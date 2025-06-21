@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dolumbican Blu Orbit - Takeoff Pad</title>
+    <title>Dolumbican Blu Orbit: Space Mission Game</title>
     <!-- Tailwind CSS CDN for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for retro title -->
@@ -33,24 +33,7 @@
             z-index: 1; /* Below UI */
         }
 
-        /* Main UI container for health bar and control panel - centered at bottom */
-        #ui-container {
-            position: absolute;
-            bottom: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10; /* Above canvas */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 90%;
-            max-width: 1000px;
-            padding-bottom: 0.5rem;
-            pointer-events: none; /* Allows mouse events to pass through to canvas for camera control */
-            min-height: 120px; /* Ensure space for content */
-        }
-
-        /* Main Game Title - positioned at the very top center */
+        /* Main Game Title Container */
         #game-title-container {
             position: absolute;
             top: 1rem;
@@ -66,12 +49,11 @@
             pointer-events: auto; /* Make title text itself selectable/interactable */
         }
 
-
-        /* Mission Control Message Area - positioned bottom-left */
+        /* Mission Control Message Area - positioned top-right */
         #mission-message-area {
             position: absolute;
-            bottom: 8.5rem; /* Adjust as needed to be above the control panel */
-            left: 1rem;
+            top: 1rem;
+            right: 1rem;
             z-index: 10;
             pointer-events: auto; /* Allow interactions within message box */
             max-width: 300px; /* Constrain width */
@@ -95,13 +77,17 @@
             width: 100%; /* Take full width of its parent */
         }
 
+        /* Health Bar Container - positioned top-left, below radar */
         #health-bar-container {
+            position: absolute;
+            top: 230px; /* Adjust based on fuel gauge (100px) + radar (100px) + margins */
+            left: 1rem;
             pointer-events: auto;
             width: 100%;
             max-width: 200px;
             display: flex;
             justify-content: center;
-            margin-bottom: 1rem; /* Space between health bar and control panel */
+            z-index: 10;
         }
         .health-notch {
             width: 30px;
@@ -122,10 +108,10 @@
             box-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
         }
 
-        /* Fuel Gauge Container */
+        /* Fuel Gauge Container - positioned top-left */
         #fuel-gauge-container {
             position: absolute;
-            top: 1rem; /* Aligned with game title, but on the left now */
+            top: 1rem;
             left: 1rem;
             z-index: 10;
             pointer-events: auto;
@@ -149,26 +135,26 @@
             filter: drop-shadow(0 0 2px rgba(0, 240, 255, 0.5)); /* Subtle glow for the gauge */
         }
 
-        #fuel-needle-line { /* Changed to #fuel-needle-line */
-            transform-origin: 50px 50px; /* Center of the SVG viewBox */
-            transition: transform 0.3s ease-out, stroke 0.3s ease-out; /* Smooth transition for needle movement and color */
+        #fuel-needle-line {
+            transform-origin: 50px 50px;
+            transition: transform 0.3s ease-out, stroke 0.3s ease-out;
         }
 
         #fuel-label {
-            font-size: 8px; /* Smaller font for circular gauge label */
+            font-size: 8px;
             font-weight: bold;
-            fill: #00f0ff; /* Neon blue for label */
-            pointer-events: none; /* Don't block interactions if any */
+            fill: #00f0ff;
+            pointer-events: none;
         }
 
         #fuel-pump-icon {
-            fill: #00f0ff; /* Neon blue for the icon */
+            fill: #00f0ff;
         }
 
-        /* Mini-Map Container */
+        /* Mini-Map Container - positioned top-left, below fuel */
         #mini-map-container {
             position: absolute;
-            top: 120px; /* Below fuel gauge */
+            top: 120px; /* Below fuel gauge (100px height + 1rem top margin) */
             left: 1rem;
             z-index: 10;
             pointer-events: auto;
@@ -193,9 +179,8 @@
             pointer-events: none;
         }
         .map-dot {
-            transition: transform 0.1s linear; /* Smooth movement for dots */
+            transition: transform 0.1s linear;
         }
-        /* Pulsating effect for extra-terrestrial activity dot */
         .map-dot.pulsating {
             animation: pulse-dot 1s infinite alternate;
         }
@@ -204,49 +189,99 @@
             to { r: 5px; }
         }
 
+        /* New Gas Icon Button Container */
+        #gas-icon-container {
+            position: absolute;
+            bottom: 14rem; /* Adjusted position to be above joystick */
+            left: 1rem;
+            z-index: 10;
+            pointer-events: auto;
+            width: 100px; /* Fixed width */
+            height: 100px; /* Adjusted height for circle */
+            background-color: rgba(30, 40, 50, 0.7);
+            border: 2px solid #00f0ff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+        }
+        #gas-icon-container:hover {
+            background-color: rgba(40, 50, 60, 0.9);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        #gas-icon-container:active {
+            transform: translateY(0);
+            background-color: rgba(20, 30, 40, 0.9);
+            box-shadow: 0 0 4px rgba(0, 240, 255, 0.2);
+        }
 
+        #gas-icon-container svg {
+            width: 60%; /* Adjust SVG size within container */
+            height: 60%;
+            filter: drop-shadow(0 0 2px rgba(0, 240, 255, 0.5));
+            margin-bottom: 5px;
+        }
+        #gas-icon-container .gas-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #00f0ff;
+        }
+        #gas-icon-container.hidden {
+            display: none;
+        }
+
+        /* Control Panel Container - centered at bottom */
         #control-panel-container {
-            pointer-events: auto; /* Re-enable pointer events for UI elements */
+            pointer-events: auto;
             width: 100%;
             display: flex;
-            justify-content: center; /* Center the entire control panel block */
-            margin-top: 0.5rem; /* Space between health bar and panel */
+            justify-content: center;
+            position: absolute; /* Position explicitly at bottom */
+            bottom: 1rem;
+            z-index: 10;
         }
 
         #control-panel {
-            display: flex; /* Changed to flex for horizontal layout */
-            flex-wrap: wrap; /* Allow buttons to wrap to next line on smaller screens */
-            justify-content: center; /* Center buttons within the flex container */
-            align-items: center; /* Align items vertically in the center */
-            width: auto; /* Allow width to be determined by content */
-            max-width: 95%; /* Constrain max width for large screens */
-            padding: 0.5rem; /* Reduced padding for more compact layout */
-            position: relative; /* For absolute positioning of buttons relative to this */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            width: auto;
+            max-width: 95%;
+            padding: 0.5rem;
+            position: relative;
         }
         .retro-button {
-            background-color: rgba(0, 150, 0, 0.8); /* Darker green base */
-            color: #00ff00; /* Neon green text */
-            padding: 0.6rem 0.8rem; /* Even smaller padding for smaller buttons */
-            border-radius: 0.4rem; /* Slightly smaller radius */
-            border: 2px solid #00ff00; /* Neon green border */
+            background-color: rgba(0, 150, 0, 0.8);
+            color: #00ff00;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.4rem;
+            border: 2px solid #00ff00;
             cursor: pointer;
-            font-size: 0.7rem; /* Smaller font size */
+            font-size: 0.7rem;
             font-weight: bold;
             text-transform: uppercase;
-            box-shadow: inset 0 0 4px rgba(0, 255, 0, 0.3), 0 0 10px rgba(0, 255, 0, 0.5); /* Neon green glow shadow */
+            box-shadow: inset 0 0 4px rgba(0, 255, 0, 0.3), 0 0 10px rgba(0, 255, 0, 0.5);
             transition: all 0.15s ease-in-out;
             position: relative;
             overflow: hidden;
-            letter-spacing: 0.05em; /* Add some spacing for retro feel */
-            margin: 0.3rem; /* Consistent margin for flex items */
+            letter-spacing: 0.05em;
+            margin: 0.3rem;
         }
         .retro-button:hover {
-            background-color: rgba(0, 200, 0, 0.9); /* Brighter green on hover */
+            background-color: rgba(0, 200, 0, 0.9);
             box-shadow: inset 0 0 6px rgba(0, 255, 0, 0.5), 0 0 15px rgba(0, 255, 0, 0.7);
             transform: translateY(-1px);
         }
         .retro-button:active {
-            background-color: rgba(0, 100, 0, 0.9); /* Even darker green on active */
+            background-color: rgba(0, 100, 0, 0.9);
             box-shadow: inset 0 0 2px rgba(0, 255, 0, 0.2), 0 0 5px rgba(0, 255, 0, 0.3);
             transform: translateY(0);
         }
@@ -268,41 +303,18 @@
             height: 150%;
             opacity: 1;
         }
-        #pip-container {
-            position: absolute;
-            top: 2rem; /* Moved to top */
-            right: 2rem; /* Moved to right */
-            width: 180px; /* Fixed width for PiP */
-            height: 120px; /* Fixed height for PiP */
-            background-color: rgba(0, 0, 0, 0.7);
-            border: 2px solid #00f0ff;
-            border-radius: 0.75rem;
-            overflow: hidden; /* Hide anything outside the PiP view */
-            z-index: 15; /* Ensure it's above everything else */
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-            pointer-events: none; /* Do not interfere with main canvas mouse events */
-        }
-        #pip-container::before {
-            content: 'BACK VIEW'; /* Updated to reflect back view */
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            color: #00f0ff;
-            font-size: 0.7rem;
-            font-weight: bold;
-            z-index: 20; /* Above the internal canvas */
-        }
 
         /* Joystick controls styling */
         #joystick-controls {
-            pointer-events: auto; /* Re-enable pointer events for UI elements */
+            pointer-events: auto;
             position: absolute;
-            bottom: 7rem; /* Aligned with PiP container */
+            bottom: 7rem;
             width: 100%;
             display: flex;
-            justify-content: space-between; /* Space out left and right joysticks */
-            padding: 0 2rem; /* Padding from edges */
+            justify-content: space-between;
+            padding: 0 2rem;
             box-sizing: border-box;
+            z-index: 10;
         }
 
         .joystick-module {
@@ -312,21 +324,21 @@
         }
 
         .directional-button {
-            background-color: #006060; /* Darker teal */
+            background-color: #006060;
             color: #e0e0e0;
             width: 50px;
             height: 50px;
-            border-radius: 50%; /* Circular buttons */
-            border: 2px solid #00f0ff; /* Neon border */
+            border-radius: 50%;
+            border: 2px solid #00f0ff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem; /* Larger arrow icons */
+            font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
             transition: all 0.1s ease-in-out;
-            margin: 0.2rem; /* Small margin between buttons */
+            margin: 0.2rem;
         }
 
         .directional-button:hover {
@@ -350,11 +362,78 @@
 
         /* Adjust positioning for joystick elements */
         #joystick-left {
-            align-self: flex-end; /* Pushes left group to bottom-left of its container */
+            align-self: flex-end;
         }
 
         #joystick-right {
-            align-self: flex-end; /* Pushes right group to bottom-right of its container */
+            align-self: flex-end;
+        }
+
+        /* Sound Control Container */
+        #sound-control-container {
+            position: absolute;
+            top: 1rem; /* Default top position for desktop */
+            left: 130px; /* Adjusted left position for desktop (next to fuel gauge) */
+            z-index: 10;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            background-color: rgba(30, 40, 50, 0.7);
+            border: 2px solid #00f0ff;
+            border-radius: 0.75rem;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+            padding: 0.5rem 0.75rem;
+            gap: 0.5rem;
+            transition: all 0.15s ease-in-out;
+        }
+
+        #sound-control-container:hover {
+            background-color: rgba(40, 50, 60, 0.9);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+        }
+
+        #sound-icon {
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            color: #00f0ff;
+            transition: color 0.15s ease-in-out;
+        }
+
+        #sound-icon:hover {
+            color: #00ffff;
+        }
+
+        #volume-slider {
+            -webkit-appearance: none;
+            width: 80px; /* Adjust width as needed */
+            height: 8px;
+            background: rgba(0, 240, 255, 0.3);
+            outline: none;
+            border-radius: 4px;
+            transition: opacity .2s;
+        }
+
+        #volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #00f0ff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.7);
+            border: 2px solid #00aaff;
+        }
+
+        #volume-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #00f0ff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.7);
+            border: 2px solid #00aaff;
         }
 
         /* Loading Spinner */
@@ -369,8 +448,8 @@
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            z-index: 100; /* Ensure it's on top */
-            display: none; /* Hidden by default */
+            z-index: 100;
+            display: none;
         }
 
         @keyframes spin {
@@ -380,77 +459,110 @@
 
         /* Startup Screen Styles */
         #startup-screen {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #0d1117; /* Same as body background */
-            z-index: 20; /* Above everything else */
+            background-color: #0d1117;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            opacity: 1;
-            transition: opacity 0.5s ease-out;
+            font-family: 'Press Start 2P', cursive;
+            color: #00f0ff;
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
         }
-        #startup-screen.hidden {
-            opacity: 0;
-            pointer-events: none; /* Prevent interaction when hidden */
-        }
-        #startup-screen .game-title-1989 {
-            font-family: 'Press Start 2P', cursive; /* Apply retro font */
-            font-size: 2.8rem; /* Slightly larger */
-            color: #00f0ff; /* Neon blue */
+
+        .game-title-1989 {
+            font-size: 2.5rem;
             margin-bottom: 2rem;
-            text-shadow: 0 0 5px #00f0ff, /* Subtle glow */
-                         0 0 15px #00f0ff,
-                         0 0 30px #00f0ff,
-                         0 0 45px #00f0ff; /* Stronger glow */
-            letter-spacing: 0.15em; /* Space out letters for retro feel */
-            white-space: nowrap; /* Prevent title from wrapping */
+            text-align: center;
+            animation: flicker 1.5s infinite alternate;
         }
-        #startup-screen .startup-button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-bottom: 2rem; /* Space before copyright */
+
+        @keyframes flicker {
+            0% { opacity: 1; text-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
+            50% { opacity: 0.9; text-shadow: 0 0 8px rgba(0, 240, 255, 0.7); }
+            100% { opacity: 1; text-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
         }
-        #startup-screen .startup-button {
-            padding: 1.5rem 3rem;
+
+        .startup-button-group {
+            margin-top: 2rem;
+        }
+
+        .startup-button {
+            background-color: #006060;
+            color: #e0e0e0;
+            padding: 1.2rem 2.5rem;
+            border-radius: 0.75rem;
+            border: 3px solid #00f0ff;
+            font-family: 'Press Start 2P', cursive;
             font-size: 1.5rem;
-            border-radius: 1rem;
-            border: 3px solid #00ff00;
-            background-color: rgba(0, 150, 0, 0.7);
-            color: #00ff00;
             cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
             transition: all 0.2s ease-in-out;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
             text-transform: uppercase;
-            font-weight: bold;
+            letter-spacing: 0.1em;
         }
-        #startup-screen .startup-button:hover {
-            background-color: rgba(0, 200, 0, 0.9);
-            box-shadow: 0 0 25px rgba(0, 255, 0, 0.9);
-            transform: scale(1.05);
+
+        .startup-button:hover {
+            background-color: #008080;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.8);
+            transform: translateY(-2px);
         }
-        #startup-screen .startup-button:active {
-            background-color: rgba(0, 100, 0, 0.9);
-            transform: scale(0.98);
+
+        .startup-button:active {
+            background-color: #004040;
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.2);
+            transform: translateY(0);
         }
-        #startup-screen .copyright-text {
-            font-family: 'Inter', sans-serif; /* Keep Inter for readability */
+
+        .copyright-text {
+            position: absolute;
+            bottom: 0.5rem; /* Adjusted for new order */
             font-size: 0.8rem;
-            color: #aaa;
-            text-shadow: 0 0 5px rgba(170, 170, 170, 0.3);
+            color: rgba(0, 240, 255, 0.7);
+            text-align: center; /* Center the text */
+            width: 100%; /* Take full width for centering */
+            padding: 0 1rem; /* Add some padding */
+            box-sizing: border-box;
+            pointer-events: none; /* Make text non-clickable */
+        }
+
+        /* Styling for new links */
+        .startup-links {
+            position: absolute;
+            bottom: 2rem; /* Adjusted for new order (above copyright) */
+            font-size: 0.7rem;
+            color: rgba(0, 240, 255, 0.7);
+            text-align: center;
+            width: 100%;
+            padding: 0 1rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column; /* Stack links vertically */
+            gap: 0.2rem; /* Small gap between links */
+            pointer-events: auto; /* Make links clickable */
+        }
+        .startup-links a {
+            color: #00ffff; /* Brighter color for links */
+            text-decoration: none;
+            text-shadow: 0 0 3px rgba(0, 240, 255, 0.5);
+            transition: color 0.15s ease-in-out, text-shadow 0.15s ease-in-out;
+        }
+        .startup-links a:hover {
+            color: #00ffee; /* Even brighter on hover */
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.8);
+            transform: translateY(-1px);
         }
 
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
             #control-panel {
-                gap: 0.3rem; /* Even smaller gap on mobile */
+                gap: 0.3rem;
                 padding: 0.3rem;
             }
             .retro-button {
@@ -464,40 +576,41 @@
                 width: 90%;
             }
             #game-title-container {
-                top: 0.5rem; /* Adjust for mobile */
+                display: none; /* Hide game title on mobile */
             }
             #mission-message-area {
-                bottom: 7.5rem; /* Adjust for mobile */
-                left: 0.5rem;
+                top: 0.5rem;
+                right: 0.5rem;
                 max-width: 250px;
             }
             #fuel-gauge-container {
-                width: 80px; /* Smaller fuel gauge on mobile */
-                height: 80px; /* Keep it square for circle border-radius */
+                width: 80px;
+                height: 80px;
                 top: 0.5rem;
-                left: 0.5rem; /* Adjusted for mobile too */
+                left: 0.5rem;
+            }
+            #health-bar-container {
+                width: 100%;
+                max-width: 150px;
+                top: 190px; /* Adjusted for mobile: below radar */
+                left: 0.5rem;
+            }
+            .health-notch {
+                width: 25px;
+                height: 12px;
             }
             #mini-map-container {
                 width: 80px;
                 height: 80px;
-                top: 90px; /* Adjust based on new fuel gauge size */
+                top: 90px; /* Adjusted for mobile: below fuel */
                 left: 0.5rem;
             }
             #mini-map-container svg {
                 width: 70px;
                 height: 70px;
             }
-            #pip-container {
-                width: 100px; /* Smaller PiP on mobile */
-                height: 70px;
-                top: 1rem;
-                right: 1rem;
-            }
-            #pip-container::before {
-                font-size: 0.5rem;
-            }
             #joystick-controls {
-                bottom: 6rem; /* Adjust for mobile */
+                bottom: 6rem;
                 padding: 0 0.5rem;
             }
             .directional-button {
@@ -515,7 +628,18 @@
                 font-size: 1.2rem;
             }
             #startup-screen .copyright-text {
-                font-size: 0.7rem;
+                bottom: 0.5rem; /* Stays at the absolute bottom */
+            }
+            .startup-links {
+                bottom: 4.5rem; /* Adjusted for mobile: Increased vertical space for links */
+                gap: 0.7rem; /* Increased gap between individual links for better mobile readability */
+            }
+
+            /* Mobile-specific adjustments for sound control */
+            #sound-control-container {
+                top: auto; /* Remove top constraint */
+                bottom: 11.5rem; /* Shifted up slightly for mobile */
+                left: 0.5rem; /* Align to the left side */
             }
         }
     </style>
@@ -527,8 +651,13 @@
     <div id="startup-screen">
         <h2 class="game-title-1989">Dolumbican Blu Orbit</h2>
         <div class="startup-button-group">
-            <button id="choose-default-craft" class="startup-button">Fly Default Craft</button>
-            <button id="choose-glb-craft" class="startup-button">Fly Blu Orbit Craft</button>
+            <button id="start-mission-button" class="startup-button">Start Mission</button>
+        </div>
+        <!-- New Links Added Below Copyright -->
+        <div class="startup-links">
+            <a href="https://buymeacoffee.com/bluorbit" target="_blank" rel="noopener noreferrer">Keep Orbit In Space</a>
+            <a href="https://blu-orbit.com" target="_blank" rel="noopener noreferrer">Official Website</a>
+            <a href="https://Dolumbican.com" target="_blank" rel="noopener noreferrer">Mission Control</a>
         </div>
         <p class="copyright-text">© 1989 Dolumbican Studios Games. All Rights Reserved.</p>
     </div>
@@ -539,14 +668,14 @@
         <div id="message-box">Awaiting Command...</div>
     </div>
 
-    <!-- Main Game Title Container (Hidden until game starts) -->
+    <!-- Main Game Title Container -->
     <div id="game-title-container" class="hidden">
         <h1 class="text-3xl md:text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400 drop-shadow-lg">
             Dolumbican Blu Orbit
         </h1>
     </div>
 
-    <!-- Fuel Gauge Container (Hidden until game starts) -->
+    <!-- Fuel Gauge Container -->
     <div id="fuel-gauge-container" class="hidden">
         <svg viewBox="0 0 100 100">
             <!-- Main Gauge Arc -->
@@ -578,7 +707,7 @@
         </svg>
     </div>
 
-    <!-- Mini-Map Container (Hidden until game starts) -->
+    <!-- Mini-Map Container -->
     <div id="mini-map-container" class="hidden">
         <svg viewBox="0 0 100 100">
             <!-- Outer Ring -->
@@ -594,23 +723,30 @@
     </div>
 
 
-    <div id="ui-container" class="hidden">
-        <div id="health-bar-container">
-            <!-- Health notches will be dynamically added here -->
-        </div>
+    <div id="health-bar-container" class="hidden">
+        <!-- Health notches will be dynamically added here -->
+    </div>
 
-        <div id="control-panel-container">
-            <div id="control-panel">
-                <button id="main-power-button" class="retro-button">Main Power</button>
-                <button id="engine-ignite-button" class="retro-button">Ignite Engines</button>
-                <button id="thrust-control-button" class="retro-button">Thrust Control</button>
-                <button id="view-toggle-button" class="retro-button">View</button>
-                <button id="report-status-button" class="retro-button">Report Status</button>
-                <button id="request-data-button" class="retro-button">Request Data</button>
-            </div>
+    <!-- New Gas Icon Container -->
+    <div id="gas-icon-container" class="hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 20V8a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2z"></path>
+            <path d="M12 2v4"></path>
+            <path d="M9 10h6"></path>
+            <path d="M9 14h6"></path>
+        </svg>
+        <span class="gas-label">GAS</span>
+    </div>
+
+    <div id="control-panel-container" class="hidden">
+        <div id="control-panel">
+            <button id="main-power-button" class="retro-button">Main Power</button>
+            <button id="engine-ignite-button" class="retro-button">Ignite Engines</button>
+            <button id="thrust-control-button" class="retro-button">Thrust Control</button>
+            <button id="report-status-button" class="retro-button">Report Status</button>
+            <button id="request-data-button" class="retro-button">Request Data</button>
         </div>
     </div>
-    <div id="pip-container" class="hidden"></div>
 
     <div id="joystick-controls" class="hidden">
         <div id="joystick-left" class="joystick-module">
@@ -618,12 +754,23 @@
             <div class="joystick-group-horizontal">
                 <button id="move-left" class="directional-button">◀</button>
                 <button id="move-down" class="directional-button">▼</button>
-        </div>
+            </div>
         </div>
         <div id="joystick-right" class="joystick-module">
             <!-- This is for directional control right -->
             <button id="move-right" class="directional-button">▶</button>
         </div>
+    </div>
+
+    <!-- New Sound Control Container -->
+    <div id="sound-control-container" class="hidden">
+        <!-- Speaker Icon (will change for mute/unmute) -->
+        <svg id="sound-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-volume-2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M23.31 1.69a16 16 0 0 1 0 20.62"></path>
+        </svg>
+        <!-- Volume Slider -->
+        <input type="range" id="volume-slider" min="0" max="100" value="70">
     </div>
 
     <!-- Loading Spinner -->
@@ -632,50 +779,172 @@
     <!-- Tone.js CDN for audio effects -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Firebase SDKs for persistence -->
     <script type="module">
-        // Import Three.js as a module - FIXED: Using full CDN URLs instead of bare specifiers
-        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
-        // Import GLTFLoader explicitly as it's now a module
-        import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Define __app_id and __firebase_config if not already defined (for local testing)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        // Global variables for Firebase instances
+        let app;
+        let db;
+        let auth;
+        let globalDistanceDocRef;
+        let authReady = false; // Flag to indicate Firebase Auth is ready
+        let distanceUpdateIntervalId; // To manage the interval for writing to Firestore
+        let unsubscribeFromDistance; // To clean up Firestore snapshot listener
 
-        // Main Three.js Scene Setup
+        // Ensure global variables are accessible by the rest of the script
+        window.initializeApp = initializeApp;
+        window.getAuth = getAuth;
+        window.signInAnonymously = signInAnonymously;
+        window.signInWithCustomToken = signInWithCustomToken;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.getFirestore = getFirestore;
+        window.doc = doc;
+        window.getDoc = getDoc;
+        window.setDoc = setDoc;
+        window.onSnapshot = onSnapshot;
+
+        // Firebase Initialization Function
+        window.initFirebase = async function() {
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            globalDistanceDocRef = doc(db, `artifacts/${appId}/public/data/game_state/global_distance`);
+
+            return new Promise(resolve => {
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        console.log("Firebase Auth ready with user:", user.uid);
+                        authReady = true;
+                        resolve(); // Resolve the promise once auth is ready
+                    } else {
+                        console.log("No user signed in. Attempting anonymous sign-in or custom token.");
+                        try {
+                            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                            console.log("Signed in to Firebase.");
+                            authReady = true;
+                            resolve();
+                        } catch (error) {
+                            console.error("Error during Firebase sign-in:", error);
+                            displayMissionMessage("Error: Failed to connect to mission database. Game may not save progress.", 7000);
+                            authReady = false; // Mark auth as not ready if it failed
+                            resolve(); // Still resolve to allow game to proceed, but with warnings
+                        }
+                    }
+                });
+            });
+        };
+
+        // Function to fetch initial global distance from Firestore
+        window.fetchInitialGlobalDistance = async function() {
+            if (!authReady) {
+                console.warn("Firebase Auth not ready to fetch global distance.");
+                return 0; // Default to 0 if not ready
+            }
+            try {
+                const docSnap = await getDoc(globalDistanceDocRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    // Setup real-time listener after initial fetch if not already done
+                    if (!unsubscribeFromDistance) {
+                        setupGlobalDistanceListener();
+                    }
+                    return data.currentDistance || 0;
+                } else {
+                    console.log("Global distance document does not exist. Initializing to 0 in Firestore.");
+                    await setDoc(globalDistanceDocRef, { currentDistance: 0 }); // Create it
+                    // Setup real-time listener after initial creation
+                    if (!unsubscribeFromDistance) {
+                        setupGlobalDistanceListener();
+                    }
+                    return 0;
+                }
+            } catch (error) {
+                console.error("Error fetching initial global distance:", error);
+                displayMissionMessage("Error: Could not retrieve interstellar navigation data. Starting from 0 miles.", 5000);
+                return 0; // Fallback to 0
+            }
+        };
+
+        // Real-time listener for global distance
+        window.setupGlobalDistanceListener = function() {
+            if (unsubscribeFromDistance) {
+                unsubscribeFromDistance(); // Clean up previous listener if any
+            }
+            unsubscribeFromDistance = onSnapshot(globalDistanceDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    // Update local distanceFromEarth from Firestore. This handles updates from other clients.
+                    distanceFromEarth = data.currentDistance || 0;
+                    // console.log("Local distance updated from Firestore via snapshot:", distanceFromEarth);
+                } else {
+                    console.warn("Global distance document disappeared from Firestore.");
+                    // Could re-initialize or handle as an error
+                }
+            }, (error) => {
+                console.error("Error listening to global distance:", error);
+                displayMissionMessage("Error: Real-time interstellar navigation data interrupted.", 5000);
+            });
+        };
+
+        // Function to start updating global distance to Firestore periodically
+        window.startGlobalDistanceUpdater = function() {
+            if (distanceUpdateIntervalId) {
+                clearInterval(distanceUpdateIntervalId);
+            }
+            const firestoreUpdateInterval = 5000; // Update every 5 seconds
+            distanceUpdateIntervalId = setInterval(async () => {
+                if (authReady && isFlying) { // Only write if authenticated and game is active
+                    try {
+                        // Use setDoc to prevent merging with other fields if any, always overwrite currentDistance
+                        await setDoc(globalDistanceDocRef, { currentDistance: distanceFromEarth });
+                        // console.log("Global distance saved:", distanceFromEarth);
+                    } catch (error) {
+                        console.error("Error saving global distance:", error);
+                        // displayMissionMessage("Error: Failed to save interstellar voyage progress.", 5000);
+                    }
+                }
+            }, firestoreUpdateInterval);
+        };
+
+        // Function to stop the periodic Firestore update
+        window.stopGlobalDistanceUpdater = function() {
+            if (distanceUpdateIntervalId) {
+                clearInterval(distanceUpdateIntervalId);
+                distanceUpdateIntervalId = null;
+            }
+        };
+    </script>
+
+
+    <script>
+        // Main Three.js Scene Setup Variables
         let scene, camera, renderer;
-        let cockpitGroup; // Group to hold all cockpit elements for rotation
-        let spacecraftMain; // Represents the physical spacecraft in the main scene (for chase/top views)
-        let engineFireMain; // Fire effect for the main spacecraft in chase/top views
+        let bluOrbitSpaceship = null; // Represents the physical spacecraft
+        let frontEngineFireParticles; // Particle system for the front of the spacecraft's engine fire
         let skybox;
         let ground;
-        let panel3D;
-        let cockpitFire; // Internal engine glow/fire for cockpit view
         let planets = []; // Array to hold planet meshes (non-collectible celestial bodies)
+        let asteroids = []; // Array to hold asteroid meshes
+        let otherSpacecrafts = []; // Array to hold other passing spacecraft
 
-        // New GLB model variables for the custom spaceship
-        let bluOrbitSpaceshipGLB = null;
-        let bluOrbitSpaceshipPiP = null;
-
-        // PiP Three.js Scene Setup
-        let scenePiP, cameraPiP;
-        // spacecraftPiP will be set after GLB load
-        let engineFirePiP; // Fire effect for PiP spacecraft
-        let skyboxPiP; // Skybox for PiP view
-        let planetsPiP = [];
-
+        // Game State Variables
         let isFlying = false;
-        // Removed autopilotActive as Autopilot button is removed
-        let currentFlightSpeed = 0.5; // Made variable for Thrust Control
+        let currentFlightSpeed = 0.0;
         const baseFlightSpeed = 0.5;
-        const thrustBoostSpeed = 1.5; // Increased speed when thrust is active
-        const maneuverSpeed = 0.1; // Speed for side/up/down movement
-        const maxCockpitOffset = 2; // Max distance cockpit can move from center
-        const maxCockpitTilt = 0.1; // Max rotation (radians) for banking
-
-        // New variables for background speed control
-        const skyboxSpeedMultiplier = 2.5; // Controls how fast the skybox moves
-        const planetSpeedMultiplier = 0.2; // Controls how fast distant planets moves
+        const thrustBoostSpeed = 1.5;
+        const maneuverSpeed = 0.1;
 
         // Movement state for joystick/keyboard
         let moveX = 0; // -1 for left, 0 for none, 1 for right
@@ -684,62 +953,92 @@
         // Spacecraft Health System
         let maxHealth = 3;
         let spacecraftHealth = maxHealth;
-        const healthBarContainer = document.getElementById('health-bar-container');
 
         // Mission Variables
-        let distanceToEarth = 500000000; // Starting at 500 million miles
+        let distanceFromEarth = 0; // Will be set by Firestore
         let fuelLevel = 10000; // Starting with a good amount of fuel
         const maxFuelLevel = 10000; // Define max fuel level for gauge calculation
-        const fuelConsumptionRate = 5; // Reduced fuel consumption rate
-        const maneuverFuelCost = 0.5; // Reduced additional fuel cost for maneuvering
-        const thrustFuelCostMultiplier = 2; // Reduced multiplier for fuel cost during thrust
-        // Removed stabilizerFuelCost as Stabilizer button is removed
-        // Removed stabilizerActive as Stabilizer button is removed
+        const fuelConsumptionRate = 5;
+        const maneuverFuelCost = 0.5;
+        const thrustFuelCostMultiplier = 2;
 
-        // Removed currentCollectible as GLB models are gone
-        // Removed all fuel tier system variables (isPremiumUser, freeRefillsUsed, maxFreeRefills, refuelCooldownActive, refuelCooldownStartTime, REFUEL_COOLDOWN_MS)
-        // Removed malfunction state for low fuel (isMalfunctioning)
-        // Removed debug mode variables (debugModeUses, maxDebugModeUses, isDebugModeActive, DEBUG_MODE_DURATION_MS)
-        // Removed encounter spawn distances and related variables (UFO_SPAWN_DIST_MIN, UFO_SPAWN_DIST_MAX, UNKNOWN_CRAFT_SPAWN_DIST_MIN, UNKNOWN_CRAFT_SPAWN_DIST_MAX, ENCOUNTER_MESSAGE_COOLDOWN, lastUfoMessageTime, lastUnknownCraftMessageTime)
-        // Removed ufoMesh, unknownCraftMesh, ufoSpawned, unknownCraftSpawned
+        // Three.js Constants
+        const fireParticleCount = 100;
+        let frontFireParticlesData = []; // Data for front fire particle animation
+        const PLAYER_COLLISION_RADIUS = 4; // Adjusted for better collision with scaled craft (half of 8-unit depth)
 
-        // Camera View Modes
-        const VIEW_MODES = ['cockpit', 'posterior', 'horizontal']; // Updated view mode names
-        let currentViewModeIndex = 0; // Start with cockpit view
+        // Planet/Obstacle Constants
+        const PLANET_RADIUS_MIN = 5;
+        const PLANET_RADIUS_MAX = 20;
+        const PLANET_MIN_SPEED = 0.1;
+        const PLANET_MAX_SPEED = 0.5;
+        let planetSpawnRate = 1000; // Milliseconds
+        let lastPlanetSpawnTime = 0;
+        const PLANET_BATCH_INTERVAL = 10000; // Spawn a batch every 10 seconds
+        let lastPlanetBatchTime = 0;
 
+        // Asteroid Constants
+        const ASTEROID_RADIUS_MIN = 0.5;
+        const ASTEROID_RADIUS_MAX = 3;
+        const ASTEROID_MIN_SPEED = 0.2;
+        const ASTEROID_MAX_SPEED = 0.8;
+        let asteroidSpawnRate = 200; // Milliseconds, more frequent than planets
+        let lastAsteroidSpawnTime = 0;
+
+        // Other Spacecraft Constants
+        let otherSpacecraftSpawnRate = 30000; // Start with 30 seconds
+        let lastOtherSpacecraftSpawnTime = 0;
+        const OTHER_SPACECRAFT_SPEED_MIN = 0.1;
+        const OTHER_SPACECRAFT_SPEED_MAX = 0.3;
+
+
+        // Background speed control
+        const skyboxSpeedMultiplier = 0.05;
+        const objectMovementScale = 0.1; // General scale for how fast objects move towards us
+
+        // UI Element References
         const messageBox = document.getElementById('message-box');
-        const fuelNeedleLine = document.getElementById('fuel-needle-line'); // Reference to the needle SVG line
-        // Removed hatchAnimationPopup and hatchAnimationMessage as Open Hatch and Debug buttons are removed
-        const collectibleDotsGroup = document.getElementById('collectible-dots'); // SVG group for map dots
+        const fuelNeedleLine = document.getElementById('fuel-needle-line');
+        const healthBarContainer = document.getElementById('health-bar-container');
+        const collectibleDotsGroup = document.getElementById('collectible-dots');
         const loadingSpinner = document.getElementById('loading-spinner');
 
         // Global references to buttons for easy access in any function
         let mainPowerButton;
         let engineIgniteButton;
-        // Removed commLinkButton as Comm Link button is removed
-        // Removed autopilotButton as Autopilot button is removed
         let thrustControlButton;
-        // Removed debugModeButton as Debug Mode button is removed
+        let reportStatusButton;
+        let requestDataButton;
+        let gasIconButton; // New reference for the gas icon button
+        let soundIcon; // New reference for the sound icon
+        let volumeSlider; // New reference for the volume slider
 
-        // URL for the new spaceship GLB model
-        const SPACESHIP_GLB_URL = 'https://raw.githubusercontent.com/flixpear/bluorbit/main/157b45e4a6d8_A_spaceship_called_Blu_Orbit.glb';
+        // Startup screen elements
+        const startupScreen = document.getElementById('startup-screen');
+        const gameTitleContainer = document.getElementById('game-title-container');
+        const fuelGaugeContainer = document.getElementById('fuel-gauge-container');
+        const miniMapContainer = document.getElementById('mini-map-container');
+        const missionMessageArea = document.getElementById('mission-message-area');
+        const healthBarContainerElement = document.getElementById('health-bar-container');
+        const controlPanelContainer = document.getElementById('control-panel-container');
+        const joystickControls = document.getElementById('joystick-controls');
+        const startMissionButton = document.getElementById('start-mission-button');
+        const soundControlContainer = document.getElementById('sound-control-container'); // New reference
 
 
-        // Remove dynamic CSS for pulse-glow effect as relevant buttons are removed
-        // const styleElement = document.createElement('style');
-        // styleElement.innerHTML = `
-        //     .retro-button.glow {
-        //         animation: pulse-glow 1s infinite alternate;
-        //     }
-        //     @keyframes pulse-glow {
-        //         from { box-shadow: 0 0 10px rgba(0, 255, 0, 0.5), inset 0 0 4px rgba(0, 255, 0, 0.3); }
-        //         to { box-shadow: 0 0 20px rgba(0, 255, 0, 0.9), inset 0 0 8px rgba(0, 255, 0, 0.5); }
-        //     }
-        // `;
-        // document.head.appendChild(styleElement);
+        // Global var for initial time for delta calculation
+        let lastFrameTime = 0; // Initialize for first frame
 
-        // --- Tone.js Audio Setup ---
-        // It's good practice to resume the audio context on user interaction for mobile devices.
+        // Deep Space Tiers & Thresholds (Miles)
+        const TIER_1_THRESHOLD = 0; // Initial
+        const TIER_2_THRESHOLD = 3; // First deep space tier, changed from 10 to 3
+        const TIER_3_THRESHOLD = 1000;
+        const TIER_4_THRESHOLD = 10000;
+        const TIER_5_THRESHOLD = 100000; // Beyond this is truly deep space
+
+        let currentDeepSpaceTier = 1;
+
+        // Audio Setup
         document.documentElement.addEventListener("mousedown", () => {
           if (Tone.context.state !== 'running') {
             Tone.context.resume();
@@ -747,66 +1046,113 @@
           }
         });
 
-        // Thrust Sound (for Main Power and Ignite Engines) - More "umph"
-        // Chaining NoiseSynth through Distortion for a more aggressive sound
-        const distortion = new Tone.Distortion(0.5).toDestination(); // Increased distortion
+        const distortion = new Tone.Distortion(0.5).toDestination();
         const thrustEffect = new Tone.NoiseSynth({
-            noise: {
-                type: "white"
-            },
-            envelope: {
-                attack: 0.1,  // Slightly longer attack for build-up
-                decay: 1.0,   // Longer decay for "roar" tail
-                sustain: 0,
-                release: 0.5  // Longer release
-            },
-            volume: -3 // Louder
-        }).connect(distortion); // Connect NoiseSynth to Distortion
+            noise: { type: "white" },
+            envelope: { attack: 0.1, decay: 1.0, sustain: 0, release: 0.5 },
+            volume: -3
+        }).connect(distortion);
 
-        // Power Down Sound (for Thrust Control - when disengaged)
         const powerDownEffect = new Tone.Synth({
-            oscillator: {
-                type: "sine"
-            },
-            envelope: {
-                attack: 0.01,
-                decay: 0.5,
-                sustain: 0,
-                release: 0.1
-            },
+            oscillator: { type: "sine" },
+            envelope: { attack: 0.01, decay: 0.5, sustain: 0, release: 0.1 },
             volume: -10
         }).toDestination();
 
-        // Function to play the thrust sound
         function playThrustSound() {
-            thrustEffect.triggerAttackRelease("1n"); // Play for a full note duration for more presence
+            thrustEffect.triggerAttackRelease("1n");
         }
 
-        // Function to play the power down sound
         function playPowerDownSound() {
             const now = Tone.context.currentTime;
-            powerDownEffect.triggerAttack(600, now);
-            powerDownEffect.frequency.linearRampTo(100, 0.4, now + 0.01);
-            powerDownEffect.triggerRelease(now + 0.5);
+            powerDownEffect.triggerAttackRelease("C3", now, now);
         }
-        // --- End Tone.js Audio Setup ---
 
+        // Continuous Engine Sound definition
+        const continuousEngineSound = new Tone.NoiseSynth({
+            noise: { type: "white" },
+            envelope: {
+                attack: 0.1,    // Gentle attack
+                decay: 0,       // No decay phase, sustain indefinitely
+                sustain: 1.0,   // Full sustain
+                release: 1.0    // Gentle release
+            },
+            volume: -15 // Background hum, subtle volume
+        }).toDestination();
+        continuousEngineSound.isStarted = false; // Custom flag to track state
 
-        // Function to update the fuel gauge visual
+        // Function to start continuous engine sound
+        function startContinuousEngineSound() {
+            if (Tone.context.state === 'running' && !continuousEngineSound.isStarted) {
+                continuousEngineSound.triggerAttack();
+                continuousEngineSound.isStarted = true; // Custom flag to track state
+            }
+        }
+
+        // Function to stop continuous engine sound
+        function stopContinuousEngineSound() {
+            if (continuousEngineSound.isStarted) {
+                continuousEngineSound.triggerRelease();
+                continuousEngineSound.isStarted = false; // Reset flag
+            }
+        }
+
+        /**
+         * Displays a message in the mission control message box.
+         * @param {string} msg The message to display.
+         * @param {number} durationMs Duration in milliseconds the message should be visible.
+         */
+        function displayMissionMessage(msg, durationMs = 3000) {
+            messageBox.textContent = msg;
+            missionMessageArea.classList.remove('hidden');
+            clearTimeout(messageBox.hideTimeout);
+            messageBox.hideTimeout = setTimeout(() => {
+                missionMessageArea.classList.add('hidden');
+            }, durationMs);
+        }
+
+        /**
+         * Updates the visual health bar based on current health.
+         */
+        function updateHealthBar() {
+            healthBarContainer.innerHTML = ''; // Clear existing notches
+            for (let i = 0; i < maxHealth; i++) {
+                const notch = document.createElement('div');
+                notch.classList.add('health-notch');
+                if (i >= spacecraftHealth) {
+                    notch.style.backgroundColor = '#444'; // Grey for lost health
+                    notch.style.boxShadow = 'none';
+                } else {
+                    // Dynamic coloring based on remaining health
+                    if (spacecraftHealth === 3) {
+                        notch.style.backgroundColor = '#00ff00'; // Green
+                        notch.style.boxShadow = '0 0 5px rgba(0, 255, 0, 0.5)';
+                    } else if (spacecraftHealth === 2) {
+                        notch.style.backgroundColor = '#ffcc00'; // Yellow
+                        notch.style.boxShadow = '0 0 5px rgba(255, 204, 0, 0.5)';
+                    } else { // spacecraftHealth === 1
+                        notch.style.backgroundColor = '#ff0000'; // Red
+                        notch.style.boxShadow = '0 0 5px rgba(255, 0, 0, 0.7)';
+                    }
+                }
+                healthBarContainer.appendChild(notch);
+            }
+        }
+
+        /**
+         * Updates the fuel gauge needle rotation.
+         */
         function updateFuelGauge() {
-            if (!fuelNeedleLine) return;
-
             const fuelPercentage = fuelLevel / maxFuelLevel;
-            // Map fuelPercentage (0 to 1) to angle range (-135 to 135 degrees)
-            const startAngle = -135; // Angle for 0% fuel (corresponds to E marker)
-            const endAngle = 135;   // Angle for 100% fuel (corresponds to F marker)
-            const angleRange = endAngle - startAngle;
-            const currentAngle = startAngle + (fuelPercentage * angleRange);
-
-            fuelNeedleLine.setAttribute('transform', `rotate(${currentAngle} 50 50)`);
+            // Angle from 0 degrees (full) to -180 degrees (empty) for a semi-circle dial
+            // SVG's default 0 degrees is to the right, so 135 degrees is "full" and -45 degrees is "empty"
+            // For a needle that goes from bottom-left (full) to bottom-right (empty) through top:
+            // Full is 135 deg, Empty is -45 deg. Total range 180 degrees.
+            const rotationDegrees = 135 - (fuelPercentage * 180); // Adjust range if needed
+            fuelNeedleLine.style.transform = `rotate(${rotationDegrees}deg)`;
 
             // Change needle color based on fuel level
-            if (fuelPercentage > 0.6) {
+            if (fuelPercentage > 0.5) {
                 fuelNeedleLine.style.stroke = '#00ff00'; // Green
             } else if (fuelPercentage > 0.2) {
                 fuelNeedleLine.style.stroke = '#ffcc00'; // Yellow
@@ -815,15 +1161,1224 @@
             }
         }
 
+        /**
+         * Updates the mini-map with planet and asteroid positions.
+         * Assumes a fixed mini-map size (e.g., 90x90 in SVG viewBox 0 0 100 100).
+         */
+        function updateMiniMap() {
+            collectibleDotsGroup.innerHTML = ''; // Clear old dots
+
+            const mapSize = 90; // SVG internal size
+            const mapCenter = 50; // SVG center
+
+            // Map the game world's X and Y range to the mini-map's X and Y range
+            const worldRange = 1000; // Max distance to display objects on map
+            const scale = mapSize / (worldRange * 2);
+
+            let playerPosition = new THREE.Vector3();
+            // In this setup, bluOrbitSpaceship is at (0,0,0) and the camera moves,
+            // so player position relative to the world origin is effectively (0,0,0) for radar.
+            // Objects moving past the camera/ship.
+
+            // Display planets on map
+            planets.forEach(planet => {
+                const relativeX = planet.position.x;
+                const relativeZ = planet.position.z; // Using Z for vertical on map, simulating "distance"
+
+                if (Math.abs(relativeX) < worldRange && Math.abs(relativeZ) < worldRange) {
+                    const mapX = mapCenter + (relativeX * scale);
+                    const mapY = mapCenter + (relativeZ * scale);
+
+                    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    dot.setAttribute('cx', mapX);
+                    dot.setAttribute('cy', mapY);
+                    dot.setAttribute('r', 3);
+                    dot.setAttribute('fill', '#00ffff'); // Cyan for planets
+                    dot.classList.add('map-dot');
+                    collectibleDotsGroup.appendChild(dot);
+                }
+            });
+
+            // Display asteroids on map (smaller dots)
+            asteroids.forEach(asteroid => {
+                const relativeX = asteroid.position.x;
+                const relativeZ = asteroid.position.z;
+
+                if (Math.abs(relativeX) < worldRange && Math.abs(relativeZ) < worldRange) {
+                    const mapX = mapCenter + (relativeX * scale);
+                    const mapY = mapCenter + (relativeZ * scale);
+
+                    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    dot.setAttribute('cx', mapX);
+                    dot.setAttribute('cy', mapY);
+                    dot.setAttribute('r', 1.5); // Smaller radius for asteroids
+                    dot.setAttribute('fill', '#aaaaaa'); // Grey for asteroids
+                    dot.classList.add('map-dot');
+                    collectibleDotsGroup.appendChild(dot);
+                }
+            });
+
+            // Display other spacecraft on map (even smaller dots, different color)
+            otherSpacecrafts.forEach(ship => {
+                const relativeX = ship.position.x;
+                const relativeZ = ship.position.z;
+
+                if (Math.abs(relativeX) < worldRange && Math.abs(relativeZ) < worldRange) {
+                    const mapX = mapCenter + (relativeX * scale);
+                    const mapY = mapCenter + (relativeZ * scale);
+
+                    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    dot.setAttribute('cx', mapX);
+                    dot.setAttribute('cy', mapY);
+                    dot.setAttribute('r', 2); // Slightly larger than asteroid, smaller than planet
+                    dot.setAttribute('fill', '#ff00ff'); // Magenta for other spacecraft
+                    dot.classList.add('map-dot');
+                    collectibleDotsGroup.appendChild(dot);
+                }
+            });
+        }
+
+        /**
+         * Creates a new planet with random position, size, and speed, influenced by deep space tier.
+         */
+        function createPlanetObject() {
+            const baseRadius = THREE.MathUtils.randFloat(PLANET_RADIUS_MIN, PLANET_RADIUS_MAX);
+            let planetColor = new THREE.Color();
+            let planetType = 'rocky'; // Default
+
+            // Dynamic planet appearance based on distance
+            if (distanceFromEarth < TIER_2_THRESHOLD) {
+                // Initial tier
+                const planetTypes = [
+                    { radius: 50, color: 0x8B4513, type: 'rocky'}, // Saddle Brown
+                    { radius: 70, color: 0x4682B4, type: 'gas'}, // Steel Blue
+                    { radius: 40, color: 0xADD8E6, type: 'ice'}, // Light Blue
+                    { radius: 60, color: 0x773333, type: 'rocky'}, // Darker Red-Brown
+                    { radius: 80, color: 0x8A2BE2, type: 'gas'}, // Blue Violet
+                    { radius: 35, color: 0xF0E68C, type: 'rocky'} // Khaki
+                ];
+                const data = planetTypes[Math.floor(Math.random() * planetTypes.length)];
+                planetColor.setHex(data.color);
+                planetType = data.type;
+            } else if (distanceFromEarth < TIER_3_THRESHOLD) {
+                // Tier 2: More vibrant, slightly alien colors (e.g., purple and green as requested)
+                const tier2Colors = [0x9900FF, 0x00CCFF, 0xFF6600, 0x33FF33, 0xAA00AA, 0x00EE00]; // Purple, light blue, orange, lime green, darker purple, brighter green
+                planetColor.setHex(tier2Colors[Math.floor(Math.random() * tier2Colors.length)]);
+                planetType = Math.random() < 0.5 ? 'gas' : 'rocky'; // More gas giants
+            } else if (distanceFromEarth < TIER_4_THRESHOLD) {
+                // Tier 3: Exotic, darker or glowing colors
+                const tier3Colors = [0xCC00CC, 0x00FF99, 0xFF3333, 0x33CCFF]; // Magenta, aquamarine, bright red, light blue
+                planetColor.setHex(tier3Colors[Math.floor(Math.random() * tier3Colors.length)]);
+                planetType = Math.random() < 0.7 ? 'gas' : 'ice'; // Even more gas/ice
+            } else {
+                // Tier 4+: Deep space, mysterious colors, more ice/gas
+                const tier4Colors = [0x550055, 0x003366, 0x88FFCC, 0xFFFFFF]; // Deep purple, deep blue, mint green, white (icy)
+                planetColor.setHex(tier4Colors[Math.floor(Math.random() * tier4Colors.length)]);
+                planetType = Math.random() < 0.8 ? 'ice' : 'gas'; // Predominantly ice/gas
+            }
+
+            const planet = createPlanet(baseRadius + (Math.random() * 20 - 10), planetColor.getHex(), planetType);
+            planet.radius = baseRadius; // Store radius for collision detection
+
+            // Spawn far away in Z, with random X and Y spread
+            const spawnX = THREE.MathUtils.randFloatSpread(1000);
+            const spawnY = THREE.MathUtils.randFloatSpread(1000);
+            const spawnZ = -1500 - Math.random() * 2000; // Spawn much further away
+
+            planet.position.set(spawnX, spawnY, spawnZ);
+            planet.velocity = THREE.MathUtils.randFloat(PLANET_MIN_SPEED, PLANET_MAX_SPEED);
+            planet.rotationSpeed = new THREE.Vector3(
+                THREE.MathUtils.randFloat(-0.005, 0.005),
+                THREE.MathUtils.randFloat(-0.005, 0.005),
+                THREE.MathUtils.randFloat(-0.005, 0.005)
+            );
+
+            planets.push(planet);
+            scene.add(planet);
+        }
+
+        /**
+         * Creates a new asteroid with random position, size, and speed.
+         */
+        function createAsteroidObject() {
+            const radius = THREE.MathUtils.randFloat(ASTEROID_RADIUS_MIN, ASTEROID_RADIUS_MAX);
+            const detail = 0; // Low detail for simple asteroid look
+            let asteroidColor = 0x555555; // Default dark grey
+
+            // Dynamic asteroid appearance based on distance
+            if (distanceFromEarth >= TIER_3_THRESHOLD) {
+                // Deeper space, asteroids might have hints of crystal or unusual materials
+                const deepSpaceAsteroidColors = [0x888888, 0xAAAAAA, 0xCCFFCC, 0xFFCCFF]; // Grey, light grey, pale green, pale pink
+                asteroidColor = deepSpaceAsteroidColors[Math.floor(Math.random() * deepSpaceAsteroidColors.length)];
+            }
+
+            const asteroidGeometry = new THREE.DodecahedronGeometry(radius, detail); // More natural rocky shape
+            const asteroidMaterial = new THREE.MeshStandardMaterial({
+                color: asteroidColor, // Dynamic color
+                metalness: 0.1,
+                roughness: 0.9
+            });
+            const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
+
+            asteroid.radius = radius; // Store radius for collision detection
+
+            // Spawn relatively close to the player, scattered in X, Y, and Z
+            const spawnX = THREE.MathUtils.randFloatSpread(200); // Spread around current X
+            const spawnY = THREE.MathUtils.randFloatSpread(200); // Spread around current Y
+            const spawnZ = -300 - Math.random() * 500; // Spawn in front of the player
+
+            asteroid.position.set(bluOrbitSpaceship.position.x + spawnX, bluOrbitSpaceship.position.y + spawnY, bluOrbitSpaceship.position.z + spawnZ);
+            asteroid.velocity = THREE.MathUtils.randFloat(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED);
+            asteroid.rotationSpeed = new THREE.Vector3(
+                THREE.MathUtils.randFloat(-0.05, 0.05),
+                THREE.MathUtils.randFloat(-0.05, 0.05),
+                THREE.MathUtils.randFloat(-0.05, 0.05)
+            );
+
+            asteroids.push(asteroid);
+            scene.add(asteroid);
+        }
+
+        /**
+         * Creates a new 'other spacecraft' object.
+         */
+        function createOtherSpacecraft() {
+            const type = Math.floor(Math.random() * 3); // 0: friendly, 1: alien scout, 2: derelict
+            let shipMesh;
+            let shipColor = new THREE.Color();
+            let shipScale = 1;
+
+            if (type === 0) { // Friendly/Exploration Vessel
+                const geometry = new THREE.BoxGeometry(2, 1, 4); // Simple rectangular ship
+                shipColor.setHex(0x00FF00); // Green
+                shipMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: shipColor }));
+                shipScale = 0.5;
+            } else if (type === 1) { // Alien Scout
+                const geometry = new THREE.ConeGeometry(1.5, 3, 8); // Cone shape
+                shipColor.setHex(0xFF00FF); // Magenta
+                shipMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: shipColor }));
+                shipScale = 0.4;
+                shipMesh.rotation.x = Math.PI / 2; // Point cone forward
+            } else { // Derelict (damaged-looking)
+                const geometry = new THREE.BoxGeometry(3, 1.5, 5);
+                shipColor.setHex(0x884444); // Rusty red
+                const material = new THREE.MeshStandardMaterial({ color: shipColor });
+                shipMesh = new THREE.Mesh(geometry, material);
+                shipScale = 0.6;
+                shipMesh.rotation.z = Math.random() * Math.PI * 2; // Tilted
+                shipMesh.rotation.y = Math.random() * Math.PI * 2; // Random rotation
+            }
+
+            shipMesh.scale.set(shipScale, shipScale, shipScale);
+
+            // Spawn significantly off-axis or far away laterally
+            const spawnX = THREE.MathUtils.randFloatSpread(500); // Wide lateral spread
+            const spawnY = THREE.MathUtils.randFloatSpread(500);
+            const spawnZ = -2000 - Math.random() * 3000; // Very far away in Z
+
+            shipMesh.position.set(bluOrbitSpaceship.position.x + spawnX, bluOrbitSpaceship.position.y + spawnY, bluOrbitSpaceship.position.z + spawnZ);
+            shipMesh.velocity = THREE.MathUtils.randFloat(OTHER_SPACECRAFT_SPEED_MIN, OTHER_SPACECRAFT_SPEED_MAX);
+            shipMesh.rotationSpeed = new THREE.Vector3(
+                THREE.MathUtils.randFloat(-0.01, 0.01),
+                THREE.MathUtils.randFloat(-0.01, 0.01),
+                THREE.MathUtils.randFloat(-0.01, 0.01)
+            );
+
+            otherSpacecrafts.push(shipMesh);
+            scene.add(shipMesh);
+        }
+
+
+        /**
+         * Updates game state: movement, fuel, health, planet/asteroid positions, and checks collisions.
+         * @param {number} deltaTime - Time elapsed since last frame in milliseconds.
+         */
+        function updateGameLogic(deltaTime) {
+            if (!isFlying) {
+                // If not flying, ensure gas icon visibility is updated only if fuel is depleted
+                updateGasIconVisibility();
+                return;
+            }
+
+            // --- Deep Space Tier Management and Environmental Effects ---
+            const oldTier = currentDeepSpaceTier;
+            if (distanceFromEarth < TIER_2_THRESHOLD) {
+                currentDeepSpaceTier = 1;
+            } else if (distanceFromEarth < TIER_3_THRESHOLD) {
+                currentDeepSpaceTier = 2;
+            } else if (distanceFromEarth < TIER_4_THRESHOLD) {
+                currentDeepSpaceTier = 3;
+            } else if (distanceFromEarth < TIER_5_THRESHOLD) {
+                currentDeepSpaceTier = 4;
+            } else {
+                currentDeepSpaceTier = 5; // Truly deep space
+            }
+
+            if (currentDeepSpaceTier !== oldTier) {
+                console.log(`Entering Deep Space Tier ${currentDeepSpaceTier}! Distance: ${distanceFromEarth.toLocaleString()} miles`);
+                // Trigger messages or visual shifts on tier change
+                if (currentDeepSpaceTier === 2) {
+                    displayMissionMessage("Entering Outer Reaches: Subtly shifting stellar formations detected.", 5000);
+                } else if (currentDeepSpaceTier === 3) {
+                    displayMissionMessage("Navigating uncharted sectors. Expect unusual celestial phenomena.", 5000);
+                } else if (currentDeepSpaceTier === 4) {
+                    displayMissionMessage("Deep Space Sector: Anomalous energy signatures increasing.", 5000);
+                } else if (currentDeepSpaceTier === 5) {
+                    displayMissionMessage("Beyond known space. Prepare for unpredictable cosmic events.", 5000);
+                }
+
+                // Update background and starfield
+                updateDeepSpaceBackground(currentDeepSpaceTier);
+                // Adjust fog based on tier
+                updateDeepSpaceFog(currentDeepSpaceTier);
+            }
+
+            // Consume fuel
+            fuelLevel -= fuelConsumptionRate;
+            if (currentFlightSpeed === thrustBoostSpeed) {
+                fuelLevel -= fuelConsumptionRate * (thrustFuelCostMultiplier - 1);
+            }
+            fuelLevel = Math.max(0, fuelLevel); // Don't go below 0
+            updateFuelGauge();
+            updateGasIconVisibility(); // Update gas icon visibility based on current fuel
+
+            if (fuelLevel <= 0 && isFlying) { // If fuel depleted AND currently flying
+                isFlying = false; // Force immediate shutdown
+                currentFlightSpeed = 0;
+                stopContinuousEngineSound(); // Stop engine sound immediately
+                displayMissionMessage("CRITICAL: Fuel Depleted! Spacecraft systems shutting down. Use the GAS icon to refuel, then press Main Power to restart.", 5000); // Updated message
+                mainPowerButton.textContent = "Power: OFF"; // Update button text to reflect off state
+                engineIgniteButton.textContent = "Ignite Engines"; // Reset ignite button text
+                thrustControlButton.textContent = "Thrust: OFF"; // Reset thrust button text
+                if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.0; }
+                // No need to explicitly save distance here for fuel depletion, as interval saver handles it.
+                stopGlobalDistanceUpdater(); // Stop updating distance if game pauses
+                return; // Stop further game logic until reactivated
+            }
+
+
+            // Move spacecraft (camera is attached to it or follows it for main view)
+            const deltaX = moveX * maneuverSpeed;
+            const deltaY = moveY * maneuverSpeed;
+
+            // Move the spacecraft itself (since camera is now fixed relative to it for posterior view)
+            bluOrbitSpaceship.position.x += deltaX;
+            bluOrbitSpaceship.position.y += deltaY;
+
+            // Clamp spacecraft position within a reasonable range
+            bluOrbitSpaceship.position.x = Math.max(-50, Math.min(50, bluOrbitSpaceship.position.x));
+            bluOrbitSpaceship.position.y = Math.max(-50, Math.min(50, bluOrbitSpaceship.position.y));
+
+
+            // Make ground recede
+            if (ground && ground.visible) {
+                ground.position.z += currentFlightSpeed * objectMovementScale; // Adjust multiplier for desired speed
+                if (ground.position.z > 50) { // If ground has moved "back" relative to the ship (which is at 0,0,0)
+                    ground.visible = false;
+                }
+            }
+
+
+            // Update distance from Earth (now increasing)
+            // 1 mile per minute at base speed (0.5 units)
+            // = 1/60 miles per second
+            // = 1 / (60 * 1000) miles per millisecond = 1 / 60000 miles/ms
+            // At currentFlightSpeed (e.g., 0.5), we want (0.5 * X) miles/ms = 1/60000
+            // X = (1/60000) / 0.5 = 1 / 30000 miles per unit speed per millisecond
+            const milesPerUnitSpeedPerMs = 1 / 30000;
+            distanceFromEarth += currentFlightSpeed * milesPerUnitSpeedPerMs * deltaTime;
+            displayMissionMessage(`Miles from Earth: ${distanceFromEarth.toLocaleString(undefined, { maximumFractionDigits: 0 })} miles`);
+
+            // No game over on distance to Earth since we are moving away
+            // if (distanceToEarth <= 0) {
+            //     displayMissionMessage("MISSION COMPLETE! Welcome to Earth!", 10000);
+            //     gameOver();
+            //     return;
+            // }
+
+            // Update planet positions and check collisions
+            for (let i = planets.length - 1; i >= 0; i--) {
+                const planet = planets[i];
+                // Move planet forward relative to spacecraft's apparent movement
+                planet.position.z += planet.velocity + (currentFlightSpeed * objectMovementScale); // Planets move towards the camera
+                planet.rotation.x += planet.rotationSpeed.x;
+                planet.rotation.y += planet.rotationSpeed.y;
+                planet.rotation.z += planet.rotationSpeed.z;
+
+                // Despawn if out of view (past the spacecraft by a certain amount)
+                if (planet.position.z > (bluOrbitSpaceship.position.z + 50)) {
+                    scene.remove(planet);
+                    planets.splice(i, 1);
+                }
+
+                // Collision detection with planets (more severe)
+                const distance = bluOrbitSpaceship.position.distanceTo(planet.position);
+                if (distance < (PLAYER_COLLISION_RADIUS + planet.radius)) {
+                    handleCollision(planet, "planet"); // Pass type for different damage
+                    return;
+                }
+            }
+
+            // Update asteroid positions and check collisions
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                const asteroid = asteroids[i];
+                // Asteroids also move relative to spacecraft's apparent movement
+                asteroid.position.z += asteroid.velocity + (currentFlightSpeed * objectMovementScale * 1.5); // Asteroids move faster
+                asteroid.rotation.x += asteroid.rotationSpeed.x;
+                asteroid.rotation.y += asteroid.rotationSpeed.y;
+                asteroid.rotation.z += asteroid.rotationSpeed.z;
+
+                // Despawn if out of view
+                if (asteroid.position.z > (bluOrbitSpaceship.position.z + 20)) { // Closer despawn for asteroids
+                    scene.remove(asteroid);
+                    asteroids.splice(i, 1);
+                }
+
+                // Collision detection with asteroids (less severe than planets)
+                const distance = bluOrbitSpaceship.position.distanceTo(asteroid.position);
+                if (distance < (PLAYER_COLLISION_RADIUS + asteroid.radius)) {
+                    handleCollision(asteroid, "asteroid"); // Pass type for different damage
+                    return;
+                }
+            }
+
+            // Update other spacecraft positions
+            for (let i = otherSpacecrafts.length - 1; i >= 0; i--) {
+                const ship = otherSpacecrafts[i];
+                ship.position.z += ship.velocity + (currentFlightSpeed * objectMovementScale * 0.5); // Move relative to player, slower than obstacles
+                ship.rotation.x += ship.rotationSpeed.x;
+                ship.rotation.y += ship.rotationSpeed.y;
+                ship.rotation.z += ship.rotationSpeed.z;
+
+                // Despawn if out of view
+                if (ship.position.z > (bluOrbitSpaceship.position.z + 50)) { // Despawn when they pass
+                    scene.remove(ship);
+                    otherSpacecrafts.splice(i, 1);
+                }
+            }
+
+
+            // Spawn new planets
+            const now = performance.now();
+            if (now - lastPlanetSpawnTime > planetSpawnRate) {
+                createPlanetObject();
+                lastPlanetSpawnTime = now;
+                planetSpawnRate = Math.max(500, planetSpawnRate * 0.99); // Increase difficulty
+            }
+            if (now - lastPlanetBatchTime > PLANET_BATCH_INTERVAL) {
+                for (let i = 0; i < 3; i++) { createPlanetObject(); } // Spawn a few at once
+                lastPlanetBatchTime = now;
+            }
+
+            // Spawn new asteroids
+            if (now - lastAsteroidSpawnTime > asteroidSpawnRate) {
+                createAsteroidObject();
+                lastAsteroidSpawnTime = now;
+                asteroidSpawnRate = Math.max(100, asteroidSpawnRate * 0.99); // Increase difficulty
+            }
+
+            // Spawn other spacecraft based on deep space tier
+            if (distanceFromEarth >= TIER_2_THRESHOLD && (now - lastOtherSpacecraftSpawnTime > otherSpacecraftSpawnRate)) {
+                if (Math.random() < getSpacecraftSpawnChance(currentDeepSpaceTier)) { // Probabilistic spawning
+                    createOtherSpacecraft();
+                    lastOtherSpacecraftSpawnTime = now;
+                    otherSpacecraftSpawnRate = Math.max(10000, otherSpacecraftSpawnRate * 0.95); // Increase frequency
+                }
+            }
+
+
+            // Update fire particles for the main spacecraft
+            if (frontEngineFireParticles && bluOrbitSpaceship) {
+                // Main box length is 8, so front is at +4.
+                updateFireParticles(frontEngineFireParticles, frontFireParticlesData, 4, true); // Pass true for front fire
+            }
+
+            updateMiniMap();
+        }
+
+        /**
+         * Determines the chance of spawning another spacecraft based on the current deep space tier.
+         * @param {number} tier
+         * @returns {number} Probability (0-1)
+         */
+        function getSpacecraftSpawnChance(tier) {
+            switch (tier) {
+                case 2: return 0.2; // 20% chance
+                case 3: return 0.4; // 40% chance
+                case 4: return 0.6; // 60% chance
+                case 5: return 0.8; // 80% chance
+                default: return 0;
+            }
+        }
+
+        /**
+         * Updates the background (skybox color, nebula properties) based on deep space tier.
+         * @param {number} tier
+         */
+        function updateDeepSpaceBackground(tier) {
+            // Adjust skybox color
+            let newSkyboxColor;
+            let newStarColor = 0xFFFFFF; // Default star color
+            let newStarDensity = 1500; // Default star count
+
+            switch (tier) {
+                case 1:
+                    newSkyboxColor = 0x02020a; // Near Earth
+                    newStarColor = 0xFFFFFF;
+                    newStarDensity = 1500;
+                    break;
+                case 2:
+                    newSkyboxColor = 0x010105; // Slightly deeper, more subtle blues
+                    newStarColor = 0xAAAAFF; // Hints of blue
+                    newStarDensity = 2000; // Slightly denser
+                    break;
+                case 3:
+                    newSkyboxColor = 0x0A020A; // Purpleish deep space
+                    newStarColor = 0xFFFFCC; // Yellowish stars
+                    newStarDensity = 2500; // Denser
+                    break;
+                case 4:
+                    newSkyboxColor = 0x020A0A; // Tealish deep space
+                    newStarColor = 0xFF88FF; // Pinkish stars
+                    newStarDensity = 3000; // Even denser
+                    break;
+                case 5:
+                    newSkyboxColor = 0x000000; // Pure black, very sparse or very dense pockets
+                    newStarColor = 0x33FFFF; // Cyan stars
+                    newStarDensity = 4000; // Max density, can be very clustered.
+                    break;
+            }
+
+            // Smoothly interpolate skybox color
+            // This requires modifying the material, but it's a dynamic change, not structural.
+            // For a basic material, color change is direct.
+            skybox.material.color.setHex(newSkyboxColor);
+
+            // Re-create stars/nebulas for proper density/color changes (or modify existing if possible)
+            // For simplicity, let's keep the existing stars/nebulas and just update their color if material allows.
+            // Recreating is heavy, so we will try to update properties.
+            // For stars, it's a single PointsMaterial, so we can change its color.
+            // For nebulas, they are individual meshes. We can filter and update them or spawn new ones at this tier
+            // We'll update the global star color for now, and rely on `createPlanetObject` to handle nebula/planet colors.
+            // Note: Directly changing existing star positions/count in a `Points` object is complex.
+            // We'll stick to color changes for existing skybox stars.
+            scene.traverse((object) => {
+                if (object.isPoints && object.parent === skybox) { // Check if it's our stars
+                    object.material.color.setHex(newStarColor);
+                }
+            });
+            // Nebula colors are handled by their creation, if new ones are spawned based on distance, they will pick up the new colors.
+        }
+
+        /**
+         * Updates environmental fog based on deep space tier.
+         * @param {number} tier
+         */
+        function updateDeepSpaceFog(tier) {
+            // Remove existing fog if any
+            if (scene.fog) {
+                scene.fog = null;
+            }
+
+            let fogColor = 0x000000; // Default black
+            let fogDensity = 0; // Default no fog
+
+            switch (tier) {
+                case 1:
+                case 2:
+                    // No significant fog near initial stages
+                    break;
+                case 3:
+                    // Light blueish haze for distant nebulas
+                    fogColor = 0x000022; // Very dark blue
+                    fogDensity = 0.0005; // Subtle
+                    break;
+                case 4:
+                    // Denser purple haze
+                    fogColor = 0x110011; // Dark purple
+                    fogDensity = 0.001; // Moderate
+                    break;
+                case 5:
+                    // Very deep, potentially disorienting red/black fog or extremely clear.
+                    // Let's make it a dense, dark red for "unknown" feel.
+                    fogColor = 0x110000; // Very dark red
+                    fogDensity = 0.002; // Quite dense
+                    break;
+            }
+
+            if (fogDensity > 0) {
+                scene.fog = new THREE.FogExp2(fogColor, fogDensity);
+            }
+        }
+
+
+        /**
+         * Main animation loop.
+         * @param {DOMHighResTimeStamp} currentTime - The current time in milliseconds.
+         */
+        function animate(currentTime) {
+            if (!lastFrameTime) lastFrameTime = currentTime; // Initialize lastFrameTime on first call
+
+            const deltaTime = currentTime - lastFrameTime; // Milliseconds since last frame
+            lastFrameTime = currentTime;
+
+            requestAnimationFrameId = requestAnimationFrame(animate);
+
+            updateGameLogic(deltaTime); // Pass deltaTime to game logic
+
+            renderer.render(scene, camera);
+        }
+
+        /**
+         * Game Over sequence.
+         */
+        async function gameOver() { // Made async to await Firestore save
+            console.log("Game Over initiated.");
+            isFlying = false;
+            currentFlightSpeed = 0;
+
+            // --- IMPORTANT: Save current distance to Firestore before game over ---
+            if (window.authReady && window.globalDistanceDocRef) {
+                try {
+                    await window.setDoc(window.globalDistanceDocRef, { currentDistance: distanceFromEarth });
+                    console.log("Final global distance saved on game over:", distanceFromEarth);
+                } catch (error) {
+                    console.error("Error saving final global distance on game over:", error);
+                }
+            }
+            // --- End of critical save ---
+
+            if (requestAnimationFrameId) {
+                cancelAnimationFrame(requestAnimationFrameId); // Stop the animation loop
+                requestAnimationFrameId = null; // Reset the ID
+            }
+            stopGlobalDistanceUpdater(); // Stop writing to Firestore on game over
+            stopContinuousEngineSound(); // Ensure engine sound stops on game over
+
+            displayMissionMessage("GAME OVER! Mission Failed. Initiating return to base.", 5000);
+            setTimeout(() => {
+                // Hide all game UI elements
+                gameTitleContainer.classList.add('hidden');
+                fuelGaugeContainer.classList.add('hidden');
+                miniMapContainer.classList.add('hidden');
+                missionMessageArea.classList.add('hidden');
+                healthBarContainerElement.classList.add('hidden');
+                controlPanelContainer.classList.add('hidden');
+                joystickControls.classList.add('hidden');
+                gasIconButton.classList.add('hidden'); // Hide gas icon on game over
+                soundControlContainer.classList.add('hidden'); // Hide sound control on game over
+
+
+                // Clear ONLY dynamic elements from the scene
+                planets.forEach(p => scene.remove(p));
+                planets = []; // Clear array
+                asteroids.forEach(a => scene.remove(a));
+                asteroids = []; // Clear array
+                otherSpacecrafts.forEach(s => scene.remove(s));
+                otherSpacecrafts = []; // Clear array
+
+                // Hide the spacecraft and fire effects temporarily, don't null them
+                if (bluOrbitSpaceship) {
+                    bluOrbitSpaceship.visible = false;
+                    if (frontEngineFireParticles) frontEngineFireParticles.material.opacity = 0.0;
+                }
+
+                // Show startup screen after game over
+                startupScreen.style.display = 'flex';
+
+            }, 3000); // Wait for mission fail message to clear
+        }
+
+        /**
+         * Updates the visibility of the GAS icon based on fuel level and flight status.
+         */
+        function updateGasIconVisibility() {
+            if (fuelLevel <= 0 && !isFlying) {
+                gasIconButton.classList.remove('hidden');
+            } else {
+                gasIconButton.classList.add('hidden');
+            }
+        }
+
+        // New: Sound Control variables
+        let isMuted = false;
+        let lastVolume = 0.7; // Store last non-muted volume (0-1 range for slider value)
+
+        /**
+         * Updates the sound icon based on mute state.
+         */
+        function updateSoundIcon() {
+            if (isMuted || Tone.Destination.volume.value <= -40) { // Consider very low volume as muted visually
+                soundIcon.innerHTML = `<path d="M11 5 6 9 2 9 2 15 6 15 11 19 11 5zM22 12h-4"></path>`; // Muted icon
+                volumeSlider.value = 0; // Set slider to 0 if muted
+            } else if (Tone.Destination.volume.value < -20) {
+                soundIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>`; // Volume 1 icon
+            } else {
+                soundIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M23.31 1.69a16 16 0 0 1 0 20.62"></path>`; // Volume 2 icon
+            }
+        }
+
+
+        /**
+         * Initializes and sets up all event listeners for UI elements.
+         */
+        function setupUIEventListeners() {
+            mainPowerButton = document.getElementById('main-power-button');
+            engineIgniteButton = document.getElementById('engine-ignite-button');
+            thrustControlButton = document.getElementById('thrust-control-button');
+            reportStatusButton = document.getElementById('report-status-button');
+            requestDataButton = document.getElementById('request-data-button');
+            gasIconButton = document.getElementById('gas-icon-container'); // Get reference to new gas icon
+            soundIcon = document.getElementById('sound-icon'); // Get reference to sound icon
+            volumeSlider = document.getElementById('volume-slider'); // Get reference to volume slider
+
+            startMissionButton.addEventListener('click', async () => {
+                startupScreen.style.display = 'none'; // Hide startup screen
+                await startGame(); // Start the game when the button is clicked, wait for it
+            });
+
+            // Joystick buttons
+            const moveUp = document.getElementById('move-up');
+            const moveDown = document.getElementById('move-down');
+            const moveLeft = document.getElementById('move-left');
+            const moveRight = document.getElementById('move-right');
+
+            mainPowerButton.addEventListener('click', () => {
+                if (isFlying) {
+                    isFlying = false;
+                    currentFlightSpeed = 0;
+                    displayMissionMessage("Main Power OFF. All systems dormant.", 3000);
+                    playPowerDownSound();
+                    mainPowerButton.textContent = "Power: OFF"; // Changed for clarity
+                    if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.0; }
+                    stopGlobalDistanceUpdater(); // Stop updating distance if game pauses
+                    updateGasIconVisibility(); // Check if gas icon should appear after shutdown
+                } else {
+                    // Only switch to ON if fuel is not depleted
+                    if (fuelLevel <= 0) {
+                        displayMissionMessage("FUEL CRITICAL! Use the GAS icon to replenish fuel to proceed.", 5000);
+                        return; // Do not start flight
+                    }
+
+                    isFlying = true;
+                    currentFlightSpeed = baseFlightSpeed;
+                    displayMissionMessage("Main Power ON. Systems nominal.", 3000);
+                    startContinuousEngineSound(); // Play continuous engine sound on power up
+                    mainPowerButton.textContent = "Power: ON"; // Changed for clarity
+                    // No automatic refuel here, that's for the GAS icon now
+                    if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.8; }
+                    startGlobalDistanceUpdater(); // Start updating distance if game resumes
+                    updateGasIconVisibility(); // Hide gas icon if powering on
+                }
+            });
+
+            engineIgniteButton.addEventListener('click', () => {
+                // If not already flying, pressing ignite should effectively 'turn on' the systems
+                // as a backup to main power, but without resetting the scene.
+                if (!isFlying) {
+                    if (fuelLevel <= 0) {
+                        displayMissionMessage("FUEL CRITICAL! Use the GAS icon to replenish fuel to proceed.", 5000);
+                        return;
+                    }
+                    isFlying = true;
+                    currentFlightSpeed = baseFlightSpeed;
+                    displayMissionMessage("Engines Ignited! Blu Orbit is Go!", 4000);
+                    startContinuousEngineSound(); // Play continuous engine sound
+                    if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.8; }
+                    mainPowerButton.textContent = "Power: ON"; // Align main power button state
+                    startGlobalDistanceUpdater(); // Start updater if not already running
+                    updateGasIconVisibility(); // Hide gas icon if powering on
+                } else {
+                    displayMissionMessage("Engines already ignited.", 2000);
+                }
+            });
+
+            thrustControlButton.addEventListener('click', () => {
+                if (!isFlying) {
+                    displayMissionMessage("Engines must be ignited first!", 2000);
+                    return;
+                }
+                if (currentFlightSpeed === baseFlightSpeed) {
+                    currentFlightSpeed = thrustBoostSpeed;
+                    displayMissionMessage("Thrust engaged! Maximizing speed.", 3000);
+                    thrustControlButton.textContent = "Thrust: OFF"; // Changed for clarity
+                    playThrustSound(); // Play thrust burst sound
+                } else {
+                    currentFlightSpeed = baseFlightSpeed;
+                    displayMissionMessage("Thrust disengaged. Conserving fuel.", 3000);
+                    thrustControlButton.textContent = "Thrust: ON"; // Changed for clarity
+                    // Only play power down sound if it's explicitly turning something off, not just changing thrust.
+                    // playPowerDownSound(); // Removed as it doesn't fit 'thrust disengaged'
+                }
+            });
+
+            // New: Gas Icon click listener
+            gasIconButton.addEventListener('click', () => {
+                if (fuelLevel < maxFuelLevel) {
+                    fuelLevel = maxFuelLevel; // Refuel instantly
+                    updateFuelGauge();
+                    displayMissionMessage("Fuel replenished! Press Main Power to resume flight.", 5000);
+                    updateGasIconVisibility(); // Hide the icon after refueling
+                } else {
+                    displayMissionMessage("Fuel tanks are already full!", 3000);
+                }
+            });
+
+            // New: Sound Icon click listener (mute/unmute)
+            soundIcon.addEventListener('click', () => {
+                if (isMuted) {
+                    // Unmute: Restore previous volume
+                    Tone.Destination.volume.value = Tone.Master.vol.linearToGain(lastVolume * 100); // Convert 0-1 to dB
+                    // Ensure the continuous engine sound is playing if the game is flying
+                    if (isFlying && Tone.context.state === 'running') {
+                        startContinuousEngineSound();
+                    }
+                } else {
+                    // Mute: Save current volume, set to -Infinity
+                    lastVolume = volumeSlider.value / 100; // Save current slider value (0-1)
+                    Tone.Destination.volume.value = -Infinity; // Mute
+                    stopContinuousEngineSound(); // Stop the sound when muted
+                }
+                isMuted = !isMuted;
+                updateSoundIcon();
+                localStorage.setItem('gameSoundMuted', isMuted);
+                localStorage.setItem('gameSoundVolume', lastVolume);
+            });
+
+            // New: Volume Slider input listener
+            volumeSlider.addEventListener('input', () => {
+                const sliderValue = parseInt(volumeSlider.value); // 0-100
+                if (sliderValue === 0) {
+                    Tone.Destination.volume.value = -Infinity; // Mute if slider is at 0
+                    isMuted = true;
+                    stopContinuousEngineSound();
+                } else {
+                    // Map slider value (0-100) to a dB range (e.g., -40dB to 0dB)
+                    // Tone.js volume is logarithmic, so a linear mapping of slider to dB is fine.
+                    // A slider value of 100 maps to 0dB (full volume)
+                    // A slider value of 0 maps to -Infinity (mute), handled above.
+                    // Let's use a range from -40dB (very quiet) to 0dB (max).
+                    const minDb = -40; // Very quiet
+                    const maxDb = 0;   // Max volume (no gain/loss)
+                    const gain = ((sliderValue / 100) * (maxDb - minDb)) + minDb;
+                    Tone.Destination.volume.value = gain;
+                    isMuted = false;
+                    // Ensure the continuous engine sound is playing if the game is flying and volume is above 0
+                    if (isFlying && Tone.context.state === 'running' && sliderValue > 0) {
+                        startContinuousEngineSound();
+                    }
+                }
+                updateSoundIcon();
+                localStorage.setItem('gameSoundMuted', isMuted);
+                localStorage.setItem('gameSoundVolume', sliderValue / 100); // Save as 0-1 for consistency
+            });
+
+
+            // LLM Integration for Report Status / Request Data
+            reportStatusButton.addEventListener('click', async () => {
+                displayMissionMessage("Requesting status report...", 2000);
+                loadingSpinner.style.display = 'block';
+                console.log('Report Status button clicked. Initiating API call...');
+                try {
+                    // Ensure the LLM prompt uses the correct variable name
+                    const prompt = `Generate a concise, retro-futuristic status report for a space mission game. Include current health (out of ${maxHealth}), fuel (${fuelLevel}/${maxFuelLevel}), and estimated distance from Earth (${distanceFromEarth.toLocaleString()} miles). Make it sound like a 1980s computer status message.`;
+                    const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    console.log('Report Status API raw response:', result);
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                        const statusReport = result.candidates[0].content.parts[0].text;
+                        console.log('Report Status parsed message:', statusReport);
+                        displayMissionMessage(statusReport, 8000);
+                        // No explicit statusReported flag needed for sequential dependency now,
+                        // as user just wants to ensure messages come through.
+                    } else {
+                        displayMissionMessage("Error: No status report data received.", 3000);
+                        console.error("LLM response structure unexpected for Report Status.");
+                    }
+                } catch (error) {
+                    console.error("Error generating status report:", error);
+                    displayMissionMessage("Error: Failed to connect to command center.", 3000);
+                } finally {
+                    loadingSpinner.style.display = 'none';
+                }
+            });
+
+            requestDataButton.addEventListener('click', async () => {
+                displayMissionMessage("Requesting planetary data...", 2000);
+                loadingSpinner.style.display = 'block';
+                console.log('Request Data button clicked. Initiating API call...');
+                try {
+                    const prompt = `As a retro 1980s mission control computer, generate a brief, cryptic message about an anomaly detected near a celestial body. Use terms like 'unknown energy signature', 'unidentified object', 'gravitational fluctuation'. Mention a specific, fictional planetary body like 'Zorgon Prime' or 'Nebula X'. Keep it short and impactful.`;
+                    const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    console.log('Request Data API raw response:', result);
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                        const dataReport = result.candidates[0].content.parts[0].text;
+                        console.log('Request Data parsed message:', dataReport);
+                        displayMissionMessage(dataReport, 8000);
+                    } else {
+                        displayMissionMessage("Error: No data received from deep space probe.", 3000);
+                        console.error("LLM response structure unexpected for Request Data.");
+                    }
+                } catch (error) {
+                    console.error("Error requesting data:", error);
+                    displayMissionMessage("Error: Communications scrambled.", 3000);
+                } finally {
+                    loadingSpinner.style.display = 'none';
+                }
+            });
+
+
+            // Joystick/Keyboard Movement Controls
+            const keysPressed = {};
+
+            document.addEventListener('keydown', (event) => {
+                keysPressed[event.key.toLowerCase()] = true;
+                updateMoveState();
+            });
+
+            document.addEventListener('keyup', (event) => {
+                delete keysPressed[event.key.toLowerCase()];
+                updateMoveState();
+            });
+
+            function updateMoveState() {
+                moveX = 0;
+                moveY = 0;
+                if (keysPressed['arrowleft'] || keysPressed['a']) moveX = -1;
+                if (keysPressed['arrowright'] || keysPressed['d']) moveX = 1;
+                if (keysPressed['arrowup'] || keysPressed['w']) moveY = 1;
+                if (keysPressed['arrowdown'] || keysPressed['s']) moveY = -1;
+            }
+
+            // Touch/Click listeners for joystick buttons
+            const setupButtonMovement = (buttonId, xDir, yDir) => {
+                const button = document.getElementById(buttonId);
+                if (button) {
+                    const startMove = () => {
+                        if (isFlying) {
+                            moveX = xDir;
+                            moveY = yDir;
+                        }
+                    };
+                    const stopMove = () => {
+                        if (isFlying) {
+                            if (moveX === xDir) moveX = 0;
+                            if (moveY === yDir) moveY = 0;
+                        }
+                    };
+
+                    button.addEventListener('mousedown', startMove);
+                    button.addEventListener('mouseup', stopMove);
+                    button.addEventListener('mouseleave', stopMove);
+
+                    button.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        startMove();
+                    }, { passive: false });
+                    button.addEventListener('touchend', stopMove);
+                    button.addEventListener('touchcancel', stopMove);
+                }
+            };
+
+            setupButtonMovement('move-left', -1, 0);
+            setupButtonMovement('move-right', 1, 0);
+            setupButtonMovement('move-up', 0, 1);
+            setupButtonMovement('move-down', 0, -1);
+        }
+
+        /**
+         * Loads saved sound preferences from local storage.
+         */
+        function loadSoundPreferences() {
+            const savedMuteState = localStorage.getItem('gameSoundMuted');
+            const savedVolume = localStorage.getItem('gameSoundVolume');
+
+            if (savedMuteState !== null) {
+                isMuted = JSON.parse(savedMuteState);
+            }
+            if (savedVolume !== null) {
+                lastVolume = parseFloat(savedVolume);
+                volumeSlider.value = lastVolume * 100; // Set slider value (0-100)
+            } else {
+                volumeSlider.value = lastVolume * 100; // Default to 70 if no saved volume
+            }
+
+            // Apply loaded preferences
+            if (isMuted) {
+                Tone.Destination.volume.value = -Infinity; // Mute
+            } else {
+                const minDb = -40; // Very quiet
+                const maxDb = 0;   // Max volume (no gain/loss)
+                const gain = (lastVolume * (maxDb - minDb)) + minDb;
+                Tone.Destination.volume.value = gain;
+            }
+            updateSoundIcon();
+        }
+
+        /**
+         * Resets the Three.js scene elements to their initial game state.
+         * This is called by startGame() to prepare for a new game session.
+         */
+        function resetGameScene() {
+            // Remove all existing planets and asteroids from the scene
+            planets.forEach(p => scene.remove(p));
+            planets = [];
+            asteroids.forEach(a => scene.remove(a));
+            asteroids = [];
+            otherSpacecrafts.forEach(s => scene.remove(s));
+            otherSpacecrafts = [];
+
+            // Reset spacecraft position and make it visible
+            if (bluOrbitSpaceship) {
+                bluOrbitSpaceship.position.set(0, 0, 0);
+                bluOrbitSpaceship.rotation.set(0, 0, 0);
+                bluOrbitSpaceship.visible = true; // Ensure it's visible
+            }
+            // Reset fire particles opacity
+            if (frontEngineFireParticles) {
+                frontEngineFireParticles.material.opacity = 0.8;
+            }
+
+            // Reset ground position and make it visible
+            if (ground) {
+                ground.position.set(0, -2.5, 0);
+                ground.visible = true;
+            }
+
+            // Re-spawn initial planets and asteroids for the new game
+            for (let i = 0; i < 10; i++) {
+                createPlanetObject();
+            }
+            for (let i = 0; i < 10; i++) { // Add initial asteroids
+                createAsteroidObject();
+            }
+
+            // Reset spawn rates to initial values
+            planetSpawnRate = 1000;
+            lastPlanetSpawnTime = performance.now();
+            asteroidSpawnRate = 200;
+            lastAsteroidSpawnTime = performance.now();
+            lastPlanetBatchTime = performance.now(); // Reset batch time
+            otherSpacecraftSpawnRate = 30000;
+            lastOtherSpacecraftSpawnTime = performance.now();
+
+            // Reset deep space tier
+            currentDeepSpaceTier = 1;
+            updateDeepSpaceBackground(currentDeepSpaceTier); // Apply initial background
+            updateDeepSpaceFog(currentDeepSpaceTier); // Clear fog
+        }
+
+
+        /**
+         * Starts a new game session. Resets all game state (except global distance).
+         */
+        async function startGame() {
+            console.log("startGame initiated.");
+            document.getElementById('loading-spinner').style.display = 'block';
+
+            // Ensure Firebase is ready and fetch initial global distance
+            distanceFromEarth = await fetchInitialGlobalDistance();
+            console.log("Game starting with global distance:", distanceFromEarth);
+
+            // Reset the Three.js scene elements for a new game
+            resetGameScene();
+
+            document.getElementById('loading-spinner').style.display = 'none';
+
+            // Hide startup screen
+            startupScreen.style.display = 'none';
+
+            // Show all game UI elements after initialization
+            gameTitleContainer.classList.remove('hidden');
+            fuelGaugeContainer.classList.remove('hidden');
+            miniMapContainer.classList.remove('hidden');
+            missionMessageArea.classList.remove('hidden');
+            healthBarContainerElement.classList.remove('hidden');
+            controlPanelContainer.classList.remove('hidden');
+            joystickControls.classList.remove('hidden');
+            soundControlContainer.classList.remove('hidden'); // Show sound control
+
+            // Reset game state for local player
+            spacecraftHealth = maxHealth;
+            fuelLevel = maxFuelLevel;
+            currentFlightSpeed = baseFlightSpeed;
+            isFlying = true;
+            console.log(`startGame: isFlying=${isFlying}, currentFlightSpeed=${currentFlightSpeed}`);
+
+            // Reset UI
+            updateHealthBar();
+            updateFuelGauge();
+            updateGasIconVisibility(); // Ensure gas icon is hidden on game start
+            displayMissionMessage("Engines ignited! Flight initiated into interstellar space. Global voyage in progress.", 3000);
+            mainPowerButton.textContent = "Power: ON"; // Changed for clarity
+            thrustControlButton.textContent = "Thrust: ON"; // Changed for clarity
+            engineIgniteButton.textContent = "Ignite Engines"; // Ensure ignite button text is correct
+
+            // Start continuous engine sound only if not muted and game is flying
+            if (!isMuted && Tone.context.state === 'running') {
+                startContinuousEngineSound();
+            }
+
+            // Start the persistent distance updater
+            startGlobalDistanceUpdater();
+
+            // Ensure the animation loop is running (it might have been cancelled on game over)
+            if (!requestAnimationFrameId) {
+                console.log("startGame: Re-starting animation loop.");
+                animate();
+            }
+        }
+
+        let requestAnimationFrameId;
+
+        /**
+         * Creates a particle system for engine fire.
+         * @param {boolean} isFrontFire - True if creating fire for the front of the ship (particles move negatively in Z).
+         * @returns {{particles: THREE.Points, particleData: Array}} An object containing the particle system and its data.
+         */
+        function createEngineFireParticleSystem(isFrontFire = false) {
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(fireParticleCount * 3);
+            const colors = new Float32Array(fireParticleCount * 3);
+            const particleData = [];
+
+            const color1 = new THREE.Color(0xffa500); // Orange
+            const color2 = new THREE.Color(0xff4500); // Orange-Red
+            const color3 = new THREE.Color(0xff0000); // Red
+
+            const zVelocitySign = isFrontFire ? -1 : 1; // Negative for front (moves towards -Z), Positive for rear (moves towards +Z)
+
+            for (let i = 0; i < fireParticleCount; i++) {
+                const i3 = i * 3;
+                positions[i3] = (Math.random() - 0.5) * 1.5; // X spread
+                positions[i3 + 1] = (Math.random() - 0.5) * 1.5; // Y spread
+                positions[i3 + 2] = (isFrontFire ? 1 : -1) * Math.random() * 2; // Initial Z position relative to emission point
+
+                const color = new THREE.Color();
+                color.lerpColors(color1, color2, Math.random());
+                color.lerpColors(color, color3, Math.random());
+                colors[i3] = color.r;
+                colors[i3+1] = color.g;
+                colors[i3+2] = color.b;
+
+                particleData[i] = {
+                    velocity: new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.05,
+                        (Math.random() - 0.5) * 0.05,
+                        zVelocitySign * (Math.random() * 0.3 + 0.1) // Particles move away from ship
+                    )
+                };
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 1.0, // Increased size of each particle
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+
+            const particles = new THREE.Points(geometry, material);
+            return { particles, particleData };
+        }
+
+        /**
+         * Updates fire particle positions and properties for animation.
+         * @param {THREE.Points} particles The particle system to update.
+         * @param {Array} particlesData The data array for particles.
+         * @param {number} referenceZ The Z position of the ship's end where fire is emitted in its local coordinates.
+         * @param {boolean} isFrontFire - True if this is fire from the front of the ship.
+         */
+        function updateFireParticles(particles, particlesData, referenceZ, isFrontFire = false) {
+            if (!particles || !particles.geometry || !particles.geometry.attributes || !particles.geometry.attributes.position) {
+                return;
+            }
+
+            const positions = particles.geometry.attributes.position.array;
+            const colors = particles.geometry.attributes.color.array;
+
+            const color1 = new THREE.Color(0xffa500);
+            const color2 = new THREE.Color(0xff4500);
+            const color3 = new THREE.Color(0xff0000);
+
+            const zResetDirection = isFrontFire ? 1 : -1; // Reset particles to be in front of emitter for front fire, behind for rear
+            const zVelocitySign = isFrontFire ? -1 : 1; // Velocity direction
+
+            for (let i = 0; i < fireParticleCount; i++) {
+                const i3 = i * 3;
+                const particleDataEntry = particlesData[i];
+
+                positions[i3] += particleDataEntry.velocity.x;
+                positions[i3 + 1] += particleDataEntry.velocity.y;
+                positions[i3 + 2] += particleDataEntry.velocity.z;
+
+                // Reset particle if it moves too far from the origin
+                // For front fire: if particle Z is less than (referenceZ - some_distance)
+                // For rear fire: if particle Z is greater than (referenceZ + some_distance)
+                const distanceThreshold = 2; // Distance particles travel before reset
+
+                let shouldReset = false;
+                if (isFrontFire) {
+                    if (positions[i3 + 2] < (referenceZ - distanceThreshold)) {
+                        shouldReset = true;
+                    }
+                } else { // Rear fire
+                    if (positions[i3 + 2] > (referenceZ + distanceThreshold)) {
+                        shouldReset = true;
+                    }
+                }
+
+                if (shouldReset || Math.abs(positions[i3]) > 2 || Math.abs(positions[i3+1]) > 2) { // Also reset if too far laterally
+                    positions[i3] = (Math.random() - 0.5) * 1.5;
+                    positions[i3 + 1] = (Math.random() - 0.5) * 1.5;
+                    positions[i3 + 2] = referenceZ + (zResetDirection * Math.random() * 2); // Reset to just behind/in front of emitter
+                    particleDataEntry.velocity.set(
+                        (Math.random() - 0.5) * 0.05,
+                        (Math.random() - 0.5) * 0.05,
+                        zVelocitySign * (Math.random() * 0.3 + 0.1)
+                    );
+                    const color = new THREE.Color();
+                    color.lerpColors(color1, color2, Math.random());
+                    color.lerpColors(color, color3, Math.random());
+                    colors[i3] = color.r;
+                    colors[i3+1] = color.g;
+                    colors[i3+2] = color.b;
+                }
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+            particles.geometry.attributes.color.needsUpdate = true;
+        }
+
+
         // Function to create a stylized planet (for non-collectible celestial bodies)
         function createPlanet(radius, colorHex, type = 'rocky') {
             let planetMaterial;
+            // Use different material types based on type for visual variety
             if (type === 'rocky') {
                 planetMaterial = new THREE.MeshStandardMaterial({
                     color: colorHex,
                     metalness: 0.3,
                     roughness: 0.7,
-                    flatShading: false // Smooth shading for planets
+                    flatShading: false
                 });
             } else if (type === 'gas') {
                 planetMaterial = new THREE.MeshPhongMaterial({
@@ -832,8 +2387,8 @@
                     opacity: 0.8,
                     blending: THREE.AdditiveBlending,
                     emissive: colorHex,
-                    emissiveIntensity: 0.15, // More subtle glow for gas
-                    shininess: 50 // Adds a highlight
+                    emissiveIntensity: 0.15,
+                    shininess: 50
                 });
             } else if (type === 'ice') {
                 planetMaterial = new THREE.MeshStandardMaterial({
@@ -844,183 +2399,69 @@
                 });
             }
 
-            const planetGeometry = new THREE.SphereGeometry(radius, 64, 64); // Increased segments for smoother sphere
+            const planetGeometry = new THREE.SphereGeometry(radius, 64, 64);
             const planet = new THREE.Mesh(planetGeometry, planetMaterial);
-            planet.radius = radius; // Store radius for collision detection
-            // Add rings to a "gas" planet for visual stunning effect
+            planet.radius = radius;
             if (type === 'gas') {
-                const ringGeometry = new THREE.TorusGeometry(radius * 1.2, radius * 0.1, 2, 100);
+                const ringGeometry = new THREE.TorusGeometry(planet.radius * 1.2, planet.radius * 0.1, 2, 100);
                 const ringMaterial = new THREE.MeshBasicMaterial({
-                    color: 0x8888aa, // Subtle ring color
+                    color: 0x8888aa,
                     side: THREE.DoubleSide,
                     transparent: true,
                     opacity: 0.6
                 });
                 const rings = new THREE.Mesh(ringGeometry, ringMaterial);
-                rings.rotation.x = Math.PI / 2; // Flat on XY plane
-                planet.add(rings); // Add rings as child of planet so they move with it
+                rings.rotation.x = Math.PI / 2;
+                planet.add(rings);
             }
             return planet;
         }
 
-        // Function to create the engine fire mesh (reused for main and PiP)
-        function createEngineFire() {
-            const fireGeometry = new THREE.ConeGeometry(0.3, 1.5, 16);
-            const fireMaterial = new THREE.MeshBasicMaterial({
-                color: 0xffa500, // Orange
-                transparent: true,
-                opacity: 0.0, // Start invisible
-                blending: THREE.AdditiveBlending,
-                side: THREE.FrontSide
-            });
-            const fireMesh = new THREE.Mesh(fireGeometry, fireMaterial);
-            fireMesh.rotation.x = -Math.PI / 2; // Point backwards (along positive Z in local space)
-            return fireMesh;
-        }
+        // Function to set up the main spaceship model (now always a primitive)
+        async function setupSpacecraftModel() {
+            // Only create if it doesn't exist. If it exists, it will be reset by resetGameScene.
+            if (!bluOrbitSpaceship) {
+                console.warn('Creating default primitive spaceship model.');
+                const playerGeometry = new THREE.BoxGeometry(3, 3, 8); // Increased size for visibility (width, height, depth)
+                const playerMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff, flatShading: true }); // Cyan color
+                bluOrbitSpaceship = new THREE.Mesh(playerGeometry, playerMaterial);
+                bluOrbitSpaceship.position.set(0, 0, 0); // Ship is at origin
+                bluOrbitSpaceship.rotation.y = 0; // Explicitly no Y rotation
+                bluOrbitSpaceship.radius = 4; // Half of its length (8 units) for collision
+                scene.add(bluOrbitSpaceship); // Add to scene only once initially
 
-        // Function to load the main spaceship GLB model or create fallback
-        function loadSpacecraftModel(craftType) {
-            return new Promise((resolve, reject) => {
-                // Remove existing spacecraft and fire elements if they exist
-                if (bluOrbitSpaceshipGLB && bluOrbitSpaceshipGLB.parent) {
-                    bluOrbitSpaceshipGLB.parent.remove(bluOrbitSpaceshipGLB);
-                }
-                if (bluOrbitSpaceshipPiP && bluOrbitSpaceshipPiP.parent) {
-                    bluOrbitSpaceshipPiP.parent.remove(bluOrbitSpaceshipPiP);
-                }
-
-                if (craftType === 'glb') {
-                    const loader = new GLTFLoader();
-                    loader.load(SPACESHIP_GLB_URL, (gltf) => {
-                        const model = gltf.scene;
-                        console.log('GLB model loaded successfully:', model);
-
-                        const initialBox = new THREE.Box3().setFromObject(model);
-                        const initialSphere = new THREE.Sphere();
-                        initialBox.getBoundingSphere(initialSphere);
-                        console.log('Initial Bounding Box:', initialBox);
-                        console.log('Initial Bounding Sphere Radius:', initialSphere.radius);
-
-                        model.scale.set(0.5, 0.5, 0.5);
-                        model.position.set(0, 0, 0);
-                        model.rotation.y = Math.PI;
-
-                        const finalBox = new THREE.Box3().setFromObject(model);
-                        const finalSphere = new THREE.Sphere();
-                        finalBox.getBoundingSphere(finalSphere);
-                        model.radius = finalSphere.radius;
-                        console.log('Final Bounding Box (after scaling/rotation):', finalBox);
-                        console.log('Effective Collision Radius:', model.radius);
-
-                        engineFireMain = createEngineFire();
-                        engineFireMain.position.set(0, 0, finalBox.max.z + 0.5);
-                        model.add(engineFireMain);
-
-                        bluOrbitSpaceshipGLB = model;
-                        scene.add(bluOrbitSpaceshipGLB);
-
-                        bluOrbitSpaceshipPiP = model.clone();
-                        bluOrbitSpaceshipPiP.scale.set(0.1, 0.1, 0.1);
-                        bluOrbitSpaceshipPiP.position.set(0, 0, 0);
-                        bluOrbitSpaceshipPiP.rotation.copy(model.rotation);
-
-                        engineFirePiP = null;
-                        bluOrbitSpaceshipPiP.traverse((child) => {
-                            if (child.isMesh && child.geometry.type === 'ConeGeometry' && child.material.color.getHex() === 0xffa500) {
-                                engineFirePiP = child;
-                            }
-                        });
-
-                        if (!engineFirePiP) {
-                            engineFirePiP = createEngineFire();
-                            bluOrbitSpaceshipPiP.add(engineFirePiP);
-                            const pipBox = new THREE.Box3().setFromObject(bluOrbitSpaceshipPiP);
-                            engineFirePiP.position.set(0, 0, pipBox.max.z + 0.05);
-                        } else {
-                            const pipBox = new THREE.Box3().setFromObject(bluOrbitSpaceshipPiP);
-                            engineFirePiP.position.set(0, 0, pipBox.max.z + 0.05);
-                        }
-                        scenePiP.add(bluOrbitSpaceshipPiP);
-                        resolve();
-
-                    }, undefined, (error) => {
-                        console.error('Error loading GLB model:', SPACESHIP_GLB_URL, error);
-                        displayMessage(`Mission Control: Failed to load Blu Orbit model. Using fallback Default Craft.`);
-                        // Fallback to basic shape
-                        spacecraftMain = new THREE.Mesh(
-                            new THREE.CylinderGeometry(0.6, 0.8, 3.5, 8),
-                            new THREE.MeshPhongMaterial({ color: 0xe0e0e0, flatShading: true })
-                        );
-                        spacecraftMain.rotation.x = Math.PI / 2;
-                        spacecraftMain.rotation.y = Math.PI;
-                        spacecraftMain.position.set(0, 0, 0);
-                        spacecraftMain.radius = 2.5;
-                        scene.add(spacecraftMain);
-                        bluOrbitSpaceshipGLB = spacecraftMain; // Assign fallback to bluOrbitSpaceshipGLB
-
-                        bluOrbitSpaceshipPiP = spacecraftMain.clone();
-                        bluOrbitSpaceshipPiP.scale.set(0.1, 0.1, 0.1);
-                        scenePiP.add(bluOrbitSpaceshipPiP);
-
-                        engineFireMain = createEngineFire();
-                        engineFireMain.position.set(0, 0, -2.8);
-                        spacecraftMain.add(engineFireMain);
-
-                        engineFirePiP = createEngineFire();
-                        engineFirePiP.position.set(0, 0, -0.28);
-                        bluOrbitSpaceshipPiP.add(engineFirePiP);
-
-                        resolve();
-                    });
-                } else { // 'default' craft chosen or GLB failed
-                    spacecraftMain = new THREE.Mesh(
-                        new THREE.CylinderGeometry(0.6, 0.8, 3.5, 8),
-                        new THREE.MeshPhongMaterial({ color: 0xe0e0e0, flatShading: true })
-                    );
-                    spacecraftMain.rotation.x = Math.PI / 2;
-                    spacecraftMain.rotation.y = Math.PI;
-                    spacecraftMain.position.set(0, 0, 0);
-                    spacecraftMain.radius = 2.5;
-                    scene.add(spacecraftMain);
-                    bluOrbitSpaceshipGLB = spacecraftMain; // Assign fallback to bluOrbitSpaceshipGLB
-
-                    bluOrbitSpaceshipPiP = spacecraftMain.clone();
-                    bluOrbitSpaceshipPiP.scale.set(0.1, 0.1, 0.1);
-                    scenePiP.add(bluOrbitSpaceshipPiP);
-
-                    engineFireMain = createEngineFire();
-                    engineFireMain.position.set(0, 0, -2.8);
-                    spacecraftMain.add(engineFireMain);
-
-                    engineFirePiP = createEngineFire();
-                    engineFirePiP.position.set(0, 0, -0.28);
-                    bluOrbitSpaceshipPiP.add(engineFirePiP);
-                    resolve();
-                }
-            });
+                // Create front engine fire particle system and attach to ship
+                const { particles: fireParticles, particleData: fireData } = createEngineFireParticleSystem(true); // True for front fire
+                frontEngineFireParticles = fireParticles;
+                frontFireParticlesData = fireData;
+                frontEngineFireParticles.position.set(0, 0, 4); // Position fire at the local +Z (front of the box)
+                bluOrbitSpaceship.add(frontEngineFireParticles);
+                displayMissionMessage("Loaded primitive craft with front-facing particle effects.", 3000);
+            } else {
+                 console.log('Spacecraft model already exists, skipping recreation.');
+            }
         }
 
 
-        async function initThreeJS(craftType) {
-            // Show loading spinner
-            loadingSpinner.style.display = 'block';
-            displayMessage("Mission Control: Initializing systems and loading assets. Please wait...");
-
-            // --- Main Scene Setup ---
+        async function initThreeJS() {
             scene = new THREE.Scene();
+            // Initial skybox color (can be dynamically updated)
             scene.background = new THREE.Color(0x02020a);
 
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 1.5, 0); // Initial cockpit view position
+            camera.position.set(0, 5, 15); // Camera in front and slightly above the ship
+            camera.lookAt(0, 0, 0); // Look at the ship (at origin)
+            console.log('Initial Main Camera position:', camera.position);
+            console.log('Initial Main Camera rotation (lookAt implied):', camera.rotation);
+
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            // Append renderer.domElement to three-container only once during initial setup
             const threeContainer = document.getElementById('three-container');
-            if (threeContainer.children.length === 0) { // Only add if not already present
+            if (threeContainer && threeContainer.children.length === 0) {
                 threeContainer.appendChild(renderer.domElement);
             }
-            renderer.autoClear = false; // Important for rendering multiple scenes
+            renderer.autoClear = true; // Only one scene now, can clear automatically
 
             // Lighting for Main Scene
             const ambientLight = new THREE.AmbientLight(0x303030, 1);
@@ -1029,105 +2470,12 @@
             directionalLight.position.set(10, 5, -15).normalize();
             scene.add(directionalLight);
             const pointLight = new THREE.PointLight(0x00f0ff, 0.3, 50, 2);
-            pointLight.position.set(0, 1, -2);
+            pointLight.position.set(0, 1, -2); // Position relative to world
             scene.add(pointLight);
 
-            // Spacecraft Interior (Cockpit elements)
-            cockpitGroup = new THREE.Group();
-            scene.add(cockpitGroup);
 
-            const interiorMaterial = new THREE.MeshStandardMaterial({
-                color: 0x181820, metalness: 0.8, roughness: 0.3, side: THREE.BackSide
-            });
-            const cabinShape = new THREE.Shape();
-            cabinShape.moveTo(-6, -2.5); cabinShape.lineTo(-5.5, 4); cabinShape.lineTo(5.5, 4); cabinShape.lineTo(6, -2.5);
-            cabinShape.bezierCurveTo(6, -3, 3, -4, 0, -4.5); cabinShape.bezierCurveTo(-3, -4, -6, -3, -6, -2.5);
-            const extrudeSettingsCabin = { steps: 1, depth: 12, bevelEnabled: true, bevelThickness: 0.2, bevelSize: 0.2, bevelOffset: 0, bevelSegments: 5 };
-            const cabinMesh = new THREE.Mesh(new THREE.ExtrudeGeometry(cabinShape, extrudeSettingsCabin), interiorMaterial);
-            cabinMesh.rotation.y = Math.PI; cabinMesh.position.set(0, 1.5, 6);
-            cockpitGroup.add(cabinMesh);
-
-            const windowFrameShape = new THREE.Shape();
-            windowFrameShape.moveTo(-4.5, 3.5); windowFrameShape.lineTo(4.5, 3.5); windowFrameShape.lineTo(5.5, -1.5); windowFrameShape.lineTo(-5.5, -1.5); windowFrameShape.lineTo(-4.5, 3.5);
-            const holePath = new THREE.Path();
-            holePath.moveTo(-4, 3); holePath.lineTo(4, 3); holePath.lineTo(5, -1); holePath.lineTo(-5, -1); holePath.lineTo(-4, 3);
-            windowFrameShape.holes.push(holePath);
-            const extrudeSettingsWindow = { steps: 1, depth: 0.3, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.1, bevelOffset: 0, bevelSegments: 4 };
-            const windowFrameMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a25, metalness: 0.9, roughness: 0.2 });
-            const windowFrame = new THREE.Mesh(new THREE.ExtrudeGeometry(windowFrameShape, extrudeSettingsWindow), windowFrameMaterial);
-            windowFrame.position.set(0, 1.5, -5.8);
-            cockpitGroup.add(windowFrame);
-
-            const windowGlassGeometry = new THREE.PlaneGeometry(9, 4);
-            const windowGlassMaterial = new THREE.MeshStandardMaterial({ color: 0x003366, transparent: true, opacity: 0.15, metalness: 0.1, roughness: 0.9, side: THREE.FrontSide });
-            const windowGlass = new THREE.Mesh(windowGlassGeometry, windowGlassMaterial);
-            windowGlass.position.set(0, 1.5, -5.7);
-            cockpitGroup.add(windowGlass);
-
-            // Control Panel 3D Model
-            const panelMaterial = new THREE.MeshStandardMaterial({ color: 0x333340, metalness: 0.8, roughness: 0.3 });
-            const panelBaseGeometry = new THREE.BoxGeometry(8, 0.8, 3);
-            panel3D = new THREE.Mesh(panelBaseGeometry, panelMaterial);
-            panel3D.position.set(0, -2, -1);
-            cockpitGroup.add(panel3D);
-
-            const panelFrontShape = new THREE.Shape();
-            panelFrontShape.moveTo(-3.5, 0); panelFrontShape.lineTo(3.5, 0); panelFrontShape.lineTo(3.0, 0.7); panelFrontShape.lineTo(-3.0, 0.7); panelFrontShape.lineTo(-3.5, 0);
-            const extrudeSettingsPanelFront = { steps: 1, depth: 0.4, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.08, bevelOffset: 0, bevelSegments: 4 };
-            const panelFront = new THREE.Mesh(new THREE.ExtrudeGeometry(panelFrontShape, extrudeSettingsPanelFront), panelMaterial);
-            panelFront.rotation.x = -Math.PI / 8; panelFront.position.set(0, -1.5, -2.8);
-            cockpitGroup.add(panelFront);
-
-            const screenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00, emissive: 0x00ff00, emissiveIntensity: 0.3 });
-            const indicatorLightMaterial = new THREE.MeshStandardMaterial({ color: 0xffa500, emissive: 0xffa500, emissiveIntensity: 0.5 });
-
-            const recessedScreen1 = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.5, 0.1), screenMaterial);
-            recessedScreen1.position.set(-1.5, -0.8, -2.9); recessedScreen1.rotation.x = -Math.PI / 8;
-            cockpitGroup.add(recessedScreen1);
-            const recessedScreen2 = recessedScreen1.clone();
-            recessedScreen2.position.set(1.5, -0.8, -2.9);
-            cockpitGroup.add(recessedScreen2);
-
-            for (let i = 0; i < 4; i++) {
-                const indicator = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.08, 16), indicatorLightMaterial);
-                indicator.rotation.x = Math.PI / 2; indicator.position.set(-2.5 + i * 1.7, -1.2, -2.9);
-                cockpitGroup.add(indicator);
-            }
-
-            // Engine Fire for cockpit view (still uses a simple mesh as internal visual effect)
-            const cockpitFireGeometry = new THREE.ConeGeometry(0.5, 3, 32); // Slightly larger cone for internal effect
-            const cockpitFireMaterial = new THREE.MeshBasicMaterial({
-                color: 0xff7700, // More orange-red for fire
-                transparent: true,
-                opacity: 0.0, // Start invisible
-                blending: THREE.AdditiveBlending
-            });
-            cockpitFire = new THREE.Mesh(cockpitFireGeometry, cockpitFireMaterial);
-            cockpitFire.rotation.x = THREE.MathUtils.degToRad(90); // Use Three.js utility for degrees to radians
-            cockpitFire.position.set(0, 0, 5); // Positioned to appear as if coming from rear of cockpit, behind the view
-            cockpitGroup.add(cockpitFire);
-
-
-            // --- PiP Scene Setup ---
-            scenePiP = new THREE.Scene();
-            cameraPiP = new THREE.PerspectiveCamera(60, 180 / 120, 0.1, 100); // Aspect ratio of PiP container, wider FOV
-            cameraPiP.position.set(0, 0, 10); // Position directly behind for back view
-            cameraPiP.lookAt(0, 0, 0); // Look at the origin where the spacecraft will be
-
-            // PiP Light
-            const pipAmbientLight = new THREE.AmbientLight(0x404040, 2);
-            scenePiP.add(pipAmbientLight);
-            const pipDirectionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            pipDirectionalLight.position.set(5, 5, 5).normalize();
-            scenePiP.add(pipDirectionalLight);
-
-
-            // Load the custom spaceship GLB for both main and PiP views
-            await loadSpacecraftModel(craftType); // Call the updated loading function
-            // After loading, spacecraftMain and spacecraftPiP are set.
-            // Hide spinner and display ready message
-            loadingSpinner.style.display = 'none';
-            displayMessage("Mission Control: Systems initialized. Ready for Launch. Awaiting command.");
+            // Set up the main spaceship model (only creates if it doesn't exist)
+            await setupSpacecraftModel();
 
 
             // Deep Space Background (Skybox, stars, nebulas)
@@ -1138,8 +2486,8 @@
             scene.add(skybox);
 
             const starColors = [0xffffff, 0xaaaaff, 0xffffaa, 0xffaaff];
-            for (let i = 0; i < 1500; i++) { // Slightly fewer stars for lighter feel
-                const starRadius = Math.random() * 0.08 + 0.03; // Slightly smaller and lighter stars
+            for (let i = 0; i < 1500; i++) {
+                const starRadius = Math.random() * 0.08 + 0.03;
                 const starGeometry = new THREE.SphereGeometry(starRadius, 8, 8);
                 const starMaterial = new THREE.MeshBasicMaterial({ color: starColors[Math.floor(Math.random() * starColors.length)] });
                 const star = new THREE.Mesh(starGeometry, starMaterial);
@@ -1148,11 +2496,11 @@
                 skybox.add(star);
             }
 
-            const nebulaColors = [0x5500aa, 0x0055ff, 0xaa00aa, 0xff00ff, 0x00ffff]; // More colors
-            for (let i = 0; i < 10; i++) { // Fewer nebulas for lighter feel
+            const nebulaColors = [0x5500aa, 0x0055ff, 0xaa00aa, 0xff00ff, 0x00ffff];
+            for (let i = 0; i < 10; i++) {
                 const nebulaSize = 50 + Math.random() * 100;
                 const nebulaMaterial = new THREE.MeshBasicMaterial({
-                    color: nebulaColors[Math.floor(Math.random() * nebulaColors.length)], transparent: true, opacity: 0.2 + Math.random() * 0.15, // Adjusted opacity
+                    color: nebulaColors[Math.floor(Math.random() * nebulaColors.length)], transparent: true, opacity: 0.2 + Math.random() * 0.15,
                     blending: THREE.AdditiveBlending, side: THREE.FrontSide
                 });
                 const nebula = new THREE.Mesh(new THREE.SphereGeometry(nebulaSize, 16, 16), nebulaMaterial);
@@ -1160,95 +2508,25 @@
                 skybox.add(nebula);
             }
 
-            // Planets (enhanced variety with more gas giants) - Initial random planets
-            const planetTypes = [
-                { radius: 50, color: 0x8B4513, type: 'rocky'},
-                { radius: 70, color: 0x4682B4, type: 'gas'},
-                { radius: 40, color: 0xADD8E6, type: 'ice'},
-                { radius: 60, color: 0x773333, type: 'rocky'},
-                { radius: 80, color: 0x8A2BE2, type: 'gas'},
-                { radius: 35, color: 0xF0E68C, type: 'rocky'}
-            ];
-
-            for (let i = 0; i < 10; i++) {
-                const data = planetTypes[i % planetTypes.length];
-                const planet = createPlanet(data.radius + (Math.random() * 20 - 10), data.color, data.type);
-                planet.position.set(
-                    (Math.random() - 0.5) * 2500,
-                    (Math.random() - 0.5) * 2500,
-                    -1000 - Math.random() * 3000
-                );
-                scene.add(planet);
-                planets.push(planet);
-            }
-
-
-            // Removed UFO Mesh and Unknown Craft Mesh creation
-            // ufoMesh = null;
-            // unknownCraftMesh = null;
-
-            // Ground/Launch Pad
+            // Ground/Launch Pad (initially visible, moves away)
             ground = new THREE.Mesh(
                 new THREE.PlaneGeometry(50, 50),
                 new THREE.MeshStandardMaterial({ color: 0x444444, side: THREE.DoubleSide })
             );
-            ground.rotation.x = THREE.MathUtils.degToRad(-90); ground.position.y = -2.5;
+            ground.rotation.x = THREE.MathUtils.degToRad(-90);
+            ground.position.y = -2.5;
+            ground.visible = true;
             scene.add(ground);
 
+            // Initialize fog (default none/black)
+            scene.fog = null; // No fog initially
 
-            // --- PiP Background Elements (Stars and Nebulae) ---
-            skyboxPiP = new THREE.Mesh(
-                new THREE.SphereGeometry(50, 32, 32), // Smaller sphere for PiP
-                new THREE.MeshBasicMaterial({ color: 0x010105, side: THREE.BackSide })
-            );
-            scenePiP.add(skyboxPiP);
-
-            // Add stars to PiP skybox (reusing the same starColors array)
-            for (let i = 0; i < 75; i++) { // Fewer stars for PiP view
-                const starRadius = Math.random() * 0.03 + 0.01;
-                const starGeometry = new THREE.SphereGeometry(starRadius, 8, 8);
-                const starMaterial = new THREE.MeshBasicMaterial({ color: starColors[Math.floor(Math.random() * starColors.length)] });
-                const star = new THREE.Mesh(starGeometry, starMaterial);
-                const r = 20 + Math.random() * 30;
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos(Math.random() * 2 - 1);
-                star.position.set(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
-                skyboxPiP.add(star);
-            }
-
-            // Add nebulas to PiP skybox (reusing the same nebulaColors array)
-            for (let i = 0; i < 1; i++) { // Fewer nebulas for PiP
-                const nebulaSize = 10 + Math.random() * 20;
-                const nebulaMaterial = new THREE.MeshBasicMaterial({
-                    color: nebulaColors[Math.floor(Math.random() * nebulaColors.length)], transparent: true, opacity: 0.2 + Math.random() * 0.15,
-                    blending: THREE.AdditiveBlending, side: THREE.FrontSide
-                });
-                const nebula = new THREE.Mesh(new THREE.SphereGeometry(nebulaSize, 16, 16), nebulaMaterial);
-                nebula.position.set((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, -50 - Math.random() * 50);
-                skyboxPiP.add(nebula);
-            }
-
-            // PiP Planets (increased variety)
-            for (let i = 0; i < 3; i++) { // Increased number of planets for PiP
-                const data = planetTypes[i % planetTypes.length];
-                const planet = createPlanet(data.radius / 5 + (Math.random() * 5 - 2.5), data.color, data.type); // Smaller and varied
-                planet.position.set(
-                    (Math.random() - 0.5) * 200,
-                    (Math.random() - 0.5) * 200,
-                    -100 - Math.random() * 200
-                );
-                scenePiP.add(planet);
-                planetsPiP.push(planet);
-            }
-
-
-            // Mouse control for camera rotation (rotates the cockpit and background)
+            // Mouse control for camera rotation (rotates the camera around the ship)
             let isMouseDown = false;
             let previousMouseX = 0;
             let previousMouseY = 0;
 
             document.addEventListener('mousedown', (event) => {
-                // Only activate mouse control if not clicking on UI elements
                 if (event.target.tagName === 'CANVAS') {
                     isMouseDown = true;
                     previousMouseX = event.clientX;
@@ -1266,702 +2544,190 @@
                 const deltaX = event.clientX - previousMouseX;
                 const deltaY = event.clientY - previousMouseY;
 
-                // Rotate the entire cockpit group (including panel and window) and the skybox
-                // This rotation behavior will only apply in 'cockpit' view.
-                if (VIEW_MODES[currentViewModeIndex] === 'cockpit') {
-                    cockpitGroup.rotation.y += deltaX * 0.002;
-                    cockpitGroup.rotation.x += deltaY * 0.002;
-                    cockpitGroup.rotation.x = Math.max(-Math.PI / 8, Math.min(Math.PI / 8, cockpitGroup.rotation.x));
-                }
-                // Always rotate the main skybox regardless of view mode
-                skybox.rotation.y -= deltaX * 0.002;
-                skybox.rotation.x -= deltaY * 0.002;
+                // Rotate camera around the spaceship (at origin 0,0,0)
+                // This makes the spaceship appear to rotate in the view
+                const cameraTarget = new THREE.Vector3(0,0,0);
+                const currentCameraPosition = camera.position.clone();
+                camera.position.sub(cameraTarget); // Translate to origin
+                camera.position.applyAxisAngle(new THREE.Vector3(0,1,0), -deltaX * 0.005); // Rotate around Y axis
+                camera.position.applyAxisAngle(new THREE.Vector3(1,0,0), -deltaY * 0.005); // Rotate around X axis
+                camera.position.add(cameraTarget); // Translate back
+                camera.lookAt(cameraTarget); // Always look at the spaceship
 
                 previousMouseX = event.clientX;
                 previousMouseY = event.clientY;
             });
 
-            // Keyboard controls
+            // Touch control for camera rotation
+            let isTouchingCamera = false;
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            document.addEventListener('touchstart', (event) => {
+                // Check if the touch is not on any joystick button before enabling camera touch
+                // This prevents conflicts between player movement and camera movement
+                const targetId = event.target.id;
+                if (!targetId.startsWith('move-') && targetId !== 'main-power-button' &&
+                    targetId !== 'engine-ignite-button' && targetId !== 'thrust-control-button' &&
+                    targetId !== 'report-status-button' && targetId !== 'request-data-button' &&
+                    targetId !== 'gas-icon-container' && targetId !== 'sound-control-container' &&
+                    targetId !== 'volume-slider' && targetId !== 'sound-icon' &&
+                    event.target.tagName !== 'BUTTON' && event.target.tagName !== 'INPUT' &&
+                    event.target.tagName !== 'A') { // Exclude UI elements from camera touch
+                    
+                    isTouchingCamera = true;
+                    touchStartX = event.touches[0].clientX;
+                    touchStartY = event.touches[0].clientY;
+                }
+            }, { passive: true }); // Use passive: true as this touch doesn't prevent scrolling
+
+            document.addEventListener('touchend', () => {
+                isTouchingCamera = false;
+            }, { passive: true });
+
+            document.addEventListener('touchmove', (event) => {
+                if (!isTouchingCamera) return;
+                if (event.touches.length === 0) return; // No active touches
+
+                const currentX = event.touches[0].clientX;
+                const currentY = event.touches[0].clientY;
+
+                const deltaX = currentX - touchStartX;
+                const deltaY = currentY - touchStartY;
+
+                // Rotate camera around the spaceship (at origin 0,0,0)
+                const cameraTarget = new THREE.Vector3(0,0,0);
+                camera.position.sub(cameraTarget); // Translate to origin
+                camera.position.applyAxisAngle(new THREE.Vector3(0,1,0), -deltaX * 0.005); // Rotate around Y axis
+                camera.position.applyAxisAngle(new THREE.Vector3(1,0,0), -deltaY * 0.005); // Rotate around X axis
+                camera.position.add(cameraTarget); // Translate back
+                camera.lookAt(cameraTarget); // Always look at the spaceship
+
+                touchStartX = currentX;
+                touchStartY = currentY;
+            }, { passive: true });
+
+
+            // Keyboard controls (move the spaceship)
             document.addEventListener('keydown', (event) => {
                 if (!isFlying) return;
-                switch (event.key) {
-                    case 'ArrowLeft': moveX = -1; break;
-                    case 'ArrowRight': moveX = 1; break;
-                    case 'ArrowUp': moveY = 1; break;
-                    case 'ArrowDown': moveY = -1; break;
+                switch (event.key.toLowerCase()) {
+                    case 'arrowleft': moveX = -1; break;
+                    case 'a': moveX = -1; break;
+                    case 'arrowright': moveX = 1; break;
+                    case 'd': moveX = 1; break;
+                    case 'arrowup': moveY = 1; break;
+                    case 'w': moveY = 1; break;
+                    case 'arrowdown': moveY = -1; break;
+                    case 's': moveY = -1; break;
                 }
             });
 
             document.addEventListener('keyup', (event) => {
                 if (!isFlying) return;
-                switch (event.key) {
-                    case 'ArrowLeft': if (moveX === -1) moveX = 0; break;
-                    case 'ArrowRight': if (moveX === 1) moveX = 0; break;
-                    case 'ArrowUp': if (moveY === 1) moveY = 0; break;
-                    case 'ArrowDown': if (moveY === -1) moveY = 0; break;
+                switch (event.key.toLowerCase()) {
+                    case 'arrowleft': if (moveX === -1) moveX = 0; break;
+                    case 'a': if (moveX === -1) moveX = 0; break;
+                    case 'arrowright': if (moveX === 1) moveX = 0; break;
+                    case 'd': if (moveX === 1) moveX = 0; break;
+                    case 'arrowup': if (moveY === 1) moveY = 0; break;
+                    case 'w': if (moveY === 1) moveY = 0; break;
+                    case 'arrowdown': if (moveY === -1) moveY = 0; break;
+                    case 's': if (moveY === -1) moveY = 0; break;
                 }
-            });
-
-            // Touch/Click listeners for joystick buttons
-            const setupButtonMovement = (buttonId, xDir, yDir) => {
-                const button = document.getElementById(buttonId);
-                if (button) {
-                    const startMove = () => {
-                        if (isFlying) {
-                            // Removed autopilotActive check
-                            moveX = xDir;
-                            moveY = yDir;
-                        }
-                    };
-                    const stopMove = () => {
-                        if (isFlying) {
-                            if (moveX === xDir) moveX = 0;
-                            if (moveY === yDir) moveY = 0;
-                        }
-                    };
-
-                    button.addEventListener('mousedown', startMove);
-                    button.addEventListener('mouseup', stopMove);
-                    button.addEventListener('mouseleave', stopMove); // Stop if mouse leaves button while pressed
-
-                    button.addEventListener('touchstart', (e) => {
-                        e.preventDefault(); // Prevent scrolling on touch
-                        startMove();
-                    }, { passive: false });
-                    button.addEventListener('touchend', stopMove);
-                    button.addEventListener('touchcancel', stopMove);
-                }
-            };
-
-            setupButtonMovement('move-left', -1, 0);
-            setupButtonMovement('move-right', 1, 0);
-            setupButtonMovement('move-up', 0, 1);
-            setupButtonMovement('move-down', 0, -1);
-
-
-            // Handle View Toggle Button
-            document.getElementById('view-toggle-button').addEventListener('click', () => {
-                currentViewModeIndex = (currentViewModeIndex + 1) % VIEW_MODES.length;
-                updateCameraView();
-                let viewName = "";
-                switch(VIEW_MODES[currentViewModeIndex]) {
-                    case 'cockpit': viewName = "Cockpit View"; break;
-                    case 'posterior': viewName = "Posterior View"; break;
-                    case 'horizontal': viewName = "Horizontal Flight View"; break;
-                }
-                displayMessage(`Mission Control: View changed to ${viewName}.`);
             });
 
             // Handle window resizing
             window.addEventListener('resize', onWindowResize, false);
-
-            // Start the animation loop after everything is initialized
-            animate();
-        }
-
-        // Function to update the main camera's view based on currentViewModeIndex
-        function updateCameraView() {
-            const currentMode = VIEW_MODES[currentViewModeIndex];
-
-            // Reset initial positions/rotations for cockpitGroup and spacecraftMain
-            // These resets are crucial to prevent accumulated rotations/positions from previous views.
-            cockpitGroup.position.set(0, 1.5, 0);
-            cockpitGroup.rotation.set(0, 0, 0);
-
-            // Ensure spacecraftMain (GLB) is always at (0,0,0) of the world for camera targeting
-            if (bluOrbitSpaceshipGLB) {
-                 bluOrbitSpaceshipGLB.position.set(0, 0, 0);
-                 bluOrbitSpaceshipGLB.rotation.y = Math.PI; // Reset to face -Z
-            }
-
-
-            // Hide/show elements based on view mode
-            cockpitGroup.visible = (currentMode === 'cockpit');
-            // Show main spacecraft (GLB) for chase/top views
-            if (bluOrbitSpaceshipGLB) bluOrbitSpaceshipGLB.visible = (currentMode !== 'cockpit');
-            if (bluOrbitSpaceshipPiP) bluOrbitSpaceshipPiP.visible = true; // PiP spacecraft is always visible when game is not exploded
-
-            // Adjust camera and possibly spacecraft orientation based on view mode
-            if (currentMode === 'cockpit') {
-                camera.position.set(0, 1.5, 0); // Camera is fixed inside cockpit
-                camera.rotation.set(0, 0, 0); // Camera does not rotate relative to world, only cockpitGroup
-            } else if (currentMode === 'posterior') { // This is View #2 - Camera in front of the spacecraft, looking back at its tail and fire
-                // Camera positioned directly behind the spacecraft, looking forward at its engines.
-                camera.position.set(0, 2, 8); // Closer, slightly lower Y to be in line with engine
-                camera.lookAt(0, 0, 0); // Still look at spacecraft's center (where GLB is)
-            } else if (currentMode === 'horizontal') { // This is View #3 - Camera on LEFT, seeing fire from BACK-RIGHT
-                // Camera positioned to the LEFT SIDE, slightly below, and a bit behind, to see the spacecraft's RIGHT REAR.
-                camera.position.x = (bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position.x : 0) - 10; // Moved to the left
-                camera.position.y = (bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position.y : 0) - 3;
-                camera.position.z = (bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position.z : 0) + 5;
-                camera.lookAt(bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position : new THREE.Vector3(0,0,0)); // Look at the spacecraft's current center
-            }
         }
 
 
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-
-            // Update PiP camera aspect as well
-            const pipContainer = document.getElementById('pip-container');
-            const pipRect = pipContainer.getBoundingClientRect(); // Get position and size of PiP container
-            const pixelRatio = renderer.getPixelRatio();
-
-            const pipX = pipRect.left * pixelRatio;
-            const pipY = (renderer.domElement.height - pipRect.bottom) * pixelRatio; // Y is from bottom for WebGL
-            const pipWidth = pipRect.width * pixelRatio;
-            const pipHeight = pipContainer.clientHeight * pixelRatio;
-
-            renderer.setViewport(pipX, pipY, pipWidth, pipHeight);
-            renderer.setScissor(pipX, pipY, pipWidth, pipHeight);
-            renderer.setScissorTest(true); // Enable scissor test for PiP scene
-            renderer.render(scenePiP, cameraPiP);
+            renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
-        // Function to update health bar display
-        function updateHealthDisplay() {
-            healthBarContainer.innerHTML = ''; // Clear current notches
-            for (let i = 0; i < maxHealth; i++) {
-                const notch = document.createElement('div');
-                notch.classList.add('health-notch');
-                if (i >= spacecraftHealth) {
-                    notch.style.backgroundColor = '#444'; // Grey for lost health
-                    notch.style.boxShadow = 'none';
-                } else if (spacecraftHealth === 1) {
-                    notch.classList.add('critical');
-                } else if (spacecraftHealth === 2) {
-                    notch.classList.add('damaged');
-                }
-                healthBarContainer.appendChild(notch);
-            }
-        }
-
-        // Handle collision function with health bar and removed autopilot logic
-        function handleCollision(collidedObject) { // Renamed from collidedPlanet for clarity
+        /**
+         * Handles collision effects and game state updates.
+         * @param {THREE.Object3D} collidedObject The object that was collided with.
+         * @param {string} type The type of object collided with ("planet" or "asteroid").
+         */
+        function handleCollision(collidedObject, type) {
             if (!isFlying) return;
 
-            // If execution reaches here, it's a non-collectible obstacle
-            spacecraftHealth--;
-            updateHealthDisplay();
-            displayMessage(`IMPACT! Hull integrity at ${spacecraftHealth}/${maxHealth}.`);
+            let damage = 0;
+            let message = "";
+            if (type === "planet") {
+                damage = 2; // More severe damage from planets
+                message = `CRITICAL IMPACT! Direct hit by large celestial body! Health at ${spacecraftHealth}/${maxHealth}.`;
+            } else if (type === "asteroid") {
+                damage = 1; // Less severe damage from asteroids
+                message = `IMPACT! Asteroid strike! Hull integrity compromised. Health at ${spacecraftHealth}/${maxHealth}.`;
+            }
 
-            // Removed autopilot disengage on collision
+            spacecraftHealth -= damage;
+            updateHealthBar();
+            displayMissionMessage(message, 3000);
 
-            // Reset position after hit, whether health is lost or not
-            // Temporarily hide spacecraft during reset
-            cockpitGroup.visible = false;
-            if (bluOrbitSpaceshipGLB) bluOrbitSpaceshipGLB.visible = false;
-            if (bluOrbitSpaceshipPiP) bluOrbitSpaceshipPiP.visible = false;
+            // Play explosion sound (Tone.js)
+            const explosionSynth = new Tone.NoiseSynth({
+                noise: { type: "pink" },
+                envelope: { attack: 0.001, decay: 0.2, sustain: 0, release: 0.5 },
+                volume: -5
+            }).toDestination();
+            explosionSynth.triggerAttackRelease("1n");
 
+            // Remove the collided object from the scene and its respective array
+            if (collidedObject.parent) {
+                scene.remove(collidedObject);
+                if (type === "planet") {
+                    planets = planets.filter(p => p !== collidedObject);
+                }
+                else if (type === "asteroid") {
+                    asteroids = asteroids.filter(a => a !== collidedObject);
+                }
+            }
 
             if (spacecraftHealth <= 0) {
-                displayMessage("CRITICAL FAILURE! Emergency reset initiated. System Rebooting...");
-                isFlying = false; // Stop flight entirely
-                // Removed autopilotActive reset
-                // autopilotButton.textContent = 'Autopilot'; // Reset button text
-                spacecraftHealth = maxHealth; // Reset health
-                fuelLevel = maxFuelLevel; // Refuel on full system reset
-            }
+                displayMissionMessage("CRITICAL FAILURE! Emergency reset initiated. System Rebooting...", 5000);
+                isFlying = false;
+                currentFlightSpeed = 0;
+                moveX = 0;
+                moveY = 0;
 
+                if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.0; }
+                stopContinuousEngineSound(); // Stop engine sound on critical failure
 
-            setTimeout(() => {
-                if (spacecraftHealth > 0) {
-                    displayMessage("Hull repaired. Ready for manual re-engagement.");
-                } else {
-                    displayMessage("Systems rebooted. Ready for Launch. Awaiting command.");
-                }
-                // Reset spacecraft position for a fresh start, regardless of view mode
-                cockpitGroup.position.set(0, 1.5, 0);
-                cockpitGroup.rotation.set(0, 0, 0);
-                if (bluOrbitSpaceshipGLB) {
-                    bluOrbitSpaceshipGLB.position.set(0, 0, 0);
-                    bluOrbitSpaceshipGLB.rotation.y = Math.PI; // Reset orientation
-                }
-                if (bluOrbitSpaceshipPiP) bluOrbitSpaceshipPiP.position.set(0, 0, 0); // Reset PiP spacecraft position
-
-                // Make the appropriate spacecraft visible again based on current view
-                updateCameraView();
-                updateHealthDisplay(); // Ensure health display is accurate
-                updateFuelGauge(); // Update fuel gauge display
-            }, 1500); // Wait for a short moment before resetting / re-engaging
-        }
-
-        // Function to update the mini-map
-        function updateMiniMap() {
-            collectibleDotsGroup.innerHTML = ''; // Clear previous dots
-
-            let currentSpacecraftPosition = new THREE.Vector3();
-            if (VIEW_MODES[currentViewModeIndex] === 'cockpit') {
-                cockpitGroup.getWorldPosition(currentSpacecraftPosition);
-            } else {
-                // Get world position of the loaded GLB model
-                if (bluOrbitSpaceshipGLB) {
-                    bluOrbitSpaceshipGLB.getWorldPosition(currentSpacecraftPosition);
-                } else {
-                    // Fallback if GLB not loaded, use dummy position
-                    currentSpacecraftPosition.set(0,0,0);
-                }
-            }
-
-            // Get the forward vector of the spacecraft
-            const forwardVector = new THREE.Vector3();
-            let spacecraftRotationY = 0;
-            if (VIEW_MODES[currentViewModeIndex] === 'cockpit') {
-                cockpitGroup.getWorldDirection(forwardVector);
-                spacecraftRotationY = cockpitGroup.rotation.y;
-            } else {
-                if (bluOrbitSpaceshipGLB) {
-                    bluOrbitSpaceshipGLB.getWorldDirection(forwardVector);
-                    spacecraftRotationY = bluOrbitSpaceshipGLB.rotation.y;
-                }
-            }
-            // Invert Z because positive Z is typically forward for objects, but camera looks -Z
-            forwardVector.z *= -1; // Correct for camera orientation
-            forwardVector.normalize();
-
-
-            // Removed UFO and Unknown Craft radar dots logic
-        }
-
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Only update game elements if `renderer` exists and `isFlying` is true
-            if (!renderer) { // Ensure renderer is initialized before proceeding with animation logic
+                setTimeout(() => {
+                    gameOver();
+                }, 4000);
                 return;
             }
 
-            // Rotate skybox slowly to give a sense of movement in space
-            skybox.rotation.y += 0.00005;
-            skybox.rotation.x += 0.00002;
-
-            // Common fire animation values
-            // Ensure cockpitFire, engineFireMain, engineFirePiP are initialized
-            const fireOpacity = isFlying ? Math.min(0.8, (cockpitFire && cockpitFire.material.opacity || 0) + 0.05) : Math.max(0.0, (cockpitFire && cockpitFire.material.opacity || 0) - 0.05);
-            const fireScalePulse = isFlying ? (0.5 + Math.sin(Date.now() * 0.02) * 0.2) : 0.0;
-            const fireLengthPulse = isFlying ? (1.0 + Math.sin(Date.now() * 0.02) * 0.2) : 0.0;
-
-
-            if (isFlying) {
-                let fuelCost = fuelConsumptionRate;
-                let intendedSpeed = baseFlightSpeed;
-                if (thrustControlButton.textContent === 'Thrust (ON)') {
-                    intendedSpeed = thrustBoostSpeed;
-                }
-
-                // Removed Malfunction logic for free tier when low on fuel
-                // Removed isMalfunctioning logic
-                currentFlightSpeed = intendedSpeed; // Set to full intended speed
-
-
-                // Make fire visible when flying
-                if (cockpitFire) cockpitFire.visible = true;
-                if (engineFireMain) engineFireMain.visible = true;
-                if (engineFirePiP) engineFirePiP.visible = true;
-
-
-                // Removed Autopilot movement logic
-
-                // Fuel cost calculation based on actual currentFlightSpeed
-                if (currentFlightSpeed > baseFlightSpeed) { // Check if thrust is actually active
-                    fuelCost *= thrustFuelCostMultiplier;
-                }
-
-                // Removed Stabilizer active fuel cost
-
-                // Apply maneuvering fuel cost
-                if (moveX !== 0 || moveY !== 0) {
-                    fuelCost += maneuverFuelCost;
-                }
-
-                // Simple fuel consumption without premium tier logic
-                if (fuelLevel <= 0) {
-                    isFlying = false;
-                    // Removed autopilotActive reset
-                    // autopilotButton.textContent = 'Autopilot';
-                    // Disable movement controls
-                    moveX = 0;
-                    moveY = 0;
-                    // Hide fire immediately
-                    if (cockpitFire) { cockpitFire.material.opacity = 0.0; cockpitFire.visible = false; }
-                    if (engineFireMain) { engineFireMain.material.opacity = 0.0; engineFireMain.visible = false; }
-                    if (engineFirePiP) { engineFirePiP.material.opacity = 0.0; engineFirePiP.visible = false; }
-
-                    displayMessage("Mission Control: Warning! Fuel Depleted! Engage Main Power to refuel and restart engines."); // Standard refuel prompt
-                    updateFuelGauge(); // Ensure gauge shows empty
-                    return; // Stop further movement calculations for this frame
-                } else {
-                    fuelLevel -= fuelCost;
-                    fuelLevel = Math.max(0, fuelLevel); // Ensure fuel doesn't go negative
-                    updateFuelGauge(); // Update gauge every frame
-                }
-
-
-                // Determine what's moving based on view mode
-                const currentMode = VIEW_MODES[currentViewModeIndex];
-
-                // In all views, the "player" spacecraft (cockpitGroup or spacecraftMain) moves into negative Z.
-                // Other objects (skybox, planets, UFOs, etc.) also move into negative Z relative to the world,
-                // simulating being left behind by the player.
-                if (currentMode === 'cockpit') {
-                    cockpitGroup.position.z -= currentFlightSpeed;
-                    // Apply maneuvering to cockpit
-                    cockpitGroup.position.x += moveX * maneuverSpeed;
-                    cockpitGroup.position.y += moveY * maneuverSpeed;
-                    // Clamp cockpit position
-                    cockpitGroup.position.x = Math.max(-maxCockpitOffset, Math.min(maxCockpitOffset, cockpitGroup.position.x));
-                    cockpitGroup.position.y = Math.max(-maxCockpitOffset, Math.min(maxCockpitOffset, cockpitGroup.position.y));
-                    // Apply banking rotation
-                    const targetRoll = -moveX * maxCockpitTilt;
-                    cockpitGroup.rotation.z += (targetRoll - cockpitGroup.rotation.z) * 0.1;
-                    // The spacecraftMain (GLB) also needs to follow this movement for consistency
-                    if (bluOrbitSpaceshipGLB) {
-                        bluOrbitSpaceshipGLB.position.copy(cockpitGroup.position);
-                        bluOrbitSpaceshipGLB.rotation.y = cockpitGroup.rotation.y + Math.PI; // Maintain relative rotation if cockpit rotates
-                        bluOrbitSpaceshipGLB.rotation.x = cockpitGroup.rotation.x;
-                        bluOrbitSpaceshipGLB.rotation.z = cockpitGroup.rotation.z;
-                    }
-
-
-                    // Cockpit Fire
-                    if (cockpitFire) {
-                        cockpitFire.material.opacity = fireOpacity;
-                        cockpitFire.scale.x = cockpitFire.scale.y = fireScalePulse;
-                        cockpitFire.scale.z = fireLengthPulse;
-                    }
-
-                } else { // Posterior/Horizontal views
-                    // GLB Spaceship moves forward (into negative Z)
-                    if (bluOrbitSpaceshipGLB) {
-                        bluOrbitSpaceshipGLB.position.z -= currentFlightSpeed;
-                        bluOrbitSpaceshipGLB.position.x += moveX * maneuverSpeed;
-                        bluOrbitSpaceshipGLB.position.y += moveY * maneuverSpeed;
-                        // Clamp spacecraftMain position
-                        bluOrbitSpaceshipGLB.position.x = Math.max(-maxCockpitOffset, Math.min(maxCockpitOffset, bluOrbitSpaceshipGLB.position.x));
-                        bluOrbitSpaceshipGLB.position.y = Math.max(-maxCockpitOffset, Math.min(maxCockpitOffset, bluOrbitSpaceshipGLB.position.y));
-                        // Apply banking rotation to spacecraftMain
-                        const targetRoll = -moveX * maxCockpitTilt;
-                        bluOrbitSpaceshipGLB.rotation.z += (targetRoll - bluOrbitSpaceshipGLB.rotation.z) * 0.1;
-                    }
-
-                    // Main Engine Fire
-                    if (engineFireMain) { // Ensure engineFireMain exists
-                        engineFireMain.material.opacity = fireOpacity;
-                        engineFireMain.scale.x = engineFireMain.scale.y = fireScalePulse;
-                        engineFireMain.scale.z = fireLengthPulse;
-                    }
-
-                    // Camera follows or observes spacecraftMain (GLB)
-                    if (currentMode === 'posterior') {
-                        // Camera positioned directly behind the spacecraft, looking forward at its engines.
-                        // Spacecraft tail is oriented to +Z due to its 180-degree Y rotation (set in loadSpacecraftGLB).
-                        camera.position.x = bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position.x : 0;
-                        camera.position.y = (bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position.y : 0) + 2; // Adjusted Y
-                        camera.position.z = (bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position.z : 0) + 8; // Adjusted Z
-                        camera.lookAt(bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position : new THREE.Vector3(0,0,0)); // Look at the spacecraft's current center
-                    } else if (currentMode === 'horizontal') {
-                        // Camera positioned to the LEFT SIDE, slightly below, and a bit behind, to see the spacecraft's RIGHT REAR.
-                        camera.position.x = (bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position.x : 0) - 10; // Moved to the left
-                        camera.position.y = (bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position.y : 0) - 3;
-                        camera.position.z = (bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position.z : 0) + 5;
-                        camera.lookAt(bluOrbitSpaceshipGLB ? bluOrbitSpaceshipGLB.position : new THREE.Vector3(0,0,0)); // Look at the spacecraft's current center
-                    }
-                }
-
-                // Update distance to Earth
-                if (distanceToEarth > 0) {
-                    distanceToEarth -= currentFlightSpeed * 100; // Arbitrary conversion for miles
-                    distanceToEarth = Math.max(0, distanceToEarth);
-
-                    // Removed UFO and Unknown Craft spawning logic
-
-
-                    // Check for mission complete (no GLB Earth model for now, just end message)
-                    if (distanceToEarth <= 0) { // Use <= 0 for safety margin
-                        isFlying = false;
-                        // Removed autopilotActive reset
-                        displayMessage("MISSION COMPLETE! Dolumbican has returned to Earth. Well done, Commander! To learn more visit us at Dolumbican.com/");
-                        return; // Stop further movement calculations for this frame
-                    }
-                }
-
-
-                // Background movement: all elements not part of the player's craft move in -Z (away from camera)
-                const mainSpacecraftCurrentZ = (bluOrbitSpaceshipGLB) ? bluOrbitSpaceshipGLB.position.z : cockpitGroup.position.z;
-
-                skybox.position.z -= currentFlightSpeed * skyboxSpeedMultiplier;
-                // If skybox moves too far behind, reset it to the front
-                if (skybox.position.z < (mainSpacecraftCurrentZ - 700)) { // Reset relative to spacecraft's position
-                    skybox.position.z = mainSpacecraftCurrentZ + 700; // Move it a full sphere diameter forward relative to spacecraft
-                }
-
-                // Planet movement and respawn/reset logic
-                planets.forEach((planet) => {
-                    if (planet.parent) { // Check if it's still in the scene
-                        planet.position.z -= currentFlightSpeed * planetSpeedMultiplier; // Planets now move with the spacecraft (into -Z)
-
-                        // If planet moves past camera (too far back), reset its position to the front
-                        if (planet.position.z < (mainSpacecraftCurrentZ - 3000)) { // Reset when behind spacecraft and far away
-                            planet.position.z = mainSpacecraftCurrentZ + 3000; // Reset to far front
-                            planet.position.x = (Math.random() - 0.5) * 2500;
-                            planet.position.y = (Math.random() - 0.5) * 2500;
-                        }
-                        planet.rotation.y += 0.001; // Slow rotation
-                    }
-                });
-
-
-                // Removed UFO movement and messaging
-                // Removed Unknown Craft movement and messaging
-
-
-                // Collision Detection (Main Scene) - More robust collision detection
-                let currentSpacecraftPosition = new THREE.Vector3();
-                let spacecraftCollisionRadius = 2.5; // Default if GLB not loaded
-                if (VIEW_MODES[currentViewModeIndex] === 'cockpit') {
-                    cockpitGroup.getWorldPosition(currentSpacecraftPosition);
-                } else {
-                    if (bluOrbitSpaceshipGLB) {
-                        bluOrbitSpaceshipGLB.getWorldPosition(currentSpacecraftPosition);
-                        spacecraftCollisionRadius = bluOrbitSpaceshipGLB.radius * 0.4; // Use GLB's dynamic radius
-                    }
-                }
-
-
-                // Check collision with non-collectible planets
-                planets.forEach(planet => {
-                    if (planet.parent) { // Check if it's still in the scene
-                        const distance = currentSpacecraftPosition.distanceTo(planet.position);
-                        const detectionRadius = spacecraftCollisionRadius + planet.radius * 0.9; // Adjusted for non-collectibles
-
-                        if (distance < detectionRadius) {
-                            handleCollision(planet);
-                        }
-                    }
-                });
-
-
-                // Main View: Rapidly move the ground down and out of view during initial takeoff
-                if (ground.position.y < 100) {
-                    ground.position.y += currentFlightSpeed * 2;
-                    ground.material.opacity = Math.max(0, ground.material.opacity - 0.001);
-                }
-
-                // PiP View: Update spacecraft position (simulated forward movement)
-                if (bluOrbitSpaceshipPiP) {
-                    bluOrbitSpaceshipPiP.position.z -= currentFlightSpeed * 0.1; // Scale down movement for PiP
-                    // Reset PiP spacecraft if it goes too far forward
-                    if (bluOrbitSpaceshipPiP.position.z < -10) {
-                        bluOrbitSpaceshipPiP.position.z = 0; // Reset to start of its journey
-                    }
-                }
-
-
-                // PiP View: Move PiP skybox to simulate background passing
-                skyboxPiP.position.z -= currentFlightSpeed * 0.1; // Consistent with main scene
-                if (skyboxPiP.position.z < -50) skyboxPiP.position.z = 0; // Loop PiP skybox
-
-                // PiP Planet movement
-                planetsPiP.forEach(planet => {
-                    planet.position.z -= currentFlightSpeed * 0.01; // Consistent with main scene
-                    if (planet.position.z < -200) { // Reset when it moves past
-                        planet.position.z = 100; // Reset to front
-                        planet.position.x = (Math.random() - 0.5) * 200;
-                        planet.position.y = (Math.random() - 0.5) * 200;
-                    }
-                    planet.rotation.y += 0.002;
-                });
-
-                // PiP Fire effect:
-                if (engineFirePiP) {
-                    engineFirePiP.material.opacity = fireOpacity;
-                    engineFirePiP.scale.x = engineFirePiP.scale.y = fireScalePulse;
-                    engineFirePiP.scale.z = fireLengthPulse;
-                }
-
-            } else {
-                // Fade out all fire effects when not flying
-                if (cockpitFire) { cockpitFire.material.opacity = Math.max(0.0, cockpitFire.material.opacity - 0.05); cockpitFire.visible = false; }
-                if (engineFireMain) { engineFireMain.material.opacity = Math.max(0.0, engineFireMain.material.opacity - 0.05); engineFireMain.visible = false; }
-                if (engineFirePiP) { engineFirePiP.material.opacity = Math.max(0.0, engineFirePiP.material.opacity - 0.05); engineFirePiP.visible = false; }
-
-
-                // Return cockpit and main spacecraft to center when not flying
-                cockpitGroup.position.x += (0 - cockpitGroup.position.x) * 0.05;
-                cockpitGroup.position.y += (1.5 - cockpitGroup.position.y) * 0.05; // Return to initial Y
-                cockpitGroup.rotation.z += (0 - cockpitGroup.rotation.z) * 0.05; // Return to no banking
-
-                if (bluOrbitSpaceshipGLB) {
-                    bluOrbitSpaceshipGLB.position.x += (0 - bluOrbitSpaceshipGLB.position.x) * 0.05;
-                    bluOrbitSpaceshipGLB.position.y += (0 - bluOrbitSpaceshipGLB.position.y) * 0.05;
-                    bluOrbitSpaceshipGLB.position.z += (0 - bluOrbitSpaceshipGLB.position.z) * 0.05;
-                    bluOrbitSpaceshipGLB.rotation.z += (0 - bluOrbitSpaceshipGLB.rotation.z) * 0.05;
-                    // Reset Y rotation if it was changed by camera movement in cockpit view
-                    bluOrbitSpaceshipGLB.rotation.y += (Math.PI - bluOrbitSpaceshipGLB.rotation.y) * 0.05;
-                }
-            }
-
-            updateMiniMap(); // Update mini-map every frame
-
-            // Always render
-            // --- Rendering multiple scenes ---
-            renderer.clear(); // Clear the entire buffer
-
-            // Render Main Scene
-            renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
-            renderer.setScissor(0, 0, window.innerWidth, window.innerHeight);
-            renderer.setScissorTest(false); // Disable scissor test for main scene
-            renderer.render(scene, camera);
-
-            // Render PiP Scene
-            const pipContainer = document.getElementById('pip-container');
-            const pipRect = pipContainer.getBoundingClientRect(); // Get position and size of PiP container
-            const pixelRatio = renderer.getPixelRatio();
-
-            const pipX = pipRect.left * pixelRatio;
-            const pipY = (renderer.domElement.height - pipRect.bottom) * pixelRatio; // Y is from bottom for WebGL
-            const pipWidth = pipRect.width * pixelRatio;
-            const pipHeight = pipContainer.clientHeight * pixelRatio;
-
-            renderer.setViewport(pipX, pipY, pipWidth, pipHeight);
-            renderer.setScissor(pipX, pipY, pipWidth, pipHeight);
-            renderer.setScissorTest(true); // Enable scissor test for PiP scene
-            renderer.render(scenePiP, cameraPiP);
+            // Minor position nudge back on impact
+            // This now applies to the spaceship's position in the world
+            bluOrbitSpaceship.position.z += 5;
         }
 
-        // --- UI Interaction ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const startupScreen = document.getElementById('startup-screen');
-            const chooseDefaultBtn = document.getElementById('choose-default-craft');
-            const chooseGlbBtn = document.getElementById('choose-glb-craft');
+        // Initialize game and Firebase on window load
+        window.onload = async function () {
+            setupUIEventListeners();
+            updateHealthBar();
+            updateFuelGauge();
+            loadSoundPreferences(); // Load sound preferences on startup
 
-            // Hide game UI elements by default
-            const gameUIElements = [
-                document.getElementById('mission-message-area'),
-                document.getElementById('game-title-container'),
-                document.getElementById('fuel-gauge-container'),
-                document.getElementById('mini-map-container'),
-                document.getElementById('ui-container'),
-                document.getElementById('pip-container'),
-                document.getElementById('joystick-controls')
-            ];
-            gameUIElements.forEach(el => el.classList.add('hidden'));
-            document.getElementById('loading-spinner').style.display = 'none'; // Ensure spinner is off initially
+            // Initialize Firebase as soon as window loads, but don't start game yet
+            await initFirebase(); // Wait for Firebase to be ready before proceeding
 
-            // Set up global references to buttons
-            mainPowerButton = document.getElementById('main-power-button');
-            engineIgniteButton = document.getElementById('engine-ignite-button');
-            thrustControlButton = document.getElementById('thrust-control-button');
+            // Initialize Three.js scene once here
+            await initThreeJS();
+            // Start the animation loop once here
+            animate();
 
-
-            const startGame = async (craftType) => {
-                startupScreen.classList.add('hidden'); // Hide the startup screen
-                document.getElementById('loading-spinner').style.display = 'block'; // Show spinner
-
-                // Initialize Three.js scene with selected craft
-                await initThreeJS(craftType); // This is async and returns a promise
-                document.getElementById('loading-spinner').style.display = 'none'; // Hide spinner
-
-                // Show all game UI elements after initialization
-                gameUIElements.forEach(el => el.classList.remove('hidden'));
-
-                // Initialize display for dynamic UI elements
-                updateHealthDisplay();
-                updateFuelGauge();
-                displayMessage("Mission Control: Systems initialized. Ready for Launch. Awaiting command.");
-            };
-
-            chooseDefaultBtn.addEventListener('click', () => startGame('default'));
-            chooseGlbBtn.addEventListener('click', () => startGame('glb'));
-
-
-            document.querySelectorAll('.retro-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    const buttonText = button.textContent;
-                    let message = '';
-                    switch (button.id) {
-                        case 'main-power-button':
-                            playThrustSound(); // Play thrust sound
-                            fuelLevel = maxFuelLevel; // Refuel to max
-                            message = `Main Power: ONLINE! Systems initializing... Fuel replenished!`;
-                            displayMessage(message);
-                            updateFuelGauge();
-
-                            setTimeout(() => {
-                                displayMessage("Mission Control: Command Control to Dolumbican - Ignite Engines!");
-                            }, 1000); // 1 second delay
-                            break;
-                        case 'engine-ignite-button':
-                            playThrustSound(); // Play thrust sound
-                            if (fuelLevel <= 0 && !isFlying) {
-                                message = 'FUEL CRITICAL! Cannot ignite engines. Replenish fuel first (Main Power button).';
-                            } else {
-                                isFlying = !isFlying; // Toggle flight state
-                                if (isFlying) {
-                                    message = 'Engine Ignition Sequence: Initiated! Blast off!';
-                                    // Reset ground for new takeoff if it's already gone
-                                    ground.position.y = -2.5;
-                                    ground.material.opacity = 1.0;
-                                    if (spacecraftHealth <= 0) { // If starting flight with 0 health, reset health
-                                        spacecraftHealth = maxHealth;
-                                        updateHealthDisplay();
-                                    }
-                                } else {
-                                    message = 'Engines Shut Down. Cruising at current velocity.';
-                                    // Reset movement state when flight stops
-                                    moveX = 0;
-                                    moveY = 0;
-                                    currentFlightSpeed = baseFlightSpeed;
-                                    thrustControlButton.textContent = 'Thrust Control';
-                                }
-                            }
-                            updateCameraView(); // Ensure camera is correctly positioned after flight state change
-                            break;
-                        case 'thrust-control-button':
-                            if (isFlying) {
-                                if (button.textContent === 'Thrust Control' || button.textContent === 'Thrust (OFF)') { // Simplified toggle
-                                    playThrustSound(); // Play thrust sound when engaging thrust
-                                    currentFlightSpeed = thrustBoostSpeed;
-                                    message = 'Thrust Boost: Engaged! Increased fuel consumption.';
-                                    button.textContent = 'Thrust (ON)';
-                                } else {
-                                    playPowerDownSound(); // Play power down sound when disengaging thrust
-                                    currentFlightSpeed = baseFlightSpeed;
-                                    message = 'Thrust Boost: Disengaged. Returning to normal speed.';
-                                    button.textContent = 'Thrust Control';
-                                }
-                            } else {
-                                message = 'Thrust control requires engines to be ignited.';
-                            }
-                            break;
-                        case 'view-toggle-button':
-                            // Handled by event listener outside this switch
-                            break;
-                        case 'report-status-button':
-                            message = `Mission Control: Dolumbican reporting. Status: Health ${spacecraftHealth}/${maxHealth}, Flight: ${isFlying ? 'Active' : 'Idle'}. Fuel: ${fuelLevel.toFixed(0)}/${maxFuelLevel}.`;
-                            break;
-                        case 'request-data-button':
-                            message = `Mission Control: Data Packet. Miles to Earth: ${distanceToEarth.toLocaleString()} miles. Fuel: ${fuelLevel.toFixed(0)}.`;
-                            break;
-                        default:
-                            message = `Button "${buttonText}" pressed!`;
-                    }
-                    displayMessage(message);
-                });
-            });
-
-        }); // End DOMContentLoaded
-
-
-        function displayMessage(message) {
-            messageBox.textContent = message;
-            // Optional: Clear message after a few seconds
-            // setTimeout(() => {
-            //     messageBox.textContent = 'Awaiting Command...';
-            // }, 5000);
-        }
+            // Show the startup screen initially
+            startupScreen.style.display = 'flex';
+        };
     </script>
 </body>
 </html>
