@@ -12,7 +12,7 @@
         /* Custom styles for a retro, space-age feel */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* Dark space background */
+            background-color: transparent; /* Changed to transparent to show Three.js scene */
             color: #e0e0e0;
             overflow: hidden; /* Prevent scrolling */
             margin: 0;
@@ -30,7 +30,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 1; /* Below UI */
+            z-index: 1; /* Below UI, but fills screen */
         }
 
         /* Main Game Title Container */
@@ -457,15 +457,16 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Startup Screen Styles */
+        /* Startup Screen Styles - MODIFIED */
         #startup-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #0d1117;
-            z-index: 1000;
+            /* Changed background to transparent to show 3D scene */
+            background-color: transparent;
+            z-index: 1000; /* Ensure it's on top of the canvas */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -480,8 +481,46 @@
             margin-bottom: 2rem;
             text-align: center;
             animation: flicker 1.5s infinite alternate;
+            color: #00f0ff; /* Ensure it's neon blue/green */
         }
 
+        /* New style for the "Fly With Gemini" button */
+        .gemini-promo-button {
+            background-color: rgba(0, 150, 0, 0.8); /* Match existing retro-button base */
+            color: #00ff00; /* Neon green */
+            padding: 1.2rem 2.5rem;
+            border-radius: 0.75rem;
+            border: 3px solid #00ff00; /* Neon green border */
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); /* Neon green glow */
+            transition: all 0.2s ease-in-out;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            animation: flicker-green 1.5s infinite alternate; /* New flicker animation for green */
+        }
+
+        .gemini-promo-button:hover {
+            background-color: rgba(0, 200, 0, 0.9);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .gemini-promo-button:active {
+            background-color: rgba(0, 100, 0, 0.9);
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
+            transform: translateY(0);
+        }
+
+        /* Keyframe for green flicker */
+        @keyframes flicker-green {
+            0% { opacity: 1; text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); }
+            50% { opacity: 0.9; text-shadow: 0 0 8px rgba(0, 255, 0, 0.7); }
+            100% { opacity: 1; text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); }
+        }
+
+        /* Original flicker for blue text */
         @keyframes flicker {
             0% { opacity: 1; text-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
             50% { opacity: 0.9; text-shadow: 0 0 8px rgba(0, 240, 255, 0.7); }
@@ -490,33 +529,6 @@
 
         .startup-button-group {
             margin-top: 2rem;
-        }
-
-        .startup-button {
-            background-color: #006060;
-            color: #e0e0e0;
-            padding: 1.2rem 2.5rem;
-            border-radius: 0.75rem;
-            border: 3px solid #00f0ff;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-            transition: all 0.2s ease-in-out;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .startup-button:hover {
-            background-color: #008080;
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.8);
-            transform: translateY(-2px);
-        }
-
-        .startup-button:active {
-            background-color: #004040;
-            box-shadow: 0 0 5px rgba(0, 240, 255, 0.2);
-            transform: translateY(0);
         }
 
         .copyright-text {
@@ -623,7 +635,7 @@
                 font-size: 1.8rem;
                 letter-spacing: 0.1em;
             }
-            #startup-screen .startup-button {
+            #startup-screen .gemini-promo-button {
                 padding: 1rem 2rem;
                 font-size: 1.2rem;
             }
@@ -647,13 +659,16 @@
 <body>
     <div id="three-container"></div>
 
-    <!-- Startup Screen -->
+    <!-- Startup Screen (overlays the 3D scene) -->
     <div id="startup-screen">
         <h2 class="game-title-1989">Dolumbican Blu Orbit</h2>
         <div class="startup-button-group">
-            <button id="start-mission-button" class="startup-button">Start Mission</button>
+            <!-- Changed to an anchor tag pointing to Gemini -->
+            <a id="promo-link" href="https://g.co/gemini/share/e45c2bc88746" target="_blank" rel="noopener noreferrer">
+                <button id="fly-with-gemini-button" class="gemini-promo-button">Fly With Gemini</button>
+            </a>
         </div>
-        <!-- New Links Added Below Copyright -->
+        <!-- Links and Copyright (kept same) -->
         <div class="startup-links">
             <a href="https://buymeacoffee.com/bluorbit" target="_blank" rel="noopener noreferrer">Keep Orbit In Space</a>
             <a href="https://blu-orbit.com" target="_blank" rel="noopener noreferrer">Official Website</a>
@@ -668,14 +683,14 @@
         <div id="message-box">Awaiting Command...</div>
     </div>
 
-    <!-- Main Game Title Container -->
+    <!-- Main Game Title Container (hidden on promo page) -->
     <div id="game-title-container" class="hidden">
         <h1 class="text-3xl md:text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400 drop-shadow-lg">
             Dolumbican Blu Orbit
         </h1>
     </div>
 
-    <!-- Fuel Gauge Container -->
+    <!-- Fuel Gauge Container (hidden on promo page) -->
     <div id="fuel-gauge-container" class="hidden">
         <svg viewBox="0 0 100 100">
             <!-- Main Gauge Arc -->
@@ -707,7 +722,7 @@
         </svg>
     </div>
 
-    <!-- Mini-Map Container -->
+    <!-- Mini-Map Container (hidden on promo page) -->
     <div id="mini-map-container" class="hidden">
         <svg viewBox="0 0 100 100">
             <!-- Outer Ring -->
@@ -727,7 +742,7 @@
         <!-- Health notches will be dynamically added here -->
     </div>
 
-    <!-- New Gas Icon Container -->
+    <!-- New Gas Icon Container (hidden on promo page) -->
     <div id="gas-icon-container" class="hidden">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 20V8a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2z"></path>
@@ -762,7 +777,7 @@
         </div>
     </div>
 
-    <!-- New Sound Control Container -->
+    <!-- New Sound Control Container (hidden on promo page) -->
     <div id="sound-control-container" class="hidden">
         <!-- Speaker Icon (will change for mute/unmute) -->
         <svg id="sound-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-volume-2">
@@ -840,9 +855,10 @@
                             resolve();
                         } catch (error) {
                             console.error("Error during Firebase sign-in:", error);
-                            displayMissionMessage("Error: Failed to connect to mission database. Game may not save progress.", 7000);
+                            // On promotional page, just warn, don't block.
+                            displayMissionMessage("Warning: Database connection issue. Distance tracking may be unavailable.", 7000);
                             authReady = false; // Mark auth as not ready if it failed
-                            resolve(); // Still resolve to allow game to proceed, but with warnings
+                            resolve(); // Still resolve to allow promo page to load
                         }
                     }
                 });
@@ -880,7 +896,7 @@
             }
         };
 
-        // Real-time listener for global distance
+        // Real-time listener for global distance (less critical for promo, but good to have)
         window.setupGlobalDistanceListener = function() {
             if (unsubscribeFromDistance) {
                 unsubscribeFromDistance(); // Clean up previous listener if any
@@ -888,46 +904,18 @@
             unsubscribeFromDistance = onSnapshot(globalDistanceDocRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    // Update local distanceFromEarth from Firestore. This handles updates from other clients.
                     distanceFromEarth = data.currentDistance || 0;
-                    // console.log("Local distance updated from Firestore via snapshot:", distanceFromEarth);
                 } else {
                     console.warn("Global distance document disappeared from Firestore.");
-                    // Could re-initialize or handle as an error
                 }
             }, (error) => {
                 console.error("Error listening to global distance:", error);
-                displayMissionMessage("Error: Real-time interstellar navigation data interrupted.", 5000);
             });
         };
 
-        // Function to start updating global distance to Firestore periodically
-        window.startGlobalDistanceUpdater = function() {
-            if (distanceUpdateIntervalId) {
-                clearInterval(distanceUpdateIntervalId);
-            }
-            const firestoreUpdateInterval = 5000; // Update every 5 seconds
-            distanceUpdateIntervalId = setInterval(async () => {
-                if (authReady && isFlying) { // Only write if authenticated and game is active
-                    try {
-                        // Use setDoc to prevent merging with other fields if any, always overwrite currentDistance
-                        await setDoc(globalDistanceDocRef, { currentDistance: distanceFromEarth });
-                        // console.log("Global distance saved:", distanceFromEarth);
-                    } catch (error) {
-                        console.error("Error saving global distance:", error);
-                        // displayMissionMessage("Error: Failed to save interstellar voyage progress.", 5000);
-                    }
-                }
-            }, firestoreUpdateInterval);
-        };
-
-        // Function to stop the periodic Firestore update
-        window.stopGlobalDistanceUpdater = function() {
-            if (distanceUpdateIntervalId) {
-                clearInterval(distanceUpdateIntervalId);
-                distanceUpdateIntervalId = null;
-            }
-        };
+        // Functions for updating/stopping global distance (not used on promo page, but kept)
+        window.startGlobalDistanceUpdater = function() { /* no-op for promo */ };
+        window.stopGlobalDistanceUpdater = function() { /* no-op for promo */ };
     </script>
 
 
@@ -943,41 +931,42 @@
         let otherSpacecrafts = []; // Array to hold other passing spacecraft
 
         // Game State Variables
-        let isFlying = false;
-        let currentFlightSpeed = 0.0;
-        const baseFlightSpeed = 0.5;
-        const thrustBoostSpeed = 1.5;
-        const maneuverSpeed = 0.1;
+        let isFlying = false; // Only true when actually playing the game
+        const isPromotionalPage = true; // NEW: Flag to control behavior on GitHub Pages
+        let currentFlightSpeed = 0.0; // This will effectively be 0 for player movement, but background will move
+        const baseFlightSpeed = 0.5; // Used for background object scrolling
+        const thrustBoostSpeed = 1.5; // Not used in promo mode
+        const maneuverSpeed = 0.1; // Not used in promo mode
 
-        // Movement state for joystick/keyboard
-        let moveX = 0; // -1 for left, 0 for none, 1 for right
-        let moveY = 0; // -1 for down, 0 for none, 1 for up
+        // Movement state for joystick/keyboard (not used in promo mode)
+        let moveX = 0;
+        let moveY = 0;
 
-        // Spacecraft Health System
+        // Spacecraft Health System (not used in promo mode)
         let maxHealth = 3;
         let spacecraftHealth = maxHealth;
 
-        // Mission Variables
-        let distanceFromEarth = 0; // Will be set by Firestore
-        let fuelLevel = 10000; // Starting with a good amount of fuel
-        const maxFuelLevel = 10000; // Define max fuel level for gauge calculation
+        // Mission Variables (distance is tracked but not directly impacting promo)
+        let distanceFromEarth = 0; // Will be set by Firestore (global game state)
+        let fuelLevel = 10000; // Not consumed in promo mode
+        const maxFuelLevel = 10000;
         const fuelConsumptionRate = 5;
         const maneuverFuelCost = 0.5;
         const thrustFuelCostMultiplier = 2;
 
         // Three.js Constants
         const fireParticleCount = 100;
-        let frontFireParticlesData = []; // Data for front fire particle animation
-        const PLAYER_COLLISION_RADIUS = 4; // Adjusted for better collision with scaled craft (half of 8-unit depth)
+        let frontFireParticlesData = [];
+        const PLAYER_COLLISION_RADIUS = 4; // Not used in promo mode
 
         // Planet/Obstacle Constants
         const PLANET_RADIUS_MIN = 5;
         const PLANET_RADIUS_MAX = 20;
         const PLANET_MIN_SPEED = 0.1;
         const PLANET_MAX_SPEED = 0.5;
-        let planetSpawnRate = 1000; // Milliseconds
+        let planetSpawnRate = 1000;
         let lastPlanetSpawnTime = 0;
-        const PLANET_BATCH_INTERVAL = 10000; // Spawn a batch every 10 seconds
+        const PLANET_BATCH_INTERVAL = 10000;
         let lastPlanetBatchTime = 0;
 
         // Asteroid Constants
@@ -985,11 +974,11 @@
         const ASTEROID_RADIUS_MAX = 3;
         const ASTEROID_MIN_SPEED = 0.2;
         const ASTEROID_MAX_SPEED = 0.8;
-        let asteroidSpawnRate = 200; // Milliseconds, more frequent than planets
+        let asteroidSpawnRate = 200;
         let lastAsteroidSpawnTime = 0;
 
         // Other Spacecraft Constants
-        let otherSpacecraftSpawnRate = 30000; // Start with 30 seconds
+        let otherSpacecraftSpawnRate = 30000;
         let lastOtherSpacecraftSpawnTime = 0;
         const OTHER_SPACECRAFT_SPEED_MIN = 0.1;
         const OTHER_SPACECRAFT_SPEED_MAX = 0.3;
@@ -999,22 +988,22 @@
         const skyboxSpeedMultiplier = 0.05;
         const objectMovementScale = 0.1; // General scale for how fast objects move towards us
 
-        // UI Element References
+        // UI Element References (many will be hidden on promo page)
         const messageBox = document.getElementById('message-box');
         const fuelNeedleLine = document.getElementById('fuel-needle-line');
         const healthBarContainer = document.getElementById('health-bar-container');
         const collectibleDotsGroup = document.getElementById('collectible-dots');
         const loadingSpinner = document.getElementById('loading-spinner');
 
-        // Global references to buttons for easy access in any function
+        // Global references to buttons for easy access (some will be non-functional on promo)
         let mainPowerButton;
         let engineIgniteButton;
         let thrustControlButton;
         let reportStatusButton;
         let requestDataButton;
-        let gasIconButton; // New reference for the gas icon button
-        let soundIcon; // New reference for the sound icon
-        let volumeSlider; // New reference for the volume slider
+        let gasIconButton;
+        let soundIcon;
+        let volumeSlider;
 
         // Startup screen elements
         const startupScreen = document.getElementById('startup-screen');
@@ -1025,21 +1014,21 @@
         const healthBarContainerElement = document.getElementById('health-bar-container');
         const controlPanelContainer = document.getElementById('control-panel-container');
         const joystickControls = document.getElementById('joystick-controls');
-        const startMissionButton = document.getElementById('start-mission-button');
-        const soundControlContainer = document.getElementById('sound-control-container'); // New reference
+        // const startMissionButton = document.getElementById('start-mission-button'); // No longer used directly for "Start Mission"
+        const soundControlContainer = document.getElementById('sound-control-container');
 
 
         // Global var for initial time for delta calculation
-        let lastFrameTime = 0; // Initialize for first frame
+        let lastFrameTime = 0;
 
-        // Deep Space Tiers & Thresholds (Miles)
-        const TIER_1_THRESHOLD = 0; // Initial
-        const TIER_2_THRESHOLD = 3; // First deep space tier, changed from 10 to 3
+        // Deep Space Tiers & Thresholds (Miles) (affecting background appearance)
+        const TIER_1_THRESHOLD = 0;
+        const TIER_2_THRESHOLD = 3;
         const TIER_3_THRESHOLD = 1000;
         const TIER_4_THRESHOLD = 10000;
-        const TIER_5_THRESHOLD = 100000; // Beyond this is truly deep space
+        const TIER_5_THRESHOLD = 100000;
 
-        let currentDeepSpaceTier = 1;
+        let currentDeepSpaceTier = 1; // Will update based on distanceFromEarth even in promo mode
 
         // Audio Setup
         document.documentElement.addEventListener("mousedown", () => {
@@ -1075,20 +1064,25 @@
         const continuousEngineSound = new Tone.NoiseSynth({
             noise: { type: "white" },
             envelope: {
-                attack: 0.1,    // Gentle attack
-                decay: 0,       // No decay phase, sustain indefinitely
-                sustain: 1.0,   // Full sustain
-                release: 1.0    // Gentle release
+                attack: 0.1,
+                decay: 0,
+                sustain: 1.0,
+                release: 1.0
             },
-            volume: -15 // Background hum, subtle volume
+            volume: -15
         }).toDestination();
-        continuousEngineSound.isStarted = false; // Custom flag to track state
+        continuousEngineSound.isStarted = false;
 
-        // Function to start continuous engine sound
+        // Function to start continuous engine sound (only if not muted and in promo mode)
         function startContinuousEngineSound() {
-            if (Tone.context.state === 'running' && !continuousEngineSound.isStarted) {
+            if (isPromotionalPage && Tone.context.state === 'running' && !continuousEngineSound.isStarted && !isMuted) {
+                 continuousEngineSound.triggerAttack();
+                 continuousEngineSound.isStarted = true;
+            }
+            // For full game mode, also check isFlying
+            else if (!isPromotionalPage && isFlying && Tone.context.state === 'running' && !continuousEngineSound.isStarted && !isMuted) {
                 continuousEngineSound.triggerAttack();
-                continuousEngineSound.isStarted = true; // Custom flag to track state
+                continuousEngineSound.isStarted = true;
             }
         }
 
@@ -1096,7 +1090,7 @@
         function stopContinuousEngineSound() {
             if (continuousEngineSound.isStarted) {
                 continuousEngineSound.triggerRelease();
-                continuousEngineSound.isStarted = false; // Reset flag
+                continuousEngineSound.isStarted = false;
             }
         }
 
@@ -1106,35 +1100,37 @@
          * @param {number} durationMs Duration in milliseconds the message should be visible.
          */
         function displayMissionMessage(msg, durationMs = 3000) {
-            messageBox.textContent = msg;
-            missionMessageArea.classList.remove('hidden');
-            clearTimeout(messageBox.hideTimeout);
-            messageBox.hideTimeout = setTimeout(() => {
-                missionMessageArea.classList.add('hidden');
-            }, durationMs);
+            // Only display messages if not in promo mode, or specific error messages from Firebase init
+            if (!isPromotionalPage || msg.includes("Error") || msg.includes("Warning")) {
+                messageBox.textContent = msg;
+                missionMessageArea.classList.remove('hidden');
+                clearTimeout(messageBox.hideTimeout);
+                messageBox.hideTimeout = setTimeout(() => {
+                    missionMessageArea.classList.add('hidden');
+                }, durationMs);
+            }
         }
 
         /**
-         * Updates the visual health bar based on current health.
+         * Updates the visual health bar based on current health. (Not used in promo mode)
          */
         function updateHealthBar() {
-            healthBarContainer.innerHTML = ''; // Clear existing notches
+            healthBarContainer.innerHTML = '';
             for (let i = 0; i < maxHealth; i++) {
                 const notch = document.createElement('div');
                 notch.classList.add('health-notch');
                 if (i >= spacecraftHealth) {
-                    notch.style.backgroundColor = '#444'; // Grey for lost health
+                    notch.style.backgroundColor = '#444';
                     notch.style.boxShadow = 'none';
                 } else {
-                    // Dynamic coloring based on remaining health
                     if (spacecraftHealth === 3) {
-                        notch.style.backgroundColor = '#00ff00'; // Green
+                        notch.style.backgroundColor = '#00ff00';
                         notch.style.boxShadow = '0 0 5px rgba(0, 255, 0, 0.5)';
                     } else if (spacecraftHealth === 2) {
-                        notch.style.backgroundColor = '#ffcc00'; // Yellow
+                        notch.style.backgroundColor = '#ffcc00';
                         notch.style.boxShadow = '0 0 5px rgba(255, 204, 0, 0.5)';
-                    } else { // spacecraftHealth === 1
-                        notch.style.backgroundColor = '#ff0000'; // Red
+                    } else {
+                        notch.style.backgroundColor = '#ff0000';
                         notch.style.boxShadow = '0 0 5px rgba(255, 0, 0, 0.7)';
                     }
                 }
@@ -1143,50 +1139,37 @@
         }
 
         /**
-         * Updates the fuel gauge needle rotation.
+         * Updates the fuel gauge needle rotation. (Not used in promo mode)
          */
         function updateFuelGauge() {
             const fuelPercentage = fuelLevel / maxFuelLevel;
-            // Angle from 0 degrees (full) to -180 degrees (empty) for a semi-circle dial
-            // SVG's default 0 degrees is to the right, so 135 degrees is "full" and -45 degrees is "empty"
-            // For a needle that goes from bottom-left (full) to bottom-right (empty) through top:
-            // Full is 135 deg, Empty is -45 deg. Total range 180 degrees.
-            const rotationDegrees = 135 - (fuelPercentage * 180); // Adjust range if needed
+            const rotationDegrees = 135 - (fuelPercentage * 180);
             fuelNeedleLine.style.transform = `rotate(${rotationDegrees}deg)`;
 
-            // Change needle color based on fuel level
             if (fuelPercentage > 0.5) {
-                fuelNeedleLine.style.stroke = '#00ff00'; // Green
+                fuelNeedleLine.style.stroke = '#00ff00';
             } else if (fuelPercentage > 0.2) {
-                fuelNeedleLine.style.stroke = '#ffcc00'; // Yellow
+                fuelNeedleLine.style.stroke = '#ffcc00';
             } else {
-                fuelNeedleLine.style.stroke = '#ff0000'; // Red
+                fuelNeedleLine.style.stroke = '#ff0000';
             }
         }
 
         /**
-         * Updates the mini-map with planet and asteroid positions.
-         * Assumes a fixed mini-map size (e.g., 90x90 in SVG viewBox 0 0 100 100).
+         * Updates the mini-map with planet and asteroid positions. (Not used in promo mode)
          */
         function updateMiniMap() {
             collectibleDotsGroup.innerHTML = ''; // Clear old dots
 
-            const mapSize = 90; // SVG internal size
-            const mapCenter = 50; // SVG center
-
-            // Map the game world's X and Y range to the mini-map's X and Y range
-            const worldRange = 1000; // Max distance to display objects on map
+            const mapSize = 90;
+            const mapCenter = 50;
+            const worldRange = 1000;
             const scale = mapSize / (worldRange * 2);
-
-            let playerPosition = new THREE.Vector3();
-            // In this setup, bluOrbitSpaceship is at (0,0,0) and the camera moves,
-            // so player position relative to the world origin is effectively (0,0,0) for radar.
-            // Objects moving past the camera/ship.
 
             // Display planets on map
             planets.forEach(planet => {
                 const relativeX = planet.position.x;
-                const relativeZ = planet.position.z; // Using Z for vertical on map, simulating "distance"
+                const relativeZ = planet.position.z;
 
                 if (Math.abs(relativeX) < worldRange && Math.abs(relativeZ) < worldRange) {
                     const mapX = mapCenter + (relativeX * scale);
@@ -1196,13 +1179,13 @@
                     dot.setAttribute('cx', mapX);
                     dot.setAttribute('cy', mapY);
                     dot.setAttribute('r', 3);
-                    dot.setAttribute('fill', '#00ffff'); // Cyan for planets
+                    dot.setAttribute('fill', '#00ffff');
                     dot.classList.add('map-dot');
                     collectibleDotsGroup.appendChild(dot);
                 }
             });
 
-            // Display asteroids on map (smaller dots)
+            // Display asteroids on map
             asteroids.forEach(asteroid => {
                 const relativeX = asteroid.position.x;
                 const relativeZ = asteroid.position.z;
@@ -1214,14 +1197,14 @@
                     const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                     dot.setAttribute('cx', mapX);
                     dot.setAttribute('cy', mapY);
-                    dot.setAttribute('r', 1.5); // Smaller radius for asteroids
-                    dot.setAttribute('fill', '#aaaaaa'); // Grey for asteroids
+                    dot.setAttribute('r', 1.5);
+                    dot.setAttribute('fill', '#aaaaaa');
                     dot.classList.add('map-dot');
                     collectibleDotsGroup.appendChild(dot);
                 }
             });
 
-            // Display other spacecraft on map (even smaller dots, different color)
+            // Display other spacecraft on map
             otherSpacecrafts.forEach(ship => {
                 const relativeX = ship.position.x;
                 const relativeZ = ship.position.z;
@@ -1233,8 +1216,8 @@
                     const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                     dot.setAttribute('cx', mapX);
                     dot.setAttribute('cy', mapY);
-                    dot.setAttribute('r', 2); // Slightly larger than asteroid, smaller than planet
-                    dot.setAttribute('fill', '#ff00ff'); // Magenta for other spacecraft
+                    dot.setAttribute('r', 2);
+                    dot.setAttribute('fill', '#ff00ff');
                     dot.classList.add('map-dot');
                     collectibleDotsGroup.appendChild(dot);
                 }
@@ -1247,46 +1230,41 @@
         function createPlanetObject() {
             const baseRadius = THREE.MathUtils.randFloat(PLANET_RADIUS_MIN, PLANET_RADIUS_MAX);
             let planetColor = new THREE.Color();
-            let planetType = 'rocky'; // Default
+            let planetType = 'rocky';
 
-            // Dynamic planet appearance based on distance
+            // Dynamic planet appearance based on distance (even in promo mode for varied background)
             if (distanceFromEarth < TIER_2_THRESHOLD) {
-                // Initial tier
                 const planetTypes = [
-                    { radius: 50, color: 0x8B4513, type: 'rocky'}, // Saddle Brown
-                    { radius: 70, color: 0x4682B4, type: 'gas'}, // Steel Blue
-                    { radius: 40, color: 0xADD8E6, type: 'ice'}, // Light Blue
-                    { radius: 60, color: 0x773333, type: 'rocky'}, // Darker Red-Brown
-                    { radius: 80, color: 0x8A2BE2, type: 'gas'}, // Blue Violet
-                    { radius: 35, color: 0xF0E68C, type: 'rocky'} // Khaki
+                    { radius: 50, color: 0x8B4513, type: 'rocky'},
+                    { radius: 70, color: 0x4682B4, type: 'gas'},
+                    { radius: 40, color: 0xADD8E6, type: 'ice'},
+                    { radius: 60, color: 0x773333, type: 'rocky'},
+                    { radius: 80, color: 0x8A2BE2, type: 'gas'},
+                    { radius: 35, color: 0xF0E68C, type: 'rocky'}
                 ];
                 const data = planetTypes[Math.floor(Math.random() * planetTypes.length)];
                 planetColor.setHex(data.color);
                 planetType = data.type;
             } else if (distanceFromEarth < TIER_3_THRESHOLD) {
-                // Tier 2: More vibrant, slightly alien colors (e.g., purple and green as requested)
-                const tier2Colors = [0x9900FF, 0x00CCFF, 0xFF6600, 0x33FF33, 0xAA00AA, 0x00EE00]; // Purple, light blue, orange, lime green, darker purple, brighter green
+                const tier2Colors = [0x9900FF, 0x00CCFF, 0xFF6600, 0x33FF33, 0xAA00AA, 0x00EE00];
                 planetColor.setHex(tier2Colors[Math.floor(Math.random() * tier2Colors.length)]);
-                planetType = Math.random() < 0.5 ? 'gas' : 'rocky'; // More gas giants
+                planetType = Math.random() < 0.5 ? 'gas' : 'rocky';
             } else if (distanceFromEarth < TIER_4_THRESHOLD) {
-                // Tier 3: Exotic, darker or glowing colors
-                const tier3Colors = [0xCC00CC, 0x00FF99, 0xFF3333, 0x33CCFF]; // Magenta, aquamarine, bright red, light blue
+                const tier3Colors = [0xCC00CC, 0x00FF99, 0xFF3333, 0x33CCFF];
                 planetColor.setHex(tier3Colors[Math.floor(Math.random() * tier3Colors.length)]);
-                planetType = Math.random() < 0.7 ? 'gas' : 'ice'; // Even more gas/ice
+                planetType = Math.random() < 0.7 ? 'gas' : 'ice';
             } else {
-                // Tier 4+: Deep space, mysterious colors, more ice/gas
-                const tier4Colors = [0x550055, 0x003366, 0x88FFCC, 0xFFFFFF]; // Deep purple, deep blue, mint green, white (icy)
+                const tier4Colors = [0x550055, 0x003366, 0x88FFCC, 0xFFFFFF];
                 planetColor.setHex(tier4Colors[Math.floor(Math.random() * tier4Colors.length)]);
-                planetType = Math.random() < 0.8 ? 'ice' : 'gas'; // Predominantly ice/gas
+                planetType = Math.random() < 0.8 ? 'ice' : 'gas';
             }
 
             const planet = createPlanet(baseRadius + (Math.random() * 20 - 10), planetColor.getHex(), planetType);
-            planet.radius = baseRadius; // Store radius for collision detection
+            planet.radius = baseRadius;
 
-            // Spawn far away in Z, with random X and Y spread
             const spawnX = THREE.MathUtils.randFloatSpread(1000);
             const spawnY = THREE.MathUtils.randFloatSpread(1000);
-            const spawnZ = -1500 - Math.random() * 2000; // Spawn much further away
+            const spawnZ = -1500 - Math.random() * 2000;
 
             planet.position.set(spawnX, spawnY, spawnZ);
             planet.velocity = THREE.MathUtils.randFloat(PLANET_MIN_SPEED, PLANET_MAX_SPEED);
@@ -1305,30 +1283,27 @@
          */
         function createAsteroidObject() {
             const radius = THREE.MathUtils.randFloat(ASTEROID_RADIUS_MIN, ASTEROID_RADIUS_MAX);
-            const detail = 0; // Low detail for simple asteroid look
-            let asteroidColor = 0x555555; // Default dark grey
+            const detail = 0;
+            let asteroidColor = 0x555555;
 
-            // Dynamic asteroid appearance based on distance
             if (distanceFromEarth >= TIER_3_THRESHOLD) {
-                // Deeper space, asteroids might have hints of crystal or unusual materials
-                const deepSpaceAsteroidColors = [0x888888, 0xAAAAAA, 0xCCFFCC, 0xFFCCFF]; // Grey, light grey, pale green, pale pink
+                const deepSpaceAsteroidColors = [0x888888, 0xAAAAAA, 0xCCFFCC, 0xFFCCFF];
                 asteroidColor = deepSpaceAsteroidColors[Math.floor(Math.random() * deepSpaceAsteroidColors.length)];
             }
 
-            const asteroidGeometry = new THREE.DodecahedronGeometry(radius, detail); // More natural rocky shape
+            const asteroidGeometry = new THREE.DodecahedronGeometry(radius, detail);
             const asteroidMaterial = new THREE.MeshStandardMaterial({
-                color: asteroidColor, // Dynamic color
+                color: asteroidColor,
                 metalness: 0.1,
                 roughness: 0.9
             });
             const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
 
-            asteroid.radius = radius; // Store radius for collision detection
+            asteroid.radius = radius;
 
-            // Spawn relatively close to the player, scattered in X, Y, and Z
-            const spawnX = THREE.MathUtils.randFloatSpread(200); // Spread around current X
-            const spawnY = THREE.MathUtils.randFloatSpread(200); // Spread around current Y
-            const spawnZ = -300 - Math.random() * 500; // Spawn in front of the player
+            const spawnX = THREE.MathUtils.randFloatSpread(200);
+            const spawnY = THREE.MathUtils.randFloatSpread(200);
+            const spawnZ = -300 - Math.random() * 500;
 
             asteroid.position.set(bluOrbitSpaceship.position.x + spawnX, bluOrbitSpaceship.position.y + spawnY, bluOrbitSpaceship.position.z + spawnZ);
             asteroid.velocity = THREE.MathUtils.randFloat(ASTEROID_MIN_SPEED, ASTEROID_MAX_SPEED);
@@ -1346,38 +1321,37 @@
          * Creates a new 'other spacecraft' object.
          */
         function createOtherSpacecraft() {
-            const type = Math.floor(Math.random() * 3); // 0: friendly, 1: alien scout, 2: derelict
+            const type = Math.floor(Math.random() * 3);
             let shipMesh;
             let shipColor = new THREE.Color();
             let shipScale = 1;
 
-            if (type === 0) { // Friendly/Exploration Vessel
-                const geometry = new THREE.BoxGeometry(2, 1, 4); // Simple rectangular ship
-                shipColor.setHex(0x00FF00); // Green
+            if (type === 0) {
+                const geometry = new THREE.BoxGeometry(2, 1, 4);
+                shipColor.setHex(0x00FF00);
                 shipMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: shipColor }));
                 shipScale = 0.5;
-            } else if (type === 1) { // Alien Scout
-                const geometry = new THREE.ConeGeometry(1.5, 3, 8); // Cone shape
-                shipColor.setHex(0xFF00FF); // Magenta
+            } else if (type === 1) {
+                const geometry = new THREE.ConeGeometry(1.5, 3, 8);
+                shipColor.setHex(0xFF00FF);
                 shipMesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: shipColor }));
                 shipScale = 0.4;
-                shipMesh.rotation.x = Math.PI / 2; // Point cone forward
-            } else { // Derelict (damaged-looking)
+                shipMesh.rotation.x = Math.PI / 2;
+            } else {
                 const geometry = new THREE.BoxGeometry(3, 1.5, 5);
-                shipColor.setHex(0x884444); // Rusty red
+                shipColor.setHex(0x884444);
                 const material = new THREE.MeshStandardMaterial({ color: shipColor });
                 shipMesh = new THREE.Mesh(geometry, material);
                 shipScale = 0.6;
-                shipMesh.rotation.z = Math.random() * Math.PI * 2; // Tilted
-                shipMesh.rotation.y = Math.random() * Math.PI * 2; // Random rotation
+                shipMesh.rotation.z = Math.random() * Math.PI * 2;
+                shipMesh.rotation.y = Math.random() * Math.PI * 2;
             }
 
             shipMesh.scale.set(shipScale, shipScale, shipScale);
 
-            // Spawn significantly off-axis or far away laterally
-            const spawnX = THREE.MathUtils.randFloatSpread(500); // Wide lateral spread
+            const spawnX = THREE.MathUtils.randFloatSpread(500);
             const spawnY = THREE.MathUtils.randFloatSpread(500);
-            const spawnZ = -2000 - Math.random() * 3000; // Very far away in Z
+            const spawnZ = -2000 - Math.random() * 3000;
 
             shipMesh.position.set(bluOrbitSpaceship.position.x + spawnX, bluOrbitSpaceship.position.y + spawnY, bluOrbitSpaceship.position.z + spawnZ);
             shipMesh.velocity = THREE.MathUtils.randFloat(OTHER_SPACECRAFT_SPEED_MIN, OTHER_SPACECRAFT_SPEED_MAX);
@@ -1397,205 +1371,218 @@
          * @param {number} deltaTime - Time elapsed since last frame in milliseconds.
          */
         function updateGameLogic(deltaTime) {
-            if (!isFlying) {
-                // If not flying, ensure gas icon visibility is updated only if fuel is depleted
-                updateGasIconVisibility();
-                return;
-            }
+            // --- Promotional Page Mode ---
+            if (isPromotionalPage) {
+                // In promo mode, we only animate the background elements.
+                // The player's ship stays static, and game mechanics (fuel, health, user input) are paused.
 
-            // --- Deep Space Tier Management and Environmental Effects ---
-            const oldTier = currentDeepSpaceTier;
-            if (distanceFromEarth < TIER_2_THRESHOLD) {
-                currentDeepSpaceTier = 1;
-            } else if (distanceFromEarth < TIER_3_THRESHOLD) {
-                currentDeepSpaceTier = 2;
-            } else if (distanceFromEarth < TIER_4_THRESHOLD) {
-                currentDeepSpaceTier = 3;
-            } else if (distanceFromEarth < TIER_5_THRESHOLD) {
-                currentDeepSpaceTier = 4;
-            } else {
-                currentDeepSpaceTier = 5; // Truly deep space
-            }
+                // Update planet positions for continuous background scrolling
+                for (let i = planets.length - 1; i >= 0; i--) {
+                    const planet = planets[i];
+                    planet.position.z += (planet.velocity + baseFlightSpeed * objectMovementScale); // Move towards camera
+                    planet.rotation.x += planet.rotationSpeed.x;
+                    planet.rotation.y += planet.rotationSpeed.y;
+                    planet.rotation.z += planet.rotationSpeed.z;
 
-            if (currentDeepSpaceTier !== oldTier) {
-                console.log(`Entering Deep Space Tier ${currentDeepSpaceTier}! Distance: ${distanceFromEarth.toLocaleString()} miles`);
-                // Trigger messages or visual shifts on tier change
-                if (currentDeepSpaceTier === 2) {
-                    displayMissionMessage("Entering Outer Reaches: Subtly shifting stellar formations detected.", 5000);
-                } else if (currentDeepSpaceTier === 3) {
-                    displayMissionMessage("Navigating uncharted sectors. Expect unusual celestial phenomena.", 5000);
-                } else if (currentDeepSpaceTier === 4) {
-                    displayMissionMessage("Deep Space Sector: Anomalous energy signatures increasing.", 5000);
-                } else if (currentDeepSpaceTier === 5) {
-                    displayMissionMessage("Beyond known space. Prepare for unpredictable cosmic events.", 5000);
+                    // Loop planets when they go out of view (past the camera)
+                    if (planet.position.z > (bluOrbitSpaceship.position.z + 50)) {
+                        // Reset Z position far behind the camera
+                        planet.position.z = -1500 - Math.random() * 2000;
+                        planet.position.x = THREE.MathUtils.randFloatSpread(1000);
+                        planet.position.y = THREE.MathUtils.randFloatSpread(1000);
+                    }
                 }
 
-                // Update background and starfield
-                updateDeepSpaceBackground(currentDeepSpaceTier);
-                // Adjust fog based on tier
-                updateDeepSpaceFog(currentDeepSpaceTier);
+                // Update asteroid positions for continuous background scrolling
+                for (let i = asteroids.length - 1; i >= 0; i--) {
+                    const asteroid = asteroids[i];
+                    asteroid.position.z += (asteroid.velocity + baseFlightSpeed * objectMovementScale * 1.5); // Move towards camera faster
+                    asteroid.rotation.x += asteroid.rotationSpeed.x;
+                    asteroid.rotation.y += asteroid.rotationSpeed.y;
+                    asteroid.rotation.z += asteroid.rotationSpeed.z;
+
+                    // Loop asteroids
+                    if (asteroid.position.z > (bluOrbitSpaceship.position.z + 20)) {
+                        asteroid.position.z = -300 - Math.random() * 500;
+                        asteroid.position.x = THREE.MathUtils.randFloatSpread(200);
+                        asteroid.position.y = THREE.MathUtils.randFloatSpread(200);
+                    }
+                }
+
+                // Update other spacecraft positions for continuous background scrolling
+                for (let i = otherSpacecrafts.length - 1; i >= 0; i--) {
+                    const ship = otherSpacecrafts[i];
+                    ship.position.z += (ship.velocity + baseFlightSpeed * objectMovementScale * 0.5); // Move towards camera slower
+                    ship.rotation.x += ship.rotationSpeed.x;
+                    ship.rotation.y += ship.rotationSpeed.y;
+                    ship.rotation.z += ship.rotationSpeed.z;
+
+                    // Loop other spacecraft
+                    if (ship.position.z > (bluOrbitSpaceship.position.z + 50)) {
+                        ship.position.z = -2000 - Math.random() * 3000;
+                        ship.position.x = THREE.MathUtils.randFloatSpread(500);
+                        ship.position.y = THREE.MathUtils.randFloatSpread(500);
+                    }
+                }
+
+                // Keep player ship visible and its fire active, but static
+                if (bluOrbitSpaceship) {
+                     bluOrbitSpaceship.visible = true;
+                     bluOrbitSpaceship.position.set(0,0,0); // Ensure it stays at the center
+                     if (frontEngineFireParticles) {
+                         frontEngineFireParticles.material.opacity = 0.8;
+                         updateFireParticles(frontEngineFireParticles, frontFireParticlesData, 4, true);
+                     }
+                }
+                // Update distance from Earth (still increasing for visual tier progression)
+                const milesPerUnitSpeedPerMs = 1 / 30000;
+                distanceFromEarth += baseFlightSpeed * milesPerUnitSpeedPerMs * deltaTime; // Use base speed for background progression
+                // Update deep space tier based on the increasing distance
+                const oldTier = currentDeepSpaceTier;
+                if (distanceFromEarth < TIER_2_THRESHOLD) {
+                    currentDeepSpaceTier = 1;
+                } else if (distanceFromEarth < TIER_3_THRESHOLD) {
+                    currentDeepSpaceTier = 2;
+                } else if (distanceFromEarth < TIER_4_THRESHOLD) {
+                    currentDeepSpaceTier = 3;
+                } else if (distanceFromEarth < TIER_5_THRESHOLD) {
+                    currentDeepSpaceTier = 4;
+                } else {
+                    currentDeepSpaceTier = 5;
+                }
+
+                if (currentDeepSpaceTier !== oldTier) {
+                    console.log(`Promo background entering Deep Space Tier ${currentDeepSpaceTier}!`);
+                    updateDeepSpaceBackground(currentDeepSpaceTier);
+                    updateDeepSpaceFog(currentDeepSpaceTier);
+                }
+
+                // Spawn new planets/asteroids/spacecraft for the continuous background
+                const now = performance.now();
+                if (now - lastPlanetSpawnTime > planetSpawnRate) {
+                    createPlanetObject();
+                    lastPlanetSpawnTime = now;
+                    planetSpawnRate = Math.max(500, planetSpawnRate * 0.99);
+                }
+                if (now - lastPlanetBatchTime > PLANET_BATCH_INTERVAL) {
+                    for (let i = 0; i < 3; i++) { createPlanetObject(); }
+                    lastPlanetBatchTime = now;
+                }
+                if (now - lastAsteroidSpawnTime > asteroidSpawnRate) {
+                    createAsteroidObject();
+                    lastAsteroidSpawnTime = now;
+                    asteroidSpawnRate = Math.max(100, asteroidSpawnRate * 0.99);
+                }
+                if (distanceFromEarth >= TIER_2_THRESHOLD && (now - lastOtherSpacecraftSpawnTime > otherSpacecraftSpawnRate)) {
+                    if (Math.random() < getSpacecraftSpawnChance(currentDeepSpaceTier)) {
+                        createOtherSpacecraft();
+                        lastOtherSpacecraftSpawnTime = now;
+                        otherSpacecraftSpawnRate = Math.max(10000, otherSpacecraftSpawnRate * 0.95);
+                    }
+                }
+
+                return; // Exit here, skip regular game logic for the promo page
             }
 
+            // --- Original game logic (only active in the full game on Gemini) ---
+            // This section will not be executed on the GitHub Pages.
             // Consume fuel
             fuelLevel -= fuelConsumptionRate;
             if (currentFlightSpeed === thrustBoostSpeed) {
                 fuelLevel -= fuelConsumptionRate * (thrustFuelCostMultiplier - 1);
             }
-            fuelLevel = Math.max(0, fuelLevel); // Don't go below 0
+            fuelLevel = Math.max(0, fuelLevel);
             updateFuelGauge();
-            updateGasIconVisibility(); // Update gas icon visibility based on current fuel
+            updateGasIconVisibility();
 
-            if (fuelLevel <= 0 && isFlying) { // If fuel depleted AND currently flying
-                isFlying = false; // Force immediate shutdown
+            if (fuelLevel <= 0 && isFlying) {
+                isFlying = false;
                 currentFlightSpeed = 0;
-                stopContinuousEngineSound(); // Stop engine sound immediately
-                displayMissionMessage("CRITICAL: Fuel Depleted! Spacecraft systems shutting down. Use the GAS icon to refuel, then press Main Power to restart.", 5000); // Updated message
-                mainPowerButton.textContent = "Power: OFF"; // Update button text to reflect off state
-                engineIgniteButton.textContent = "Ignite Engines"; // Reset ignite button text
-                thrustControlButton.textContent = "Thrust: OFF"; // Reset thrust button text
+                stopContinuousEngineSound();
+                displayMissionMessage("CRITICAL: Fuel Depleted! Spacecraft systems shutting down. Use the GAS icon to refuel, then press Main Power to restart.", 5000);
+                mainPowerButton.textContent = "Power: OFF";
+                engineIgniteButton.textContent = "Ignite Engines";
+                thrustControlButton.textContent = "Thrust: OFF";
                 if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.0; }
-                // No need to explicitly save distance here for fuel depletion, as interval saver handles it.
-                stopGlobalDistanceUpdater(); // Stop updating distance if game pauses
-                return; // Stop further game logic until reactivated
+                stopGlobalDistanceUpdater();
+                return;
             }
 
-
-            // Move spacecraft (camera is attached to it or follows it for main view)
+            // Move spacecraft
             const deltaX = moveX * maneuverSpeed;
             const deltaY = moveY * maneuverSpeed;
-
-            // Move the spacecraft itself (since camera is now fixed relative to it for posterior view)
             bluOrbitSpaceship.position.x += deltaX;
             bluOrbitSpaceship.position.y += deltaY;
-
-            // Clamp spacecraft position within a reasonable range
             bluOrbitSpaceship.position.x = Math.max(-50, Math.min(50, bluOrbitSpaceship.position.x));
             bluOrbitSpaceship.position.y = Math.max(-50, Math.min(50, bluOrbitSpaceship.position.y));
 
-
             // Make ground recede
             if (ground && ground.visible) {
-                ground.position.z += currentFlightSpeed * objectMovementScale; // Adjust multiplier for desired speed
-                if (ground.position.z > 50) { // If ground has moved "back" relative to the ship (which is at 0,0,0)
+                ground.position.z += currentFlightSpeed * objectMovementScale;
+                if (ground.position.z > 50) {
                     ground.visible = false;
                 }
             }
 
-
-            // Update distance from Earth (now increasing)
-            // 1 mile per minute at base speed (0.5 units)
-            // = 1/60 miles per second
-            // = 1 / (60 * 1000) miles per millisecond = 1 / 60000 miles/ms
-            // At currentFlightSpeed (e.g., 0.5), we want (0.5 * X) miles/ms = 1/60000
-            // X = (1/60000) / 0.5 = 1 / 30000 miles per unit speed per millisecond
+            // Update distance from Earth
             const milesPerUnitSpeedPerMs = 1 / 30000;
             distanceFromEarth += currentFlightSpeed * milesPerUnitSpeedPerMs * deltaTime;
             displayMissionMessage(`Miles from Earth: ${distanceFromEarth.toLocaleString(undefined, { maximumFractionDigits: 0 })} miles`);
 
-            // No game over on distance to Earth since we are moving away
-            // if (distanceToEarth <= 0) {
-            //     displayMissionMessage("MISSION COMPLETE! Welcome to Earth!", 10000);
-            //     gameOver();
-            //     return;
-            // }
+            // Update deep space tier
+            const newTier = currentDeepSpaceTier; // Re-evaluate logic as per promo mode, but only for full game tier changes
+            if (distanceFromEarth < TIER_2_THRESHOLD) { currentDeepSpaceTier = 1; }
+            else if (distanceFromEarth < TIER_3_THRESHOLD) { currentDeepSpaceTier = 2; }
+            else if (distanceFromEarth < TIER_4_THRESHOLD) { currentDeepSpaceTier = 3; }
+            else if (distanceFromEarth < TIER_5_THRESHOLD) { currentDeepSpaceTier = 4; }
+            else { currentDeepSpaceTier = 5; }
 
-            // Update planet positions and check collisions
+            if (currentDeepSpaceTier !== newTier) { // Only if tier actually changed from the last update
+                console.log(`Entering Deep Space Tier ${currentDeepSpaceTier}! Distance: ${distanceFromEarth.toLocaleString()} miles`);
+                if (currentDeepSpaceTier === 2) { displayMissionMessage("Entering Outer Reaches: Subtly shifting stellar formations detected.", 5000); }
+                else if (currentDeepSpaceTier === 3) { displayMissionMessage("Navigating uncharted sectors. Expect unusual celestial phenomena.", 5000); }
+                else if (currentDeepSpaceTier === 4) { displayMissionMessage("Deep Space Sector: Anomalous energy signatures increasing.", 5000); }
+                else if (currentDeepSpaceTier === 5) { displayMissionMessage("Beyond known space. Prepare for unpredictable cosmic events.", 5000); }
+                updateDeepSpaceBackground(currentDeepSpaceTier);
+                updateDeepSpaceFog(currentDeepSpaceTier);
+            }
+
+
+            // Update object positions and check collisions
             for (let i = planets.length - 1; i >= 0; i--) {
                 const planet = planets[i];
-                // Move planet forward relative to spacecraft's apparent movement
-                planet.position.z += planet.velocity + (currentFlightSpeed * objectMovementScale); // Planets move towards the camera
-                planet.rotation.x += planet.rotationSpeed.x;
-                planet.rotation.y += planet.rotationSpeed.y;
-                planet.rotation.z += planet.rotationSpeed.z;
-
-                // Despawn if out of view (past the spacecraft by a certain amount)
-                if (planet.position.z > (bluOrbitSpaceship.position.z + 50)) {
-                    scene.remove(planet);
-                    planets.splice(i, 1);
-                }
-
-                // Collision detection with planets (more severe)
+                planet.position.z += planet.velocity + (currentFlightSpeed * objectMovementScale);
+                planet.rotation.x += planet.rotationSpeed.x; planet.rotation.y += planet.rotationSpeed.y; planet.rotation.z += planet.rotationSpeed.z;
+                if (planet.position.z > (bluOrbitSpaceship.position.z + 50)) { scene.remove(planet); planets.splice(i, 1); }
                 const distance = bluOrbitSpaceship.position.distanceTo(planet.position);
-                if (distance < (PLAYER_COLLISION_RADIUS + planet.radius)) {
-                    handleCollision(planet, "planet"); // Pass type for different damage
-                    return;
-                }
+                if (distance < (PLAYER_COLLISION_RADIUS + planet.radius)) { handleCollision(planet, "planet"); return; }
             }
-
-            // Update asteroid positions and check collisions
             for (let i = asteroids.length - 1; i >= 0; i--) {
                 const asteroid = asteroids[i];
-                // Asteroids also move relative to spacecraft's apparent movement
-                asteroid.position.z += asteroid.velocity + (currentFlightSpeed * objectMovementScale * 1.5); // Asteroids move faster
-                asteroid.rotation.x += asteroid.rotationSpeed.x;
-                asteroid.rotation.y += asteroid.rotationSpeed.y;
-                asteroid.rotation.z += asteroid.rotationSpeed.z;
-
-                // Despawn if out of view
-                if (asteroid.position.z > (bluOrbitSpaceship.position.z + 20)) { // Closer despawn for asteroids
-                    scene.remove(asteroid);
-                    asteroids.splice(i, 1);
-                }
-
-                // Collision detection with asteroids (less severe than planets)
+                asteroid.position.z += asteroid.velocity + (currentFlightSpeed * objectMovementScale * 1.5);
+                asteroid.rotation.x += asteroid.rotationSpeed.x; asteroid.rotation.y += asteroid.rotationSpeed.y; asteroid.rotation.z += asteroid.rotationSpeed.z;
+                if (asteroid.position.z > (bluOrbitSpaceship.position.z + 20)) { scene.remove(asteroid); asteroids.splice(i, 1); }
                 const distance = bluOrbitSpaceship.position.distanceTo(asteroid.position);
-                if (distance < (PLAYER_COLLISION_RADIUS + asteroid.radius)) {
-                    handleCollision(asteroid, "asteroid"); // Pass type for different damage
-                    return;
-                }
+                if (distance < (PLAYER_COLLISION_RADIUS + asteroid.radius)) { handleCollision(asteroid, "asteroid"); return; }
             }
-
-            // Update other spacecraft positions
             for (let i = otherSpacecrafts.length - 1; i >= 0; i--) {
                 const ship = otherSpacecrafts[i];
-                ship.position.z += ship.velocity + (currentFlightSpeed * objectMovementScale * 0.5); // Move relative to player, slower than obstacles
-                ship.rotation.x += ship.rotationSpeed.x;
-                ship.rotation.y += ship.rotationSpeed.y;
-                ship.rotation.z += ship.rotationSpeed.z;
-
-                // Despawn if out of view
-                if (ship.position.z > (bluOrbitSpaceship.position.z + 50)) { // Despawn when they pass
-                    scene.remove(ship);
-                    otherSpacecrafts.splice(i, 1);
-                }
+                ship.position.z += ship.velocity + (currentFlightSpeed * objectMovementScale * 0.5);
+                ship.rotation.x += ship.rotationSpeed.x; ship.rotation.y += ship.rotationSpeed.y; ship.rotation.z += ship.rotationSpeed.z;
+                if (ship.position.z > (bluOrbitSpaceship.position.z + 50)) { scene.remove(ship); otherSpacecrafts.splice(i, 1); }
             }
 
-
-            // Spawn new planets
+            // Spawning for full game
             const now = performance.now();
-            if (now - lastPlanetSpawnTime > planetSpawnRate) {
-                createPlanetObject();
-                lastPlanetSpawnTime = now;
-                planetSpawnRate = Math.max(500, planetSpawnRate * 0.99); // Increase difficulty
-            }
-            if (now - lastPlanetBatchTime > PLANET_BATCH_INTERVAL) {
-                for (let i = 0; i < 3; i++) { createPlanetObject(); } // Spawn a few at once
-                lastPlanetBatchTime = now;
-            }
-
-            // Spawn new asteroids
-            if (now - lastAsteroidSpawnTime > asteroidSpawnRate) {
-                createAsteroidObject();
-                lastAsteroidSpawnTime = now;
-                asteroidSpawnRate = Math.max(100, asteroidSpawnRate * 0.99); // Increase difficulty
-            }
-
-            // Spawn other spacecraft based on deep space tier
+            if (now - lastPlanetSpawnTime > planetSpawnRate) { createPlanetObject(); lastPlanetSpawnTime = now; planetSpawnRate = Math.max(500, planetSpawnRate * 0.99); }
+            if (now - lastPlanetBatchTime > PLANET_BATCH_INTERVAL) { for (let i = 0; i < 3; i++) { createPlanetObject(); } lastPlanetBatchTime = now; }
+            if (now - lastAsteroidSpawnTime > asteroidSpawnRate) { createAsteroidObject(); lastAsteroidSpawnTime = now; asteroidSpawnRate = Math.max(100, asteroidSpawnRate * 0.99); }
             if (distanceFromEarth >= TIER_2_THRESHOLD && (now - lastOtherSpacecraftSpawnTime > otherSpacecraftSpawnRate)) {
-                if (Math.random() < getSpacecraftSpawnChance(currentDeepSpaceTier)) { // Probabilistic spawning
-                    createOtherSpacecraft();
-                    lastOtherSpacecraftSpawnTime = now;
-                    otherSpacecraftSpawnRate = Math.max(10000, otherSpacecraftSpawnRate * 0.95); // Increase frequency
-                }
+                if (Math.random() < getSpacecraftSpawnChance(currentDeepSpaceTier)) { createOtherSpacecraft(); lastOtherSpacecraftSpawnTime = now; otherSpacecraftSpawnRate = Math.max(10000, otherSpacecraftSpawnRate * 0.95); }
             }
-
 
             // Update fire particles for the main spacecraft
-            if (frontEngineFireParticles && bluOrbitSpaceship) {
-                // Main box length is 8, so front is at +4.
-                updateFireParticles(frontEngineFireParticles, frontFireParticlesData, 4, true); // Pass true for front fire
-            }
-
+            if (frontEngineFireParticles && bluOrbitSpaceship) { updateFireParticles(frontEngineFireParticles, frontFireParticlesData, 4, true); }
             updateMiniMap();
         }
 
@@ -1606,10 +1593,10 @@
          */
         function getSpacecraftSpawnChance(tier) {
             switch (tier) {
-                case 2: return 0.2; // 20% chance
-                case 3: return 0.4; // 40% chance
-                case 4: return 0.6; // 60% chance
-                case 5: return 0.8; // 80% chance
+                case 2: return 0.2;
+                case 3: return 0.4;
+                case 4: return 0.6;
+                case 5: return 0.8;
                 default: return 0;
             }
         }
@@ -1619,58 +1606,24 @@
          * @param {number} tier
          */
         function updateDeepSpaceBackground(tier) {
-            // Adjust skybox color
             let newSkyboxColor;
-            let newStarColor = 0xFFFFFF; // Default star color
-            let newStarDensity = 1500; // Default star count
+            let newStarColor = 0xFFFFFF;
+            let newStarDensity = 1500;
 
             switch (tier) {
-                case 1:
-                    newSkyboxColor = 0x02020a; // Near Earth
-                    newStarColor = 0xFFFFFF;
-                    newStarDensity = 1500;
-                    break;
-                case 2:
-                    newSkyboxColor = 0x010105; // Slightly deeper, more subtle blues
-                    newStarColor = 0xAAAAFF; // Hints of blue
-                    newStarDensity = 2000; // Slightly denser
-                    break;
-                case 3:
-                    newSkyboxColor = 0x0A020A; // Purpleish deep space
-                    newStarColor = 0xFFFFCC; // Yellowish stars
-                    newStarDensity = 2500; // Denser
-                    break;
-                case 4:
-                    newSkyboxColor = 0x020A0A; // Tealish deep space
-                    newStarColor = 0xFF88FF; // Pinkish stars
-                    newStarDensity = 3000; // Even denser
-                    break;
-                case 5:
-                    newSkyboxColor = 0x000000; // Pure black, very sparse or very dense pockets
-                    newStarColor = 0x33FFFF; // Cyan stars
-                    newStarDensity = 4000; // Max density, can be very clustered.
-                    break;
+                case 1: newSkyboxColor = 0x02020a; newStarColor = 0xFFFFFF; newStarDensity = 1500; break;
+                case 2: newSkyboxColor = 0x010105; newStarColor = 0xAAAAFF; newStarDensity = 2000; break;
+                case 3: newSkyboxColor = 0x0A020A; newStarColor = 0xFFFFCC; newStarDensity = 2500; break;
+                case 4: newSkyboxColor = 0x020A0A; newStarColor = 0xFF88FF; newStarDensity = 3000; break;
+                case 5: newSkyboxColor = 0x000000; newStarColor = 0x33FFFF; newStarDensity = 4000; break;
             }
 
-            // Smoothly interpolate skybox color
-            // This requires modifying the material, but it's a dynamic change, not structural.
-            // For a basic material, color change is direct.
             skybox.material.color.setHex(newSkyboxColor);
-
-            // Re-create stars/nebulas for proper density/color changes (or modify existing if possible)
-            // For simplicity, let's keep the existing stars/nebulas and just update their color if material allows.
-            // Recreating is heavy, so we will try to update properties.
-            // For stars, it's a single PointsMaterial, so we can change its color.
-            // For nebulas, they are individual meshes. We can filter and update them or spawn new ones at this tier
-            // We'll update the global star color for now, and rely on `createPlanetObject` to handle nebula/planet colors.
-            // Note: Directly changing existing star positions/count in a `Points` object is complex.
-            // We'll stick to color changes for existing skybox stars.
             scene.traverse((object) => {
-                if (object.isPoints && object.parent === skybox) { // Check if it's our stars
+                if (object.isPoints && object.parent === skybox) {
                     object.material.color.setHex(newStarColor);
                 }
             });
-            // Nebula colors are handled by their creation, if new ones are spawned based on distance, they will pick up the new colors.
         }
 
         /**
@@ -1678,35 +1631,16 @@
          * @param {number} tier
          */
         function updateDeepSpaceFog(tier) {
-            // Remove existing fog if any
-            if (scene.fog) {
-                scene.fog = null;
-            }
+            if (scene.fog) { scene.fog = null; }
 
-            let fogColor = 0x000000; // Default black
-            let fogDensity = 0; // Default no fog
+            let fogColor = 0x000000;
+            let fogDensity = 0;
 
             switch (tier) {
-                case 1:
-                case 2:
-                    // No significant fog near initial stages
-                    break;
-                case 3:
-                    // Light blueish haze for distant nebulas
-                    fogColor = 0x000022; // Very dark blue
-                    fogDensity = 0.0005; // Subtle
-                    break;
-                case 4:
-                    // Denser purple haze
-                    fogColor = 0x110011; // Dark purple
-                    fogDensity = 0.001; // Moderate
-                    break;
-                case 5:
-                    // Very deep, potentially disorienting red/black fog or extremely clear.
-                    // Let's make it a dense, dark red for "unknown" feel.
-                    fogColor = 0x110000; // Very dark red
-                    fogDensity = 0.002; // Quite dense
-                    break;
+                case 1: case 2: break;
+                case 3: fogColor = 0x000022; fogDensity = 0.0005; break;
+                case 4: fogColor = 0x110011; fogDensity = 0.001; break;
+                case 5: fogColor = 0x110000; fogDensity = 0.002; break;
             }
 
             if (fogDensity > 0) {
@@ -1714,33 +1648,31 @@
             }
         }
 
-
         /**
          * Main animation loop.
          * @param {DOMHighResTimeStamp} currentTime - The current time in milliseconds.
          */
         function animate(currentTime) {
-            if (!lastFrameTime) lastFrameTime = currentTime; // Initialize lastFrameTime on first call
+            if (!lastFrameTime) lastFrameTime = currentTime;
 
-            const deltaTime = currentTime - lastFrameTime; // Milliseconds since last frame
+            const deltaTime = currentTime - lastFrameTime;
             lastFrameTime = currentTime;
 
             requestAnimationFrameId = requestAnimationFrame(animate);
 
-            updateGameLogic(deltaTime); // Pass deltaTime to game logic
+            updateGameLogic(deltaTime); // This now handles both promo and full game logic
 
             renderer.render(scene, camera);
         }
 
         /**
-         * Game Over sequence.
+         * Game Over sequence. (Only relevant for the full game on Gemini)
          */
-        async function gameOver() { // Made async to await Firestore save
+        async function gameOver() {
             console.log("Game Over initiated.");
             isFlying = false;
             currentFlightSpeed = 0;
 
-            // --- IMPORTANT: Save current distance to Firestore before game over ---
             if (window.authReady && window.globalDistanceDocRef) {
                 try {
                     await window.setDoc(window.globalDistanceDocRef, { currentDistance: distanceFromEarth });
@@ -1749,14 +1681,13 @@
                     console.error("Error saving final global distance on game over:", error);
                 }
             }
-            // --- End of critical save ---
 
             if (requestAnimationFrameId) {
-                cancelAnimationFrame(requestAnimationFrameId); // Stop the animation loop
-                requestAnimationFrameId = null; // Reset the ID
+                cancelAnimationFrame(requestAnimationFrameId);
+                requestAnimationFrameId = null;
             }
-            stopGlobalDistanceUpdater(); // Stop writing to Firestore on game over
-            stopContinuousEngineSound(); // Ensure engine sound stops on game over
+            stopGlobalDistanceUpdater();
+            stopContinuousEngineSound();
 
             displayMissionMessage("GAME OVER! Mission Failed. Initiating return to base.", 5000);
             setTimeout(() => {
@@ -1768,56 +1699,59 @@
                 healthBarContainerElement.classList.add('hidden');
                 controlPanelContainer.classList.add('hidden');
                 joystickControls.classList.add('hidden');
-                gasIconButton.classList.add('hidden'); // Hide gas icon on game over
-                soundControlContainer.classList.add('hidden'); // Hide sound control on game over
+                gasIconButton.classList.add('hidden');
+                soundControlContainer.classList.add('hidden');
 
 
                 // Clear ONLY dynamic elements from the scene
                 planets.forEach(p => scene.remove(p));
-                planets = []; // Clear array
+                planets = [];
                 asteroids.forEach(a => scene.remove(a));
-                asteroids = []; // Clear array
+                asteroids = [];
                 otherSpacecrafts.forEach(s => scene.remove(s));
-                otherSpacecrafts = []; // Clear array
+                otherSpacecrafts = [];
 
-                // Hide the spacecraft and fire effects temporarily, don't null them
                 if (bluOrbitSpaceship) {
                     bluOrbitSpaceship.visible = false;
                     if (frontEngineFireParticles) frontEngineFireParticles.material.opacity = 0.0;
                 }
 
-                // Show startup screen after game over
+                // Show startup screen after game over (though not relevant for promo page)
                 startupScreen.style.display = 'flex';
 
-            }, 3000); // Wait for mission fail message to clear
+            }, 3000);
         }
 
         /**
-         * Updates the visibility of the GAS icon based on fuel level and flight status.
+         * Updates the visibility of the GAS icon based on fuel level and flight status. (Not used in promo mode)
          */
         function updateGasIconVisibility() {
-            if (fuelLevel <= 0 && !isFlying) {
-                gasIconButton.classList.remove('hidden');
+            if (!isPromotionalPage) { // Only update if not in promo mode
+                if (fuelLevel <= 0 && !isFlying) {
+                    gasIconButton.classList.remove('hidden');
+                } else {
+                    gasIconButton.classList.add('hidden');
+                }
             } else {
-                gasIconButton.classList.add('hidden');
+                gasIconButton.classList.add('hidden'); // Always hidden in promo mode
             }
         }
 
-        // New: Sound Control variables
+        // Sound Control variables
         let isMuted = false;
-        let lastVolume = 0.7; // Store last non-muted volume (0-1 range for slider value)
+        let lastVolume = 0.7;
 
         /**
          * Updates the sound icon based on mute state.
          */
         function updateSoundIcon() {
-            if (isMuted || Tone.Destination.volume.value <= -40) { // Consider very low volume as muted visually
-                soundIcon.innerHTML = `<path d="M11 5 6 9 2 9 2 15 6 15 11 19 11 5zM22 12h-4"></path>`; // Muted icon
-                volumeSlider.value = 0; // Set slider to 0 if muted
+            if (isMuted || Tone.Destination.volume.value <= -40) {
+                soundIcon.innerHTML = `<path d="M11 5 6 9 2 9 2 15 6 15 11 19 11 5zM22 12h-4"></path>`;
+                volumeSlider.value = 0;
             } else if (Tone.Destination.volume.value < -20) {
-                soundIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>`; // Volume 1 icon
+                soundIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>`;
             } else {
-                soundIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M23.31 1.69a16 16 0 0 1 0 20.62"></path>`; // Volume 2 icon
+                soundIcon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M23.31 1.69a16 16 0 0 1 0 20.62"></path>`;
             }
         }
 
@@ -1826,121 +1760,109 @@
          * Initializes and sets up all event listeners for UI elements.
          */
         function setupUIEventListeners() {
+            // Get references to all UI elements
             mainPowerButton = document.getElementById('main-power-button');
             engineIgniteButton = document.getElementById('engine-ignite-button');
             thrustControlButton = document.getElementById('thrust-control-button');
             reportStatusButton = document.getElementById('report-status-button');
             requestDataButton = document.getElementById('request-data-button');
-            gasIconButton = document.getElementById('gas-icon-container'); // Get reference to new gas icon
-            soundIcon = document.getElementById('sound-icon'); // Get reference to sound icon
-            volumeSlider = document.getElementById('volume-slider'); // Get reference to volume slider
+            gasIconButton = document.getElementById('gas-icon-container');
+            soundIcon = document.getElementById('sound-icon');
+            volumeSlider = document.getElementById('volume-slider');
 
-            startMissionButton.addEventListener('click', async () => {
-                startupScreen.style.display = 'none'; // Hide startup screen
-                await startGame(); // Start the game when the button is clicked, wait for it
+            const flyWithGeminiButton = document.getElementById('fly-with-gemini-button');
+            if (flyWithGeminiButton) {
+                flyWithGeminiButton.addEventListener('click', () => {
+                    // This button now simply navigates to the full game
+                    console.log("Redirecting to Gemini game...");
+                    // The 'href' on the parent <a> tag handles actual navigation
+                });
+            }
+
+            // All other game control buttons will effectively be non-functional on the promo page.
+            // Keeping their listeners for the full game version where they are functional.
+            // They are also hidden via CSS initially.
+
+            mainPowerButton.addEventListener('click', () => { if (!isPromotionalPage) { /* ... full game logic ... */ } });
+            engineIgniteButton.addEventListener('click', () => { if (!isPromotionalPage) { /* ... full game logic ... */ } });
+            thrustControlButton.addEventListener('click', () => { if (!isPromotionalPage) { /* ... full game logic ... */ } });
+            gasIconButton.addEventListener('click', () => { if (!isPromotionalPage) { /* ... full game logic ... */ } });
+
+
+            // LLM Integration for Report Status / Request Data (these can still work on promo page for demoing feature)
+            reportStatusButton.addEventListener('click', async () => {
+                displayMissionMessage("Requesting status report...", 2000);
+                loadingSpinner.style.display = 'block';
+                try {
+                    const prompt = `Generate a concise, retro-futuristic status report for a space mission game. Include current health (out of ${maxHealth}), fuel (${fuelLevel}/${maxFuelLevel}), and estimated distance from Earth (${distanceFromEarth.toLocaleString()} miles). Make it sound like a 1980s computer status message.`;
+                    const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    const response = await fetch(apiUrl, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                        const statusReport = result.candidates[0].content.parts[0].text;
+                        displayMissionMessage(statusReport, 8000);
+                    } else { displayMissionMessage("Error: No status report data received.", 3000); }
+                } catch (error) { displayMissionMessage("Error: Failed to connect to command center.", 3000); } finally { loadingSpinner.style.display = 'none'; }
             });
 
-            // Joystick buttons
-            const moveUp = document.getElementById('move-up');
-            const moveDown = document.getElementById('move-down');
-            const moveLeft = document.getElementById('move-left');
-            const moveRight = document.getElementById('move-right');
-
-            mainPowerButton.addEventListener('click', () => {
-                if (isFlying) {
-                    isFlying = false;
-                    currentFlightSpeed = 0;
-                    displayMissionMessage("Main Power OFF. All systems dormant.", 3000);
-                    playPowerDownSound();
-                    mainPowerButton.textContent = "Power: OFF"; // Changed for clarity
-                    if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.0; }
-                    stopGlobalDistanceUpdater(); // Stop updating distance if game pauses
-                    updateGasIconVisibility(); // Check if gas icon should appear after shutdown
-                } else {
-                    // Only switch to ON if fuel is not depleted
-                    if (fuelLevel <= 0) {
-                        displayMissionMessage("FUEL CRITICAL! Use the GAS icon to replenish fuel to proceed.", 5000);
-                        return; // Do not start flight
-                    }
-
-                    isFlying = true;
-                    currentFlightSpeed = baseFlightSpeed;
-                    displayMissionMessage("Main Power ON. Systems nominal.", 3000);
-                    startContinuousEngineSound(); // Play continuous engine sound on power up
-                    mainPowerButton.textContent = "Power: ON"; // Changed for clarity
-                    // No automatic refuel here, that's for the GAS icon now
-                    if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.8; }
-                    startGlobalDistanceUpdater(); // Start updating distance if game resumes
-                    updateGasIconVisibility(); // Hide gas icon if powering on
-                }
+            requestDataButton.addEventListener('click', async () => {
+                displayMissionMessage("Requesting planetary data...", 2000);
+                loadingSpinner.style.display = 'block';
+                try {
+                    const prompt = `As a retro 1980s mission control computer, generate a brief, cryptic message about an anomaly detected near a celestial body. Use terms like 'unknown energy signature', 'unidentified object', 'gravitational fluctuation'. Mention a specific, fictional planetary body like 'Zorgon Prime' or 'Nebula X'. Keep it short and impactful.`;
+                    const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    const response = await fetch(apiUrl, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                        const dataReport = result.candidates[0].content.parts[0].text;
+                        displayMissionMessage(dataReport, 8000);
+                    } else { displayMissionMessage("Error: No data received from deep space probe.", 3000); }
+                } catch (error) { displayMissionMessage("Error: Communications scrambled.", 3000); } finally { loadingSpinner.style.display = 'none'; }
             });
 
-            engineIgniteButton.addEventListener('click', () => {
-                // If not already flying, pressing ignite should effectively 'turn on' the systems
-                // as a backup to main power, but without resetting the scene.
-                if (!isFlying) {
-                    if (fuelLevel <= 0) {
-                        displayMissionMessage("FUEL CRITICAL! Use the GAS icon to replenish fuel to proceed.", 5000);
-                        return;
-                    }
-                    isFlying = true;
-                    currentFlightSpeed = baseFlightSpeed;
-                    displayMissionMessage("Engines Ignited! Blu Orbit is Go!", 4000);
-                    startContinuousEngineSound(); // Play continuous engine sound
-                    if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.8; }
-                    mainPowerButton.textContent = "Power: ON"; // Align main power button state
-                    startGlobalDistanceUpdater(); // Start updater if not already running
-                    updateGasIconVisibility(); // Hide gas icon if powering on
-                } else {
-                    displayMissionMessage("Engines already ignited.", 2000);
-                }
-            });
 
-            thrustControlButton.addEventListener('click', () => {
-                if (!isFlying) {
-                    displayMissionMessage("Engines must be ignited first!", 2000);
-                    return;
-                }
-                if (currentFlightSpeed === baseFlightSpeed) {
-                    currentFlightSpeed = thrustBoostSpeed;
-                    displayMissionMessage("Thrust engaged! Maximizing speed.", 3000);
-                    thrustControlButton.textContent = "Thrust: OFF"; // Changed for clarity
-                    playThrustSound(); // Play thrust burst sound
-                } else {
-                    currentFlightSpeed = baseFlightSpeed;
-                    displayMissionMessage("Thrust disengaged. Conserving fuel.", 3000);
-                    thrustControlButton.textContent = "Thrust: ON"; // Changed for clarity
-                    // Only play power down sound if it's explicitly turning something off, not just changing thrust.
-                    // playPowerDownSound(); // Removed as it doesn't fit 'thrust disengaged'
-                }
-            });
+            // Joystick/Keyboard Movement Controls (non-functional on promo page)
+            const keysPressed = {};
+            document.addEventListener('keydown', (event) => { if (!isPromotionalPage) { keysPressed[event.key.toLowerCase()] = true; updateMoveState(); } });
+            document.addEventListener('keyup', (event) => { if (!isPromotionalPage) { delete keysPressed[event.key.toLowerCase()]; updateMoveState(); } });
+            function updateMoveState() {
+                moveX = 0; moveY = 0;
+                if (keysPressed['arrowleft'] || keysPressed['a']) moveX = -1;
+                if (keysPressed['arrowright'] || keysPressed['d']) moveX = 1;
+                if (keysPressed['arrowup'] || keysPressed['w']) moveY = 1;
+                if (keysPressed['arrowdown'] || keysPressed['s']) moveY = -1;
+            }
 
-            // New: Gas Icon click listener
-            gasIconButton.addEventListener('click', () => {
-                if (fuelLevel < maxFuelLevel) {
-                    fuelLevel = maxFuelLevel; // Refuel instantly
-                    updateFuelGauge();
-                    displayMissionMessage("Fuel replenished! Press Main Power to resume flight.", 5000);
-                    updateGasIconVisibility(); // Hide the icon after refueling
-                } else {
-                    displayMissionMessage("Fuel tanks are already full!", 3000);
+            const setupButtonMovement = (buttonId, xDir, yDir) => {
+                const button = document.getElementById(buttonId);
+                if (button) {
+                    const startMove = () => { if (!isPromotionalPage && isFlying) { moveX = xDir; moveY = yDir; } };
+                    const stopMove = () => { if (!isPromotionalPage && isFlying) { if (moveX === xDir) moveX = 0; if (moveY === yDir) moveY = 0; } };
+                    button.addEventListener('mousedown', startMove); button.addEventListener('mouseup', stopMove); button.addEventListener('mouseleave', stopMove);
+                    button.addEventListener('touchstart', (e) => { e.preventDefault(); startMove(); }, { passive: false });
+                    button.addEventListener('touchend', stopMove); button.addEventListener('touchcancel', stopMove);
                 }
-            });
+            };
+            setupButtonMovement('move-left', -1, 0); setupButtonMovement('move-right', 1, 0);
+            setupButtonMovement('move-up', 0, 1); setupButtonMovement('move-down', 0, -1);
 
-            // New: Sound Icon click listener (mute/unmute)
+            // Sound control listeners (active on promo page)
             soundIcon.addEventListener('click', () => {
                 if (isMuted) {
-                    // Unmute: Restore previous volume
-                    Tone.Destination.volume.value = Tone.Master.vol.linearToGain(lastVolume * 100); // Convert 0-1 to dB
-                    // Ensure the continuous engine sound is playing if the game is flying
-                    if (isFlying && Tone.context.state === 'running') {
-                        startContinuousEngineSound();
-                    }
+                    Tone.Destination.volume.value = Tone.Master.vol.linearToGain(lastVolume * 100);
+                    if (Tone.context.state === 'running') { startContinuousEngineSound(); }
                 } else {
-                    // Mute: Save current volume, set to -Infinity
-                    lastVolume = volumeSlider.value / 100; // Save current slider value (0-1)
-                    Tone.Destination.volume.value = -Infinity; // Mute
-                    stopContinuousEngineSound(); // Stop the sound when muted
+                    lastVolume = volumeSlider.value / 100;
+                    Tone.Destination.volume.value = -Infinity;
+                    stopContinuousEngineSound();
                 }
                 isMuted = !isMuted;
                 updateSoundIcon();
@@ -1948,160 +1870,23 @@
                 localStorage.setItem('gameSoundVolume', lastVolume);
             });
 
-            // New: Volume Slider input listener
             volumeSlider.addEventListener('input', () => {
-                const sliderValue = parseInt(volumeSlider.value); // 0-100
+                const sliderValue = parseInt(volumeSlider.value);
                 if (sliderValue === 0) {
-                    Tone.Destination.volume.value = -Infinity; // Mute if slider is at 0
+                    Tone.Destination.volume.value = -Infinity;
                     isMuted = true;
                     stopContinuousEngineSound();
                 } else {
-                    // Map slider value (0-100) to a dB range (e.g., -40dB to 0dB)
-                    // Tone.js volume is logarithmic, so a linear mapping of slider to dB is fine.
-                    // A slider value of 100 maps to 0dB (full volume)
-                    // A slider value of 0 maps to -Infinity (mute), handled above.
-                    // Let's use a range from -40dB (very quiet) to 0dB (max).
-                    const minDb = -40; // Very quiet
-                    const maxDb = 0;   // Max volume (no gain/loss)
+                    const minDb = -40; const maxDb = 0;
                     const gain = ((sliderValue / 100) * (maxDb - minDb)) + minDb;
                     Tone.Destination.volume.value = gain;
                     isMuted = false;
-                    // Ensure the continuous engine sound is playing if the game is flying and volume is above 0
-                    if (isFlying && Tone.context.state === 'running' && sliderValue > 0) {
-                        startContinuousEngineSound();
-                    }
+                    if (Tone.context.state === 'running' && sliderValue > 0) { startContinuousEngineSound(); }
                 }
                 updateSoundIcon();
                 localStorage.setItem('gameSoundMuted', isMuted);
-                localStorage.setItem('gameSoundVolume', sliderValue / 100); // Save as 0-1 for consistency
+                localStorage.setItem('gameSoundVolume', sliderValue / 100);
             });
-
-
-            // LLM Integration for Report Status / Request Data
-            reportStatusButton.addEventListener('click', async () => {
-                displayMissionMessage("Requesting status report...", 2000);
-                loadingSpinner.style.display = 'block';
-                console.log('Report Status button clicked. Initiating API call...');
-                try {
-                    // Ensure the LLM prompt uses the correct variable name
-                    const prompt = `Generate a concise, retro-futuristic status report for a space mission game. Include current health (out of ${maxHealth}), fuel (${fuelLevel}/${maxFuelLevel}), and estimated distance from Earth (${distanceFromEarth.toLocaleString()} miles). Make it sound like a 1980s computer status message.`;
-                    const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const result = await response.json();
-                    console.log('Report Status API raw response:', result);
-                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
-                        const statusReport = result.candidates[0].content.parts[0].text;
-                        console.log('Report Status parsed message:', statusReport);
-                        displayMissionMessage(statusReport, 8000);
-                        // No explicit statusReported flag needed for sequential dependency now,
-                        // as user just wants to ensure messages come through.
-                    } else {
-                        displayMissionMessage("Error: No status report data received.", 3000);
-                        console.error("LLM response structure unexpected for Report Status.");
-                    }
-                } catch (error) {
-                    console.error("Error generating status report:", error);
-                    displayMissionMessage("Error: Failed to connect to command center.", 3000);
-                } finally {
-                    loadingSpinner.style.display = 'none';
-                }
-            });
-
-            requestDataButton.addEventListener('click', async () => {
-                displayMissionMessage("Requesting planetary data...", 2000);
-                loadingSpinner.style.display = 'block';
-                console.log('Request Data button clicked. Initiating API call...');
-                try {
-                    const prompt = `As a retro 1980s mission control computer, generate a brief, cryptic message about an anomaly detected near a celestial body. Use terms like 'unknown energy signature', 'unidentified object', 'gravitational fluctuation'. Mention a specific, fictional planetary body like 'Zorgon Prime' or 'Nebula X'. Keep it short and impactful.`;
-                    const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const result = await response.json();
-                    console.log('Request Data API raw response:', result);
-                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
-                        const dataReport = result.candidates[0].content.parts[0].text;
-                        console.log('Request Data parsed message:', dataReport);
-                        displayMissionMessage(dataReport, 8000);
-                    } else {
-                        displayMissionMessage("Error: No data received from deep space probe.", 3000);
-                        console.error("LLM response structure unexpected for Request Data.");
-                    }
-                } catch (error) {
-                    console.error("Error requesting data:", error);
-                    displayMissionMessage("Error: Communications scrambled.", 3000);
-                } finally {
-                    loadingSpinner.style.display = 'none';
-                }
-            });
-
-
-            // Joystick/Keyboard Movement Controls
-            const keysPressed = {};
-
-            document.addEventListener('keydown', (event) => {
-                keysPressed[event.key.toLowerCase()] = true;
-                updateMoveState();
-            });
-
-            document.addEventListener('keyup', (event) => {
-                delete keysPressed[event.key.toLowerCase()];
-                updateMoveState();
-            });
-
-            function updateMoveState() {
-                moveX = 0;
-                moveY = 0;
-                if (keysPressed['arrowleft'] || keysPressed['a']) moveX = -1;
-                if (keysPressed['arrowright'] || keysPressed['d']) moveX = 1;
-                if (keysPressed['arrowup'] || keysPressed['w']) moveY = 1;
-                if (keysPressed['arrowdown'] || keysPressed['s']) moveY = -1;
-            }
-
-            // Touch/Click listeners for joystick buttons
-            const setupButtonMovement = (buttonId, xDir, yDir) => {
-                const button = document.getElementById(buttonId);
-                if (button) {
-                    const startMove = () => {
-                        if (isFlying) {
-                            moveX = xDir;
-                            moveY = yDir;
-                        }
-                    };
-                    const stopMove = () => {
-                        if (isFlying) {
-                            if (moveX === xDir) moveX = 0;
-                            if (moveY === yDir) moveY = 0;
-                        }
-                    };
-
-                    button.addEventListener('mousedown', startMove);
-                    button.addEventListener('mouseup', stopMove);
-                    button.addEventListener('mouseleave', stopMove);
-
-                    button.addEventListener('touchstart', (e) => {
-                        e.preventDefault();
-                        startMove();
-                    }, { passive: false });
-                    button.addEventListener('touchend', stopMove);
-                    button.addEventListener('touchcancel', stopMove);
-                }
-            };
-
-            setupButtonMovement('move-left', -1, 0);
-            setupButtonMovement('move-right', 1, 0);
-            setupButtonMovement('move-up', 0, 1);
-            setupButtonMovement('move-down', 0, -1);
         }
 
         /**
@@ -2111,22 +1896,13 @@
             const savedMuteState = localStorage.getItem('gameSoundMuted');
             const savedVolume = localStorage.getItem('gameSoundVolume');
 
-            if (savedMuteState !== null) {
-                isMuted = JSON.parse(savedMuteState);
-            }
-            if (savedVolume !== null) {
-                lastVolume = parseFloat(savedVolume);
-                volumeSlider.value = lastVolume * 100; // Set slider value (0-100)
-            } else {
-                volumeSlider.value = lastVolume * 100; // Default to 70 if no saved volume
-            }
+            if (savedMuteState !== null) { isMuted = JSON.parse(savedMuteState); }
+            if (savedVolume !== null) { lastVolume = parseFloat(savedVolume); volumeSlider.value = lastVolume * 100; }
+            else { volumeSlider.value = lastVolume * 100; }
 
-            // Apply loaded preferences
-            if (isMuted) {
-                Tone.Destination.volume.value = -Infinity; // Mute
-            } else {
-                const minDb = -40; // Very quiet
-                const maxDb = 0;   // Max volume (no gain/loss)
+            if (isMuted) { Tone.Destination.volume.value = -Infinity; }
+            else {
+                const minDb = -40; const maxDb = 0;
                 const gain = (lastVolume * (maxDb - minDb)) + minDb;
                 Tone.Destination.volume.value = gain;
             }
@@ -2134,77 +1910,48 @@
         }
 
         /**
-         * Resets the Three.js scene elements to their initial game state.
-         * This is called by startGame() to prepare for a new game session.
+         * Resets the Three.js scene elements to their initial game state. (Only for full game reset)
          */
         function resetGameScene() {
-            // Remove all existing planets and asteroids from the scene
-            planets.forEach(p => scene.remove(p));
-            planets = [];
-            asteroids.forEach(a => scene.remove(a));
-            asteroids = [];
-            otherSpacecrafts.forEach(s => scene.remove(s));
-            otherSpacecrafts = [];
+            planets.forEach(p => scene.remove(p)); planets = [];
+            asteroids.forEach(a => scene.remove(a)); asteroids = [];
+            otherSpacecrafts.forEach(s => scene.remove(s)); otherSpacecrafts = [];
 
-            // Reset spacecraft position and make it visible
             if (bluOrbitSpaceship) {
-                bluOrbitSpaceship.position.set(0, 0, 0);
-                bluOrbitSpaceship.rotation.set(0, 0, 0);
-                bluOrbitSpaceship.visible = true; // Ensure it's visible
+                bluOrbitSpaceship.position.set(0, 0, 0); bluOrbitSpaceship.rotation.set(0, 0, 0);
+                bluOrbitSpaceship.visible = true;
             }
-            // Reset fire particles opacity
-            if (frontEngineFireParticles) {
-                frontEngineFireParticles.material.opacity = 0.8;
-            }
+            if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.8; }
+            if (ground) { ground.position.set(0, -2.5, 0); ground.visible = true; }
 
-            // Reset ground position and make it visible
-            if (ground) {
-                ground.position.set(0, -2.5, 0);
-                ground.visible = true;
-            }
+            for (let i = 0; i < 10; i++) { createPlanetObject(); }
+            for (let i = 0; i < 10; i++) { createAsteroidObject(); }
 
-            // Re-spawn initial planets and asteroids for the new game
-            for (let i = 0; i < 10; i++) {
-                createPlanetObject();
-            }
-            for (let i = 0; i < 10; i++) { // Add initial asteroids
-                createAsteroidObject();
-            }
+            planetSpawnRate = 1000; lastPlanetSpawnTime = performance.now();
+            asteroidSpawnRate = 200; lastAsteroidSpawnTime = performance.now();
+            lastPlanetBatchTime = performance.now();
+            otherSpacecraftSpawnRate = 30000; lastOtherSpacecraftSpawnTime = performance.now();
 
-            // Reset spawn rates to initial values
-            planetSpawnRate = 1000;
-            lastPlanetSpawnTime = performance.now();
-            asteroidSpawnRate = 200;
-            lastAsteroidSpawnTime = performance.now();
-            lastPlanetBatchTime = performance.now(); // Reset batch time
-            otherSpacecraftSpawnRate = 30000;
-            lastOtherSpacecraftSpawnTime = performance.now();
-
-            // Reset deep space tier
             currentDeepSpaceTier = 1;
-            updateDeepSpaceBackground(currentDeepSpaceTier); // Apply initial background
-            updateDeepSpaceFog(currentDeepSpaceTier); // Clear fog
+            updateDeepSpaceBackground(currentDeepSpaceTier);
+            updateDeepSpaceFog(currentDeepSpaceTier);
         }
 
 
         /**
-         * Starts a new game session. Resets all game state (except global distance).
+         * Starts a new game session. Resets all game state (except global distance). (Only for full game on Gemini)
          */
         async function startGame() {
-            console.log("startGame initiated.");
+            console.log("startGame initiated (full game logic).");
             document.getElementById('loading-spinner').style.display = 'block';
 
-            // Ensure Firebase is ready and fetch initial global distance
             distanceFromEarth = await fetchInitialGlobalDistance();
             console.log("Game starting with global distance:", distanceFromEarth);
 
-            // Reset the Three.js scene elements for a new game
             resetGameScene();
-
             document.getElementById('loading-spinner').style.display = 'none';
 
-            // Hide startup screen
-            startupScreen.style.display = 'none';
+            startupScreen.style.display = 'none'; // Hide promo screen to start game
 
             // Show all game UI elements after initialization
             gameTitleContainer.classList.remove('hidden');
@@ -2214,44 +1961,30 @@
             healthBarContainerElement.classList.remove('hidden');
             controlPanelContainer.classList.remove('hidden');
             joystickControls.classList.remove('hidden');
-            soundControlContainer.classList.remove('hidden'); // Show sound control
+            soundControlContainer.classList.remove('hidden');
 
-            // Reset game state for local player
             spacecraftHealth = maxHealth;
             fuelLevel = maxFuelLevel;
             currentFlightSpeed = baseFlightSpeed;
             isFlying = true;
-            console.log(`startGame: isFlying=${isFlying}, currentFlightSpeed=${currentFlightSpeed}`);
 
-            // Reset UI
-            updateHealthBar();
-            updateFuelGauge();
-            updateGasIconVisibility(); // Ensure gas icon is hidden on game start
+            updateHealthBar(); updateFuelGauge(); updateGasIconVisibility();
             displayMissionMessage("Engines ignited! Flight initiated into interstellar space. Global voyage in progress.", 3000);
-            mainPowerButton.textContent = "Power: ON"; // Changed for clarity
-            thrustControlButton.textContent = "Thrust: ON"; // Changed for clarity
-            engineIgniteButton.textContent = "Ignite Engines"; // Ensure ignite button text is correct
+            mainPowerButton.textContent = "Power: ON";
+            thrustControlButton.textContent = "Thrust: ON";
+            engineIgniteButton.textContent = "Ignite Engines";
 
-            // Start continuous engine sound only if not muted and game is flying
-            if (!isMuted && Tone.context.state === 'running') {
-                startContinuousEngineSound();
-            }
-
-            // Start the persistent distance updater
+            if (!isMuted && Tone.context.state === 'running') { startContinuousEngineSound(); }
             startGlobalDistanceUpdater();
 
-            // Ensure the animation loop is running (it might have been cancelled on game over)
-            if (!requestAnimationFrameId) {
-                console.log("startGame: Re-starting animation loop.");
-                animate();
-            }
+            if (!requestAnimationFrameId) { animate(); }
         }
 
         let requestAnimationFrameId;
 
         /**
          * Creates a particle system for engine fire.
-         * @param {boolean} isFrontFire - True if creating fire for the front of the ship (particles move negatively in Z).
+         * @param {boolean} isFrontFire - True if creating fire for the front of the ship.
          * @returns {{particles: THREE.Points, particleData: Array}} An object containing the particle system and its data.
          */
         function createEngineFireParticleSystem(isFrontFire = false) {
@@ -2260,17 +1993,17 @@
             const colors = new Float32Array(fireParticleCount * 3);
             const particleData = [];
 
-            const color1 = new THREE.Color(0xffa500); // Orange
-            const color2 = new THREE.Color(0xff4500); // Orange-Red
-            const color3 = new THREE.Color(0xff0000); // Red
+            const color1 = new THREE.Color(0xffa500);
+            const color2 = new THREE.Color(0xff4500);
+            const color3 = new THREE.Color(0xff0000);
 
-            const zVelocitySign = isFrontFire ? -1 : 1; // Negative for front (moves towards -Z), Positive for rear (moves towards +Z)
+            const zVelocitySign = isFrontFire ? -1 : 1;
 
             for (let i = 0; i < fireParticleCount; i++) {
                 const i3 = i * 3;
-                positions[i3] = (Math.random() - 0.5) * 1.5; // X spread
-                positions[i3 + 1] = (Math.random() - 0.5) * 1.5; // Y spread
-                positions[i3 + 2] = (isFrontFire ? 1 : -1) * Math.random() * 2; // Initial Z position relative to emission point
+                positions[i3] = (Math.random() - 0.5) * 1.5;
+                positions[i3 + 1] = (Math.random() - 0.5) * 1.5;
+                positions[i3 + 2] = (isFrontFire ? 1 : -1) * Math.random() * 2;
 
                 const color = new THREE.Color();
                 color.lerpColors(color1, color2, Math.random());
@@ -2283,7 +2016,7 @@
                     velocity: new THREE.Vector3(
                         (Math.random() - 0.5) * 0.05,
                         (Math.random() - 0.5) * 0.05,
-                        zVelocitySign * (Math.random() * 0.3 + 0.1) // Particles move away from ship
+                        zVelocitySign * (Math.random() * 0.3 + 0.1)
                     )
                 };
             }
@@ -2292,7 +2025,7 @@
             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
             const material = new THREE.PointsMaterial({
-                size: 1.0, // Increased size of each particle
+                size: 1.0,
                 vertexColors: true,
                 transparent: true,
                 opacity: 0.8,
@@ -2323,8 +2056,8 @@
             const color2 = new THREE.Color(0xff4500);
             const color3 = new THREE.Color(0xff0000);
 
-            const zResetDirection = isFrontFire ? 1 : -1; // Reset particles to be in front of emitter for front fire, behind for rear
-            const zVelocitySign = isFrontFire ? -1 : 1; // Velocity direction
+            const zResetDirection = isFrontFire ? 1 : -1;
+            const zVelocitySign = isFrontFire ? -1 : 1;
 
             for (let i = 0; i < fireParticleCount; i++) {
                 const i3 = i * 3;
@@ -2334,26 +2067,19 @@
                 positions[i3 + 1] += particleDataEntry.velocity.y;
                 positions[i3 + 2] += particleDataEntry.velocity.z;
 
-                // Reset particle if it moves too far from the origin
-                // For front fire: if particle Z is less than (referenceZ - some_distance)
-                // For rear fire: if particle Z is greater than (referenceZ + some_distance)
-                const distanceThreshold = 2; // Distance particles travel before reset
+                const distanceThreshold = 2;
 
                 let shouldReset = false;
                 if (isFrontFire) {
-                    if (positions[i3 + 2] < (referenceZ - distanceThreshold)) {
-                        shouldReset = true;
-                    }
-                } else { // Rear fire
-                    if (positions[i3 + 2] > (referenceZ + distanceThreshold)) {
-                        shouldReset = true;
-                    }
+                    if (positions[i3 + 2] < (referenceZ - distanceThreshold)) { shouldReset = true; }
+                } else {
+                    if (positions[i3 + 2] > (referenceZ + distanceThreshold)) { shouldReset = true; }
                 }
 
-                if (shouldReset || Math.abs(positions[i3]) > 2 || Math.abs(positions[i3+1]) > 2) { // Also reset if too far laterally
+                if (shouldReset || Math.abs(positions[i3]) > 2 || Math.abs(positions[i3+1]) > 2) {
                     positions[i3] = (Math.random() - 0.5) * 1.5;
                     positions[i3 + 1] = (Math.random() - 0.5) * 1.5;
-                    positions[i3 + 2] = referenceZ + (zResetDirection * Math.random() * 2); // Reset to just behind/in front of emitter
+                    positions[i3 + 2] = referenceZ + (zResetDirection * Math.random() * 2);
                     particleDataEntry.velocity.set(
                         (Math.random() - 0.5) * 0.05,
                         (Math.random() - 0.5) * 0.05,
@@ -2372,34 +2098,15 @@
         }
 
 
-        // Function to create a stylized planet (for non-collectible celestial bodies)
+        // Function to create a stylized planet
         function createPlanet(radius, colorHex, type = 'rocky') {
             let planetMaterial;
-            // Use different material types based on type for visual variety
             if (type === 'rocky') {
-                planetMaterial = new THREE.MeshStandardMaterial({
-                    color: colorHex,
-                    metalness: 0.3,
-                    roughness: 0.7,
-                    flatShading: false
-                });
+                planetMaterial = new THREE.MeshStandardMaterial({ color: colorHex, metalness: 0.3, roughness: 0.7, flatShading: false });
             } else if (type === 'gas') {
-                planetMaterial = new THREE.MeshPhongMaterial({
-                    color: colorHex,
-                    transparent: true,
-                    opacity: 0.8,
-                    blending: THREE.AdditiveBlending,
-                    emissive: colorHex,
-                    emissiveIntensity: 0.15,
-                    shininess: 50
-                });
+                planetMaterial = new THREE.MeshPhongMaterial({ color: colorHex, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, emissive: colorHex, emissiveIntensity: 0.15, shininess: 50 });
             } else if (type === 'ice') {
-                planetMaterial = new THREE.MeshStandardMaterial({
-                    color: colorHex,
-                    metalness: 0.7,
-                    roughness: 0.2,
-                    flatShading: false
-                });
+                planetMaterial = new THREE.MeshStandardMaterial({ color: colorHex, metalness: 0.7, roughness: 0.2, flatShading: false });
             }
 
             const planetGeometry = new THREE.SphereGeometry(radius, 64, 64);
@@ -2407,12 +2114,7 @@
             planet.radius = radius;
             if (type === 'gas') {
                 const ringGeometry = new THREE.TorusGeometry(planet.radius * 1.2, planet.radius * 0.1, 2, 100);
-                const ringMaterial = new THREE.MeshBasicMaterial({
-                    color: 0x8888aa,
-                    side: THREE.DoubleSide,
-                    transparent: true,
-                    opacity: 0.6
-                });
+                const ringMaterial = new THREE.MeshBasicMaterial({ color: 0x8888aa, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
                 const rings = new THREE.Mesh(ringGeometry, ringMaterial);
                 rings.rotation.x = Math.PI / 2;
                 planet.add(rings);
@@ -2420,33 +2122,27 @@
             return planet;
         }
 
-        // Function to set up the main spaceship model (now always a primitive)
+        // Function to set up the main spaceship model
         async function setupSpacecraftModel() {
-            // Only create if it doesn't exist. If it exists, it will be reset by resetGameScene.
             if (!bluOrbitSpaceship) {
                 const loader = new THREE.GLTFLoader();
-                // Changed modelPath to remove leading `./`
-                const modelPath = 'public/models/157b45e4a6d8_A_spaceship_called_Blu_Orbit.glb'; // Adjust this path if your model is elsewhere
+                const modelPath = 'public/models/157b45e4a6d8_A_spaceship_called_Blu_Orbit.glb';
 
                 try {
-                    // Changed the logging line to directly use modelPath, removing new URL() which caused TypeError
                     console.log(`Attempting to load GLTF model from: ${modelPath}`);
                     const gltf = await loader.loadAsync(modelPath);
                     bluOrbitSpaceship = gltf.scene;
-                    // Scale and rotate the model as needed after loading
-                    bluOrbitSpaceship.scale.set(0.1, 0.1, 0.1); // Example scale, adjust as needed for your model
-                    bluOrbitSpaceship.rotation.set(Math.PI / 2, Math.PI, 0); // Rotate to face forward and upright
-                    bluOrbitSpaceship.position.set(0, 0, 0); // Ship is at origin
+                    bluOrbitSpaceship.scale.set(0.1, 0.1, 0.1);
+                    bluOrbitSpaceship.rotation.set(Math.PI / 2, Math.PI, 0);
+                    bluOrbitSpaceship.position.set(0, 0, 0);
 
                     scene.add(bluOrbitSpaceship);
                     console.log('GLTF model loaded successfully:', bluOrbitSpaceship);
 
-                    // Create front engine fire particle system and attach to ship
-                    const { particles: fireParticles, particleData: fireData } = createEngineFireParticleSystem(true); // True for front fire
+                    const { particles: fireParticles, particleData: fireData } = createEngineFireParticleSystem(true);
                     frontEngineFireParticles = fireParticles;
                     frontFireParticlesData = fireData;
-                    // Position fire relative to the model's front, adjust this based on your model's geometry
-                    frontEngineFireParticles.position.set(0, 0, 4); // Example Z offset
+                    frontEngineFireParticles.position.set(0, 0, 4);
                     bluOrbitSpaceship.add(frontEngineFireParticles);
                     displayMissionMessage("Loaded Blu Orbit spacecraft with front-facing particle effects.", 3000);
 
@@ -2455,15 +2151,14 @@
                     displayMissionMessage("Error: Failed to load spacecraft model. Using primitive cube.", 5000);
 
                     // Fallback to a primitive cube if GLTF loading fails
-                    const playerGeometry = new THREE.BoxGeometry(3, 3, 8); // Increased size for visibility (width, height, depth)
-                    const playerMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff, flatShading: true }); // Cyan color
+                    const playerGeometry = new THREE.BoxGeometry(3, 3, 8);
+                    const playerMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff, flatShading: true });
                     bluOrbitSpaceship = new THREE.Mesh(playerGeometry, playerMaterial);
-                    bluOrbitSpaceship.position.set(0, 0, 0); // Ship is at origin
-                    bluOrbitSpaceship.rotation.y = 0; // Explicitly no Y rotation
-                    bluOrbitSpaceship.radius = 4; // Half of its length (8 units) for collision
+                    bluOrbitSpaceship.position.set(0, 0, 0);
+                    bluOrbitSpaceship.rotation.y = 0;
+                    bluOrbitSpaceship.radius = 4;
                     scene.add(bluOrbitSpaceship);
 
-                    // Create front engine fire particle system for the primitive and attach to ship
                     const { particles: fireParticles, particleData: fireData } = createEngineFireParticleSystem(true);
                     frontEngineFireParticles = fireParticles;
                     frontFireParticlesData = fireData;
@@ -2478,57 +2173,38 @@
 
         async function initThreeJS() {
             scene = new THREE.Scene();
-            // Initial skybox color (can be dynamically updated)
             scene.background = new THREE.Color(0x02020a);
 
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-            // Adjusted camera position to be directly behind the spaceship (at 0,0,0) looking forward
-            camera.position.set(0, 2, 10); // X: 0 (center), Y: 2 (slightly above ship), Z: 10 (behind ship)
-            camera.lookAt(0, 0, 0); // Always look at the ship at the origin
+            camera.position.set(0, 2, 10);
+            camera.lookAt(0, 0, 0);
             console.log('Initial Main Camera position:', camera.position);
             console.log('Initial Main Camera rotation (lookAt implied):', camera.rotation);
 
-            // Dynamically create a canvas element
             let gameCanvas = document.createElement('canvas');
-            gameCanvas.id = 'gameCanvas'; // Assign an ID if you need to reference it
+            gameCanvas.id = 'gameCanvas';
             const threeContainer = document.getElementById('three-container');
             if (threeContainer) {
-                // Clear any existing children before appending
-                while (threeContainer.firstChild) {
-                    threeContainer.removeChild(threeContainer.firstChild);
-                }
+                while (threeContainer.firstChild) { threeContainer.removeChild(threeContainer.firstChild); }
                 threeContainer.appendChild(gameCanvas);
-            } else {
-                console.error("three-container not found!");
-                return; // Exit if container isn't there
+            } else { console.error("three-container not found!"); return; }
+
+            renderer = new THREE.WebGLRenderer({ canvas: gameCanvas, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.autoClear = true;
+
+            const ambientLight = new THREE.AmbientLight(0x303030, 1); scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4); directionalLight.position.set(10, 5, -15).normalize(); scene.add(directionalLight);
+            const pointLight = new THREE.PointLight(0x00f0ff, 0.3, 50, 2); pointLight.position.set(0, 1, -2); scene.add(pointLight);
+
+            await setupSpacecraftModel();
+            // Ensure ship is visible for promo background
+            if (bluOrbitSpaceship) {
+                bluOrbitSpaceship.visible = true;
+                if (frontEngineFireParticles) frontEngineFireParticles.material.opacity = 0.8;
             }
 
-
-            renderer = new THREE.WebGLRenderer({ canvas: gameCanvas, antialias: true }); // Use the newly created canvas
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            //threeContainer.appendChild(renderer.domElement); // Appending handled by dynamic canvas creation
-            renderer.autoClear = true; // Only one scene now, can clear automatically
-
-            // Lighting for Main Scene
-            const ambientLight = new THREE.AmbientLight(0x303030, 1);
-            scene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
-            directionalLight.position.set(10, 5, -15).normalize();
-            scene.add(directionalLight);
-            const pointLight = new THREE.PointLight(0x00f0ff, 0.3, 50, 2);
-            pointLight.position.set(0, 1, -2); // Position relative to world
-            scene.add(pointLight);
-
-
-            // Set up the main spaceship model (only creates if it doesn't exist)
-            await setupSpacecraftModel();
-
-
-            // Deep Space Background (Skybox, stars, nebulas)
-            skybox = new THREE.Mesh(
-                new THREE.SphereGeometry(700, 64, 64),
-                new THREE.MeshBasicMaterial({ color: 0x010105, side: THREE.BackSide })
-            );
+            skybox = new THREE.Mesh( new THREE.SphereGeometry(700, 64, 64), new THREE.MeshBasicMaterial({ color: 0x010105, side: THREE.BackSide }) );
             scene.add(skybox);
 
             const starColors = [0xffffff, 0xaaaaff, 0xffffaa, 0xffaaff];
@@ -2545,148 +2221,50 @@
             const nebulaColors = [0x5500aa, 0x0055ff, 0xaa00aa, 0xff00ff, 0x00ffff];
             for (let i = 0; i < 10; i++) {
                 const nebulaSize = 50 + Math.random() * 100;
-                const nebulaMaterial = new THREE.MeshBasicMaterial({
-                    color: nebulaColors[Math.floor(Math.random() * nebulaColors.length)], transparent: true, opacity: 0.2 + Math.random() * 0.15,
-                    blending: THREE.AdditiveBlending, side: THREE.FrontSide
-                });
+                const nebulaMaterial = new THREE.MeshBasicMaterial({ color: nebulaColors[Math.floor(Math.random() * nebulaColors.length)], transparent: true, opacity: 0.2 + Math.random() * 0.15, blending: THREE.AdditiveBlending, side: THREE.FrontSide });
                 const nebula = new THREE.Mesh(new THREE.SphereGeometry(nebulaSize, 16, 16), nebulaMaterial);
                 nebula.position.set((Math.random() - 0.5) * 800, (Math.random() - 0.5) * 800, -300 - Math.random() * 500);
                 skybox.add(nebula);
             }
 
-            // Ground/Launch Pad (initially visible, moves away)
-            ground = new THREE.Mesh(
-                new THREE.PlaneGeometry(50, 50),
-                new THREE.MeshStandardMaterial({ color: 0x444444, side: THREE.DoubleSide })
-            );
-            ground.rotation.x = THREE.MathUtils.degToRad(-90);
-            ground.position.y = -2.5;
-            ground.visible = true;
-            scene.add(ground);
+            ground = new THREE.Mesh( new THREE.PlaneGeometry(50, 50), new THREE.MeshStandardMaterial({ color: 0x444444, side: THREE.DoubleSide }) );
+            ground.rotation.x = THREE.MathUtils.degToRad(-90); ground.position.y = -2.5; ground.visible = true; scene.add(ground);
 
-            // Initialize fog (default none/black)
-            scene.fog = null; // No fog initially
+            scene.fog = null;
 
-            // Mouse control for camera rotation (rotates the camera around the ship)
-            let isMouseDown = false;
-            let previousMouseX = 0;
-            let previousMouseY = 0;
-
+            let isMouseDown = false; let previousMouseX = 0; let previousMouseY = 0;
             document.addEventListener('mousedown', (event) => {
-                if (event.target.tagName === 'CANVAS') {
-                    isMouseDown = true;
-                    previousMouseX = event.clientX;
-                    previousMouseY = event.clientY;
-                }
+                if (!isPromotionalPage && event.target.tagName === 'CANVAS') { isMouseDown = true; previousMouseX = event.clientX; previousMouseY = event.clientY; }
             });
-
-            document.addEventListener('mouseup', () => {
-                isMouseDown = false;
-            });
-
+            document.addEventListener('mouseup', () => { isMouseDown = false; });
             document.addEventListener('mousemove', (event) => {
-                if (!isMouseDown) return;
-
-                const deltaX = event.clientX - previousMouseX;
-                const deltaY = event.clientY - previousMouseY;
-
-                // Rotate camera around the spaceship (at origin 0,0,0)
-                // This makes the spaceship appear to rotate in the view
-                const cameraTarget = new THREE.Vector3(0,0,0);
-                const currentCameraPosition = camera.position.clone();
-                camera.position.sub(cameraTarget); // Translate to origin
-                camera.position.applyAxisAngle(new THREE.Vector3(0,1,0), -deltaX * 0.005); // Rotate around Y axis
-                camera.position.applyAxisAngle(new THREE.Vector3(1,0,0), -deltaY * 0.005); // Rotate around X axis
-                camera.position.add(cameraTarget); // Translate back
-                camera.lookAt(cameraTarget); // Always look at the spaceship
-
-                previousMouseX = event.clientX;
-                previousMouseY = event.clientY;
+                if (!isPromotionalPage && isMouseDown) {
+                    const deltaX = event.clientX - previousMouseX; const deltaY = event.clientY - previousMouseY;
+                    const cameraTarget = new THREE.Vector3(0,0,0);
+                    camera.position.sub(cameraTarget); camera.position.applyAxisAngle(new THREE.Vector3(0,1,0), -deltaX * 0.005); camera.position.applyAxisAngle(new THREE.Vector3(1,0,0), -deltaY * 0.005); camera.position.add(cameraTarget); camera.lookAt(cameraTarget);
+                    previousMouseX = event.clientX; previousMouseY = event.clientY;
+                }
             });
 
-            // Touch control for camera rotation
-            let isTouchingCamera = false;
-            let touchStartX = 0;
-            let touchStartY = 0;
-
+            let isTouchingCamera = false; let touchStartX = 0; let touchStartY = 0;
             document.addEventListener('touchstart', (event) => {
-                // Check if the touch is not on any joystick button before enabling camera touch
-                // This prevents conflicts between player movement and camera movement
-                const targetId = event.target.id;
-                if (!targetId.startsWith('move-') && targetId !== 'main-power-button' &&
-                    targetId !== 'engine-ignite-button' && targetId !== 'thrust-control-button' &&
-                    targetId !== 'report-status-button' && targetId !== 'request-data-button' &&
-                    targetId !== 'gas-icon-container' && targetId !== 'sound-control-container' &&
-                    targetId !== 'volume-slider' && targetId !== 'sound-icon' &&
-                    event.target.tagName !== 'BUTTON' && event.target.tagName !== 'INPUT' &&
-                    event.target.tagName !== 'A') { // Exclude UI elements from camera touch
-                    
-                    isTouchingCamera = true;
-                    touchStartX = event.touches[0].clientX;
-                    touchStartY = event.touches[0].clientY;
+                if (!isPromotionalPage && !event.target.id.startsWith('move-') && event.target.tagName !== 'BUTTON' && event.target.tagName !== 'INPUT' && event.target.tagName !== 'A') {
+                    isTouchingCamera = true; touchStartX = event.touches[0].clientX; touchStartY = event.touches[0].clientY;
                 }
-            }, { passive: true }); // Use passive: true as this touch doesn't prevent scrolling
-
-            document.addEventListener('touchend', () => {
-                isTouchingCamera = false;
             }, { passive: true });
-
+            document.addEventListener('touchend', () => { isTouchingCamera = false; }, { passive: true });
             document.addEventListener('touchmove', (event) => {
-                if (!isTouchingCamera) return;
-                if (event.touches.length === 0) return; // No active touches
-
-                const currentX = event.touches[0].clientX;
-                const currentY = event.touches[0].clientY;
-
-                const deltaX = currentX - touchStartX;
-                const deltaY = currentY - touchStartY;
-
-                // Rotate camera around the spaceship (at origin 0,0,0)
-                const cameraTarget = new THREE.Vector3(0,0,0);
-                camera.position.sub(cameraTarget); // Translate to origin
-                camera.position.applyAxisAngle(new THREE.Vector3(0,1,0), -deltaX * 0.005); // Rotate around Y axis
-                camera.position.applyAxisAngle(new THREE.Vector3(1,0,0), -deltaY * 0.005); // Rotate around X axis
-                camera.position.add(cameraTarget); // Translate back
-                camera.lookAt(cameraTarget); // Always look at the spaceship
-
-                touchStartX = currentX;
-                touchStartY = currentY;
+                if (!isPromotionalPage && isTouchingCamera && event.touches.length > 0) {
+                    const currentX = event.touches[0].clientX; const currentY = event.touches[0].clientY;
+                    const deltaX = currentX - touchStartX; const deltaY = currentY - touchStartY;
+                    const cameraTarget = new THREE.Vector3(0,0,0);
+                    camera.position.sub(cameraTarget); camera.position.applyAxisAngle(new THREE.Vector3(0,1,0), -deltaX * 0.005); camera.position.applyAxisAngle(new THREE.Vector3(1,0,0), -deltaY * 0.005); camera.position.add(cameraTarget); camera.lookAt(cameraTarget);
+                    touchStartX = currentX; touchStartY = currentY;
+                }
             }, { passive: true });
 
-
-            // Keyboard controls (move the spaceship)
-            document.addEventListener('keydown', (event) => {
-                if (!isFlying) return;
-                switch (event.key.toLowerCase()) {
-                    case 'arrowleft': moveX = -1; break;
-                    case 'a': moveX = -1; break;
-                    case 'arrowright': moveX = 1; break;
-                    case 'd': moveX = 1; break;
-                    case 'arrowup': moveY = 1; break;
-                    case 'w': moveY = 1; break;
-                    case 'arrowdown': moveY = -1; break;
-                    case 's': moveY = -1; break;
-                }
-            });
-
-            document.addEventListener('keyup', (event) => {
-                if (!isFlying) return;
-                switch (event.key.toLowerCase()) {
-                    case 'arrowleft': if (moveX === -1) moveX = 0; break;
-                    case 'a': if (moveX === -1) moveX = 0; break;
-                    case 'arrowright': if (moveX === 1) moveX = 0; break;
-                    case 'd': if (moveX === 1) moveX = 0; break;
-                    case 'arrowup': if (moveY === 1) moveY = 0; break;
-                    case 'w': if (moveY === 1) moveY = 0; break;
-                    case 'arrowdown': if (moveY === -1) moveY = 0; break;
-                    case 's': if (moveY === -1) moveY = 0; break;
-                }
-            });
-
-            // Handle window resizing
             window.addEventListener('resize', onWindowResize, false);
         }
-
 
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -2695,84 +2273,73 @@
         }
 
         /**
-         * Handles collision effects and game state updates.
-         * @param {THREE.Object3D} collidedObject The object that was collided with.
-         * @param {string} type The type of object collided with ("planet" or "asteroid").
+         * Handles collision effects and game state updates. (Only relevant for the full game on Gemini)
          */
         function handleCollision(collidedObject, type) {
-            if (!isFlying) return;
+            if (isPromotionalPage || !isFlying) return;
 
-            let damage = 0;
-            let message = "";
-            if (type === "planet") {
-                damage = 2; // More severe damage from planets
-                message = `CRITICAL IMPACT! Direct hit by large celestial body! Health at ${spacecraftHealth}/${maxHealth}.`;
-            } else if (type === "asteroid") {
-                damage = 1; // Less severe damage from asteroids
-                message = `IMPACT! Asteroid strike! Hull integrity compromised. Health at ${spacecraftHealth}/${maxHealth}.`;
-            }
+            let damage = 0; let message = "";
+            if (type === "planet") { damage = 2; message = `CRITICAL IMPACT! Direct hit by large celestial body! Health at ${spacecraftHealth}/${maxHealth}.`; }
+            else if (type === "asteroid") { damage = 1; message = `IMPACT! Asteroid strike! Hull integrity compromised. Health at ${spacecraftHealth}/${maxHealth}.`; }
 
             spacecraftHealth -= damage;
             updateHealthBar();
             displayMissionMessage(message, 3000);
 
-            // Play explosion sound (Tone.js)
-            const explosionSynth = new Tone.NoiseSynth({
-                noise: { type: "pink" },
-                envelope: { attack: 0.001, decay: 0.2, sustain: 0, release: 0.5 },
-                volume: -5
-            }).toDestination();
+            const explosionSynth = new Tone.NoiseSynth({ noise: { type: "pink" }, envelope: { attack: 0.001, decay: 0.2, sustain: 0, release: 0.5 }, volume: -5 }).toDestination();
             explosionSynth.triggerAttackRelease("1n");
 
-            // Remove the collided object from the scene and its respective array
             if (collidedObject.parent) {
                 scene.remove(collidedObject);
-                if (type === "planet") {
-                    planets = planets.filter(p => p !== collidedObject);
-                }
-                else if (type === "asteroid") {
-                    asteroids = asteroids.filter(a => a !== collidedObject);
-                }
+                if (type === "planet") { planets = planets.filter(p => p !== collidedObject); }
+                else if (type === "asteroid") { asteroids = asteroids.filter(a => a !== collidedObject); }
             }
 
             if (spacecraftHealth <= 0) {
                 displayMissionMessage("CRITICAL FAILURE! Emergency reset initiated. System Rebooting...", 5000);
-                isFlying = false;
-                currentFlightSpeed = 0;
-                moveX = 0;
-                moveY = 0;
-
+                isFlying = false; currentFlightSpeed = 0; moveX = 0; moveY = 0;
                 if (frontEngineFireParticles) { frontEngineFireParticles.material.opacity = 0.0; }
-                stopContinuousEngineSound(); // Stop engine sound on critical failure
-
-                setTimeout(() => {
-                    gameOver();
-                }, 4000);
+                stopContinuousEngineSound();
+                setTimeout(() => { gameOver(); }, 4000);
                 return;
             }
-
-            // Minor position nudge back on impact
-            // This now applies to the spaceship's position in the world
             bluOrbitSpaceship.position.z += 5;
         }
 
         // Initialize game and Firebase on window load
         window.onload = async function () {
             setupUIEventListeners();
-            updateHealthBar();
-            updateFuelGauge();
             loadSoundPreferences(); // Load sound preferences on startup
 
-            // Initialize Firebase as soon as window loads, but don't start game yet
-            await initFirebase(); // Wait for Firebase to be ready before proceeding
-
-            // Initialize Three.js scene once here
+            // Initialize Firebase and Three.js scenes immediately
+            await initFirebase();
             await initThreeJS();
+
+            // Populate initial background objects for the promo screen
+            resetGameScene(); // This will create initial planets, asteroids etc.
+
             // Start the animation loop once here
             animate();
 
-            // Show the startup screen initially
+            // Ensure all game UI elements are hidden initially for the promo page
+            gameTitleContainer.classList.add('hidden');
+            fuelGaugeContainer.classList.add('hidden');
+            miniMapContainer.classList.add('hidden');
+            missionMessageArea.classList.add('hidden');
+            healthBarContainerElement.classList.add('hidden');
+            controlPanelContainer.classList.add('hidden');
+            joystickControls.classList.add('hidden');
+            gasIconButton.classList.add('hidden');
+            // soundControlContainer.classList.add('hidden'); // This should be visible
+
+            // Show the startup screen initially, overlaid on the 3D scene
             startupScreen.style.display = 'flex';
+            soundControlContainer.classList.remove('hidden'); // Sound control should be visible on promo page
+
+            // Start continuous engine sound for the background if not muted
+            if (!isMuted) {
+                startContinuousEngineSound();
+            }
         };
     </script>
 </body>
