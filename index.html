@@ -1,7 +1,4 @@
-<html>
-        <head><title>Downloaded HTML</title></head>
-        <body>
-            <pre style="white-space: pre-wrap; word-wrap: break-word;"><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -2457,13 +2454,25 @@
             console.log('Initial Main Camera position:', camera.position);
             console.log('Initial Main Camera rotation (lookAt implied):', camera.rotation);
 
-
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            // Dynamically create a canvas element
+            let gameCanvas = document.createElement('canvas');
+            gameCanvas.id = 'gameCanvas'; // Assign an ID if you need to reference it
             const threeContainer = document.getElementById('three-container');
-            if (threeContainer && threeContainer.children.length === 0) {
-                threeContainer.appendChild(renderer.domElement);
+            if (threeContainer) {
+                // Clear any existing children before appending
+                while (threeContainer.firstChild) {
+                    threeContainer.removeChild(threeContainer.firstChild);
+                }
+                threeContainer.appendChild(gameCanvas);
+            } else {
+                console.error("three-container not found!");
+                return; // Exit if container isn't there
             }
+
+
+            renderer = new THREE.WebGLRenderer({ canvas: gameCanvas, antialias: true }); // Use the newly created canvas
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            //threeContainer.appendChild(renderer.domElement); // Appending handled by dynamic canvas creation
             renderer.autoClear = true; // Only one scene now, can clear automatically
 
             // Lighting for Main Scene
@@ -2734,6 +2743,3 @@
     </script>
 </body>
 </html>
-</pre>
-        </body>
-    </html>
