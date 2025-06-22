@@ -780,6 +780,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <!-- Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GLTFLoader CDN - IMPORTANT: Added for loading 3D models -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
 
     <!-- Firebase SDKs for persistence -->
     <script type="module">
@@ -2421,22 +2424,52 @@
         async function setupSpacecraftModel() {
             // Only create if it doesn't exist. If it exists, it will be reset by resetGameScene.
             if (!bluOrbitSpaceship) {
-                console.warn('Creating default primitive spaceship model.');
-                const playerGeometry = new THREE.BoxGeometry(3, 3, 8); // Increased size for visibility (width, height, depth)
-                const playerMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff, flatShading: true }); // Cyan color
-                bluOrbitSpaceship = new THREE.Mesh(playerGeometry, playerMaterial);
-                bluOrbitSpaceship.position.set(0, 0, 0); // Ship is at origin
-                bluOrbitSpaceship.rotation.y = 0; // Explicitly no Y rotation
-                bluOrbitSpaceship.radius = 4; // Half of its length (8 units) for collision
-                scene.add(bluOrbitSpaceship); // Add to scene only once initially
+                const loader = new THREE.GLTFLoader();
+                // Changed modelPath to remove leading `./`
+                const modelPath = 'public/models/157b45e4a6d8_A_spaceship_called_Blu_Orbit.glb'; // Adjust this path if your model is elsewhere
 
-                // Create front engine fire particle system and attach to ship
-                const { particles: fireParticles, particleData: fireData } = createEngineFireParticleSystem(true); // True for front fire
-                frontEngineFireParticles = fireParticles;
-                frontFireParticlesData = fireData;
-                frontEngineFireParticles.position.set(0, 0, 4); // Position fire at the local +Z (front of the box)
-                bluOrbitSpaceship.add(frontEngineFireParticles);
-                displayMissionMessage("Loaded primitive craft with front-facing particle effects.", 3000);
+                try {
+                    // Changed the logging line to directly use modelPath, removing new URL() which caused TypeError
+                    console.log(`Attempting to load GLTF model from: ${modelPath}`);
+                    const gltf = await loader.loadAsync(modelPath);
+                    bluOrbitSpaceship = gltf.scene;
+                    // Scale and rotate the model as needed after loading
+                    bluOrbitSpaceship.scale.set(0.1, 0.1, 0.1); // Example scale, adjust as needed for your model
+                    bluOrbitSpaceship.rotation.set(Math.PI / 2, Math.PI, 0); // Rotate to face forward and upright
+                    bluOrbitSpaceship.position.set(0, 0, 0); // Ship is at origin
+
+                    scene.add(bluOrbitSpaceship);
+                    console.log('GLTF model loaded successfully:', bluOrbitSpaceship);
+
+                    // Create front engine fire particle system and attach to ship
+                    const { particles: fireParticles, particleData: fireData } = createEngineFireParticleSystem(true); // True for front fire
+                    frontEngineFireParticles = fireParticles;
+                    frontFireParticlesData = fireData;
+                    // Position fire relative to the model's front, adjust this based on your model's geometry
+                    frontEngineFireParticles.position.set(0, 0, 4); // Example Z offset
+                    bluOrbitSpaceship.add(frontEngineFireParticles);
+                    displayMissionMessage("Loaded Blu Orbit spacecraft with front-facing particle effects.", 3000);
+
+                } catch (error) {
+                    console.error('Error loading GLTF model:', error);
+                    displayMissionMessage("Error: Failed to load spacecraft model. Using primitive cube.", 5000);
+
+                    // Fallback to a primitive cube if GLTF loading fails
+                    const playerGeometry = new THREE.BoxGeometry(3, 3, 8); // Increased size for visibility (width, height, depth)
+                    const playerMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff, flatShading: true }); // Cyan color
+                    bluOrbitSpaceship = new THREE.Mesh(playerGeometry, playerMaterial);
+                    bluOrbitSpaceship.position.set(0, 0, 0); // Ship is at origin
+                    bluOrbitSpaceship.rotation.y = 0; // Explicitly no Y rotation
+                    bluOrbitSpaceship.radius = 4; // Half of its length (8 units) for collision
+                    scene.add(bluOrbitSpaceship);
+
+                    // Create front engine fire particle system for the primitive and attach to ship
+                    const { particles: fireParticles, particleData: fireData } = createEngineFireParticleSystem(true);
+                    frontEngineFireParticles = fireParticles;
+                    frontFireParticlesData = fireData;
+                    frontEngineFireParticles.position.set(0, 0, 4);
+                    bluOrbitSpaceship.add(frontEngineFireParticles);
+                }
             } else {
                  console.log('Spacecraft model already exists, skipping recreation.');
             }
@@ -2449,8 +2482,9 @@
             scene.background = new THREE.Color(0x02020a);
 
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 5, 15); // Camera in front and slightly above the ship
-            camera.lookAt(0, 0, 0); // Look at the ship (at origin)
+            // Adjusted camera position to be directly behind the spaceship (at 0,0,0) looking forward
+            camera.position.set(0, 2, 10); // X: 0 (center), Y: 2 (slightly above ship), Z: 10 (behind ship)
+            camera.lookAt(0, 0, 0); // Always look at the ship at the origin
             console.log('Initial Main Camera position:', camera.position);
             console.log('Initial Main Camera rotation (lookAt implied):', camera.rotation);
 
